@@ -1,5 +1,7 @@
 # Actify
 
+## Julia Package for Active Inference.
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://samuelnehrer02.github.io/Actify.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://samuelnehrer02.github.io/Actify.jl/dev/)
 [![Build Status](https://github.com/samuelnehrer02/Actify.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/samuelnehrer02/Actify.jl/actions/workflows/CI.yml?query=branch%3Amaster)
