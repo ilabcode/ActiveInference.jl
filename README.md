@@ -1,4 +1,4 @@
-# Actify
+# ActiveInference.jl
 
 ## Julia Package for Active Inference.
 
