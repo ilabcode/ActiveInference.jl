@@ -1,7 +1,10 @@
-using Actify
+using ActiveInference
 using Test
 
+categorical_dist = rand(3)
 
-@testset "Actify.jl" begin
+categorical_dist = norm_dist(categorical_dist)
+
+@testset "ActiveInference.jl" begin
       
 end

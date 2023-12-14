@@ -4,7 +4,7 @@ CurrentModule = Actify
 
 # Actify
 
-Documentation for [Actify](https://github.com/samuelnehrer02/Actify.jl).
+Documentation for [Actify](https://github.com/samuelnehrer02/ActiveInference.jl).
 
 ```@index
 ```

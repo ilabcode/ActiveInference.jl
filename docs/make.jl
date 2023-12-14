@@ -1,16 +1,16 @@
-using Actify
+using ActiveInference
 using Documenter
 
-DocMeta.setdocmeta!(Actify, :DocTestSetup, :(using Actify); recursive=true)
+DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
 makedocs(;
-    modules=[Actify],
+    modules=[ActiveInference],
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
-    repo="https://github.com/samuelnehrer02/Actify.jl/blob/{commit}{path}#{line}",
-    sitename="Actify.jl",
+    repo="https://github.com/samuelnehrer02/ActiveInference.jl/blob/{commit}{path}#{line}",
+    sitename="ActiveInference.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://samuelnehrer02.github.io/Actify.jl",
+        canonical="https://samuelnehrer02.github.io/ActiveInference.jl",
         edit_link="master",
         assets=String[],
     ),
@@ -20,6 +20,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/samuelnehrer02/Actify.jl",
+    repo="github.com/samuelnehrer02/ActiveInference.jl",
     devbranch="master",
 )
