@@ -1,9 +1,13 @@
 using ActiveInference
 using Test
 
-categorical_dist = rand(3)
 
+# ---test the functions here---
+categorical_dist = rand(3)
 categorical_dist = norm_dist(categorical_dist)
+# --- end of testing
+
+
 
 @testset "ActiveInference.jl" begin
       
