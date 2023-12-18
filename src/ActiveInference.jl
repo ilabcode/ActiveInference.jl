@@ -15,12 +15,12 @@ module ActiveInference
     export get_expected_observations
 
 
-    # # From maths.jl
-    # export norm_dist
-    # export sample_category
-    # export softmax
-    # export spm_log_single
-    # export entropy
+    # From maths.jl
+    export norm_dist
+    export sample_category
+    export softmax
+    export spm_log_single
+    export entropy
 
 
 
