@@ -43,4 +43,14 @@ function entropy(A)
 end
 
 
+"""Function for getting KL-divergence"""
+function kl_divergence(qo_u, C)
+
+    #dist = (spm_log_single(qo_u) .- spm_log_single(C))
+    #kl_div = dot(dist, qo_u)
+
+    return dot((spm_log_single(qo_u) .- spm_log_single(C)), qo_u)
+end
+
+
 

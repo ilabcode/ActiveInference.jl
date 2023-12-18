@@ -171,5 +171,198 @@ function get_expected_observations(A, qs_u)
 end
 
 
+"""Function Calculating the Expectped Free Energy"""
+function calculate_G(A, B, C, qs_current, action_list)
+    G = zeros(length(action_list))
+
+    H_A = entropy(A)
+
+    for (idx_i, action_i) in enumerate(action_list)
+
+        qs_u = get_expected_states(B, qs_current, action_i)
+        qo_u = get_expected_observations(A, qs_u)
+
+        pred_uncertainty = H_A * qs_u
+        pred_divergence = kl_divergence(qo_u, C)
+        G[idx_i] = sum(pred_uncertainty .+ pred_divergence)
+    end
+
+    return G
+end
+
+
+"""Function That does Active Inference Loop"""
+function run_active_inference_loop(A, B, C, D, actions, env, T)
+    prior = copy(D)  # Initialize the prior
+    obs = reset!(env)  # Reset the environment and get the initial observation
+
+    for t in 1:T
+        println("Time $t: Agent observes itself in location: $obs")
+
+        # Convert observation to index
+        obs_idx = findfirst(isequal(obs), grid_locations)
+
+        # Perform inference over hidden states (our infer_states function)
+        qs_current = infer_states(obs_idx, A, prior)
+
+        # Plot beliefs (it will create plots separately, careful here xD)
+        plot = plot_beliefs(qs_current, "Beliefs about location at time $t")
+        display(plot)
+
+        # Calculate expected free energy (our calculate_G function)
+        G = calculate_G(A, B, C, qs_current, actions)
+
+        # Compute posterior over action 
+        Q_u = softmax(-G)
+
+        # Sample action from Q_u using the function that we have predefined in the beginning of the document
+        chosen_action_idx = sample_category(Q_u)
+
+        # Update prior for next timestep
+        prior = B[:, :, chosen_action_idx] * qs_current
+
+        # Update generative process
+        action_label = actions[chosen_action_idx]
+        obs = step!(env, action_label)
+    end
+
+    return qs_current
+end
+
+
+"""Function for Constructing Policies"""
+function construct_policies(num_states; num_controls=nothing, policy_len=1, control_fac_idx=nothing)
+
+    # Number of factors (states) we are dealing with, remember that n_states must be converted to an array!
+   num_factors = length(num_states)
+   
+   # Loops for controllable factors
+   if isnothing(control_fac_idx)
+       if !isnothing(num_controls)
+           # If specific controls are given, find which factors have more than one control option
+           control_fac_idx = findall(x -> x > 1, num_controls)
+       else
+           # If no controls are specified, assume all factors are controllable
+           control_fac_idx = 1:num_factors
+       end
+   end
+
+   # Determine the number of controls for each factor
+   if isnothing(num_controls)
+       num_controls = [in(c_idx, control_fac_idx) ? num_states[c_idx] : 1 for c_idx in 1:num_factors]
+   end
+
+   # Create a list of possible actions for each time step
+   x = repeat(num_controls, policy_len)
+   # Generate all combinations of actions across all time steps
+   policies = collect(product([1:i for i in x]...))
+
+   # Reshape each policy combination into a matrix of (policy_len x num_factors)
+   reshaped_policies = [reshape(collect(policy), policy_len, num_factors) for policy in policies]
+
+   return reshaped_policies
+end
+
+
+"""Function that Calculate the Expected Free Energy for Policies"""
+function calculate_G_policies(A, B, C, qs_current, policies)
+    G = zeros(length(policies))
+    H_A = entropy(A)
+
+    for (policy_id, policy) in enumerate(policies)
+        t_horizon = size(policy, 1)
+        G_pi = 0.0
+        qs_pi_t = copy(qs_current)
+
+        for t in 1:t_horizon
+            # Assuming policy[t, 1] gives an action index, convert it to the action label
+            action_label = actions[policy[t, 1]]  # This one might be problematic 
+
+            qs_prev = t == 1 ? qs_current : qs_pi_t
+            qs_pi_t = get_expected_states(B, qs_prev, action_label)
+            qo_pi_t = get_expected_observations(A, qs_pi_t)
+            kld = kl_divergence(qo_pi_t, C)
+            G_pi_t = dot(H_A, qs_pi_t) + kld
+            G_pi += G_pi_t
+        end
+
+        G[policy_id] += G_pi
+    end
+
+    return G
+end
+
+
+"""Function for Computing Probability for Actions"""
+function compute_prob_actions(actions, policies, Q_pi)
+    P_u = zeros(length(actions)) # initialize the vector of probabilities of each action
+
+    for (policy_id, policy) in enumerate(policies)
+        # Assuming the first action of the policy is an index into the actions array
+        action_index = policy[1, 1]
+        if action_index >= 1 && action_index <= length(actions)
+            P_u[action_index] += Q_pi[policy_id]
+        else
+            error("Invalid action index: $action_index")
+        end
+    end
+
+    # Normalize the action probabilities
+    P_u = norm_dist(P_u)
+  
+    return P_u
+end
+
+"""Function for Active Inference with Planning"""
+function active_inference_with_planning(A, B, C, D, n_actions, env, policy_len , T)
+    # Initialize prior, first observation, and policies
+    prior = D
+    obs = reset!(env) 
+
+    policies = construct_policies([n_states],num_controls=[n_actions],  policy_len = policy_len)
+
+    for t in 1:T
+        println("Time $t: Agent observes itself in location: $obs")
+
+        # Convert observation to index
+        obs_idx = findfirst(isequal(obs), grid_locations)
+        obs_idx = findfirst(isequal(obs), grid_locations)
+
+        # Perform inference over hidden states
+        qs_current = infer_states(obs_idx, A, prior)
+
+        #plot beliefs
+        plot = plot_beliefs(qs_current, "Beliefs about location at time $t")
+        display(plot)
+
+        # Calculate expected free energy of policies-actions
+        G = calculate_G_policies(A, B, C, qs_current, policies)
+
+        # Marginalize P(u|pi) with the probabilities of each policy Q(pi)
+        Q_pi = softmax(-G)
+
+        # Compute the probability of each action
+        P_u = compute_prob_actions(actions, policies, Q_pi)
+
+        # Sample action from probability distribution over actions
+        chosen_action = sample_category(P_u)
+
+        # Compute prior for next timestep of inference
+        prior = B[:, :, chosen_action] * qs_current
+
+        # Step the generative process and get new observation
+        action_label = actions[chosen_action]
+        obs = step!(env, action_label)
+    end
+
+    return qs_current
+end
+
+
+
+
+
+
+
 
 
