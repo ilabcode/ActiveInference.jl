@@ -24,7 +24,7 @@ export plot_beliefs, plot_gridworld, plot_likelihood, create_B_matrix, onehot, p
     
     include("maths.jl")
     
-    export norm_dist, sample_category, softmax, spm_log_single, entropy, kl_divergence
+    #export norm_dist, sample_category, softmax, spm_log_single, entropy, kl_divergence
         
         # export sample_category
         # export softmax
