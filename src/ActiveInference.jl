@@ -1,8 +1,6 @@
 module ActiveInference
 
     include("functions.jl")
-    include("maths.jl")
-    include("environment.jl")
 
     # From functions.jl
     export plot_beliefs
@@ -21,6 +19,15 @@ module ActiveInference
     export compute_prob_actions
     export active_inference_with_planning
 
+end
+
+
+
+
+
+module maths
+    
+    include("maths.jl")
 
     # From maths.jl
     export norm_dist
@@ -30,12 +37,20 @@ module ActiveInference
     export entropy
     export kl_divergence
 
+end
+
+
+module environment
+
+    include("environment.jl")
+
     # From environment.jl
     export GridWorldEnv
     export step!
     export reset!
 
+end
 
 
-    end
+
 
