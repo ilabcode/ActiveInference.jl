@@ -19,6 +19,37 @@ export plot_beliefs, plot_gridworld, plot_likelihood, create_B_matrix, onehot, p
     # export compute_prob_actions
     # export active_inference_with_planning
 
+
+    module Maths
+    
+    include("maths.jl")
+    
+    export norm_dist, sample_category, softmax, spm_log_single, entropy, kl_divergence
+        
+        # export sample_category
+        # export softmax
+        # export spm_log_single
+        # export entropy
+        # export kl_divergence
+    
+    end;
+
+
+    module Environment
+
+    include("environment.jl")
+    
+    export GridWorldEnv, step!, reset!
+        # export step!
+        # export reset!
+    
+    end;
+
+
+
+
+
+
 end;
 
 
