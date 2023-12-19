@@ -1,3 +1,5 @@
+parentmodule(Main)
+
 module ActiveInference
 
 include("functions.jl")
@@ -19,10 +21,10 @@ export plot_beliefs, plot_gridworld, plot_likelihood, create_B_matrix, onehot, p
     # export compute_prob_actions
     # export active_inference_with_planning
 
-end
+end;
 
 
-module maths
+module Maths
     
 include("maths.jl")
 
@@ -34,10 +36,10 @@ include("maths.jl")
     # export entropy
     # export kl_divergence
 
-end
+end;
 
 
-module environment
+module Environment
 
 include("environment.jl")
 
@@ -45,7 +47,7 @@ include("environment.jl")
     # export step!
     # export reset!
 
-end
+end;
 
 
 
