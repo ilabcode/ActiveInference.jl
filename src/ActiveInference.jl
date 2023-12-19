@@ -1,5 +1,3 @@
-parentmodule(Main)
-
 module ActiveInference
 
 include("functions.jl")
@@ -28,7 +26,7 @@ module Maths
     
 include("maths.jl")
 
-#export norm_dist, sample_category, softmax, spm_log_single, entropy, kl_divergence
+export norm_dist, sample_category, softmax, spm_log_single, entropy, kl_divergence
     
     # export sample_category
     # export softmax
@@ -43,7 +41,7 @@ module Environment
 
 include("environment.jl")
 
-#export GridWorldEnv, step!, reset!
+export GridWorldEnv, step!, reset!
     # export step!
     # export reset!
 
