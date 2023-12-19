@@ -22,20 +22,16 @@ module ActiveInference
 end
 
 
-
-
-
 module maths
     
     include("maths.jl")
 
-    # From maths.jl
-    export norm_dist
-    export sample_category
-    export softmax
-    export spm_log_single
-    export entropy
-    export kl_divergence
+    # export norm_dist
+    # export sample_category
+    # export softmax
+    # export spm_log_single
+    # export entropy
+    # export kl_divergence
 
 end
 
@@ -44,7 +40,6 @@ module environment
 
     include("environment.jl")
 
-    # From environment.jl
     export GridWorldEnv
     export step!
     export reset!
