@@ -10,9 +10,9 @@ end
 
 """Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
 function array_of_any_zeros(shape_list)
-    arr = Array{Array{Float64, 1}}(undef, length(shape_list))
+    arr = Array{Any}(undef, length(shape_list))
     for (i, shape) in enumerate(shape_list)
-        arr[i] = zeros(Float64, shape)
+        arr[i] = zeros(Float64, shape...)
     end
     return arr
 end
