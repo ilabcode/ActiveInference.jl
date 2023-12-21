@@ -1,3 +1,6 @@
+using LinearAlgebra
+using Plots
+
 module ActiveInference
 
 include("functions.jl")
