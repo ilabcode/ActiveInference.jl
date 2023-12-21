@@ -15,8 +15,8 @@ end
 """Function for Plotting Grid World"""
 function plot_gridworld(grid_locations)
     # Determine the size of the grid
-    max_x = maximum(x -> x[1], grid_locations)
-    max_y = maximum(y -> y[2], grid_locations)
+    max_x = maximum(x -> x[2], grid_locations)
+    max_y = maximum(y -> y[1], grid_locations)
 
     # Initialize a matrix for the heatmap
     heatmap_matrix = zeros(max_y, max_x)
