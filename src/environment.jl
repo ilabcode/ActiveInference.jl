@@ -1,3 +1,6 @@
+using LinearAlgebra
+using Plots
+
 """Mutable structure creating the environment"""
 mutable struct GridWorldEnv
     init_state::Tuple{Int, Int}

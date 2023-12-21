@@ -1,4 +1,9 @@
 using LinearAlgebra
+using Pkg
+using Plots
+
+Pkg.instantiate
+
 
 
 """Function for Plotting Beliefs"""
