@@ -1,3 +1,5 @@
 [deps]
 ActiveInference = "688b0e7a-0122-4325-8669-5ff08899a59e"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Plots = "..."
+Pkg = "..."

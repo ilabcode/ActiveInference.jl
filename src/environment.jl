@@ -1,5 +1,4 @@
 using LinearAlgebra
-using Plots
 
 """Mutable structure creating the environment"""
 mutable struct GridWorldEnv

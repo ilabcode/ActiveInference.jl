@@ -2,9 +2,6 @@ using LinearAlgebra
 using Pkg
 using Plots
 
-Pkg.instantiate
-
-
 
 """Function for Plotting Beliefs"""
 function plot_beliefs(belief_dist, title_str="")
