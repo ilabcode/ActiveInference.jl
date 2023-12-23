@@ -282,7 +282,7 @@ end
 
 
 """Function that Calculate the Expected Free Energy for Policies"""
-function calculate_G_policies(A, B, C, qs_current, policies)
+function calculate_G_policies(A, B, C, qs_current, policies, actions)
     G = zeros(length(policies))
     H_A = entropy(A)
 
@@ -377,13 +377,15 @@ end
 
 
 """Function for Active Inference with Planning"""
-function active_inference_with_planning(A, B, C, D, n_actions, env, policy_len , T, grid_locations)
+function active_inference_with_planning(A, B, C, D, actions, env, policy_len , T, grid_locations)
     # Initialize prior, first observation, and policies
     prior = D
     obs = reset!(env) 
 
     x_grid, y_grid = size(grid_locations)
     n_states = x_grid*y_grid
+
+    n_actions = length(actions)
 
     policies = construct_policies([n_states],num_controls=[n_actions],  policy_len = policy_len)
 
@@ -402,7 +404,7 @@ function active_inference_with_planning(A, B, C, D, n_actions, env, policy_len ,
         display(plot)
 
         # Calculate expected free energy of policies-actions
-        G = calculate_G_policies(A, B, C, qs_current, policies)
+        G = calculate_G_policies(A, B, C, qs_current, policies, actions)
 
         # Marginalize P(u|pi) with the probabilities of each policy Q(pi)
         Q_pi = softmax(-G)
