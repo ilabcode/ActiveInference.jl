@@ -379,7 +379,7 @@ end
 """Function for Active Inference with Planning"""
 function active_inference_with_planning(A, B, C, D, actions, env, policy_len , T, grid_locations)
     # Initialize prior, first observation, and policies
-    prior = C
+    prior = D
     obs = reset!(env) 
 
     x_grid, y_grid = size(grid_locations)
