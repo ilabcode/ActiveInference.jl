@@ -169,7 +169,7 @@ end
 
 """Function for Getting Expected States"""
 # Note that this takes the action variable as a string and not an index 
-function get_expected_states(B, qs_current, action)
+function get_expected_states(B, qs_current, action, actions)
     
     action_id = findfirst(isequal(action), actions)
 
@@ -196,7 +196,7 @@ function calculate_G(A, B, C, qs_current, action_list)
 
     for (idx_i, action_i) in enumerate(action_list)
 
-        qs_u = get_expected_states(B, qs_current, action_i)
+        qs_u = get_expected_states(B, qs_current, action_i, action_list)
         qo_u = get_expected_observations(A, qs_u)
 
         pred_uncertainty = H_A * qs_u
@@ -296,7 +296,7 @@ function calculate_G_policies(A, B, C, qs_current, policies, actions)
             action_label = actions[policy[t, 1]]  # This one might be problematic 
 
             qs_prev = t == 1 ? qs_current : qs_pi_t
-            qs_pi_t = get_expected_states(B, qs_prev, action_label)
+            qs_pi_t = get_expected_states(B, qs_prev, action_label, actions)
             qo_pi_t = get_expected_observations(A, qs_pi_t)
             kld = kl_divergence(qo_pi_t, C)
             G_pi_t = dot(H_A, qs_pi_t) + kld
