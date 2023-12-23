@@ -1,5 +1,6 @@
 using LinearAlgebra
 using Plots
+using IterTools
 
 
 
@@ -271,7 +272,7 @@ function construct_policies(num_states; num_controls=nothing, policy_len=1, cont
    # Create a list of possible actions for each time step
    x = repeat(num_controls, policy_len)
    # Generate all combinations of actions across all time steps
-   policies = collect(Base.product([1:i for i in x]...))
+   policies = collect(product([1:i for i in x]...))
 
    # Reshape each policy combination into a matrix of (policy_len x num_factors)
    reshaped_policies = [reshape(collect(policy), policy_len, num_factors) for policy in policies]
