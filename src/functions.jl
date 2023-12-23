@@ -381,6 +381,9 @@ function active_inference_with_planning(A, B, C, D, n_actions, env, policy_len ,
     prior = D
     obs = reset!(env) 
 
+    x_grid, y_grid = size(env.grid_locations)
+    n_states = x_grid*y_grid
+
     policies = construct_policies([n_states],num_controls=[n_actions],  policy_len = policy_len)
 
     for t in 1:T
