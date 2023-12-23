@@ -2,6 +2,21 @@ using LinearAlgebra
 using Plots
 
 
+
+"""Creates an array of "Any" with the desired number of sub-arrays"""
+function array_of_any(num_arr::Int) 
+    return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.
+end
+
+"""Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
+function array_of_any_zeros(shape_list)
+    arr = Array{Any}(undef, length(shape_list))
+    for (i, shape) in enumerate(shape_list)
+        arr[i] = zeros(Float64, shape...)
+    end
+    return arr
+end
+
 """Function for Plotting Beliefs"""
 function plot_beliefs(belief_dist, title_str="")
     if abs(sum(belief_dist) - 1.0) > 1e-6
@@ -15,8 +30,8 @@ end
 """Function for Plotting Grid World"""
 function plot_gridworld(grid_locations)
     # Determine the size of the grid
-    max_x = maximum(x -> x[1], grid_locations)
-    max_y = maximum(y -> y[2], grid_locations)
+    max_x = maximum(x -> x[2], grid_locations)
+    max_y = maximum(y -> y[1], grid_locations)
 
     # Initialize a matrix for the heatmap
     heatmap_matrix = zeros(max_y, max_x)
