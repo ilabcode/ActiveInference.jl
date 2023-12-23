@@ -421,10 +421,10 @@ function active_inference_with_planning(A, B, C, D, actions, env, policy_len , T
         # Step the generative process and get new observation
         action_label = actions[chosen_action]
         obs = step!(env, action_label)
-        
-        return qs_current
+
     end
 
+    return qs_current
 
 end
 
