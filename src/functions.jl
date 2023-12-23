@@ -161,9 +161,9 @@ function infer_states(observation_index, A, prior)
 
     log_prior = spm_log_single(prior)
 
-    qs = softmax(log_likelihood .+ log_prior)
+    qs_current = softmax(log_likelihood .+ log_prior)
 
-    return qs
+    return qs_current
 end
 
 
