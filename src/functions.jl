@@ -417,15 +417,12 @@ function step!(env::GridWorldEnv, action_label::String)
 
     loc_obs = env.current_loc
 
-    # Now for the navigation withing the cue modalities
-    # This is needed to loc the cue2 location to a cue2_name
     cue2_loc_names = ["L1","L2","L3","L4"]
     cue2_locs = [(1, 3), (2, 4), (4, 4), (5, 3)]
 
     cue2_loc_idx = Dict(cue2_loc_names[1] => 1, cue2_loc_names[2] => 2, cue2_loc_names[3] => 3, cue2_loc_names[4] => 4)
 
     cue2_loc = cue2_locs[cue2_loc_idx[env.cue2]]
-    #-------------------------------------------------------
 
     if env.current_loc == cue1_loc
         cue1_obs = env.cue2
@@ -433,10 +430,8 @@ function step!(env::GridWorldEnv, action_label::String)
         cue1_obs = "Null"
     end
 
-    # Needed for reward condition indexing
     reward_conditions = ["TOP", "BOTTOM"]
     rew_cond_idx = Dict(reward_conditions[1] => 1, reward_conditions[2] => 2)
-    #------------------------------------
 
 
     if env.current_loc == cue2_loc
