@@ -4,8 +4,8 @@ using IterTools
 
 include("environment.jl")
 
-reset! = reset_GWE!
-step! = step_GWE!
+reset_GWE! = reset_GWE!
+step_GWE! = step_GWE!
 
 """Creates an array of "Any" with the desired number of sub-arrays"""
 function array_of_any(num_arr::Int) 
@@ -346,7 +346,7 @@ end
 function active_inference_with_planning(A, B, C, D, actions, env, policy_len , T, grid_locations)
     # Initialize prior, first observation, and policies
     prior = D
-    obs = reset!(env) 
+    obs = reset_GWE!(env) 
 
     x_grid, y_grid = size(grid_locations)
     n_states = x_grid*y_grid
