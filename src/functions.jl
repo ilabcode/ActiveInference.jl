@@ -393,8 +393,9 @@ mutable struct GridWorldEnv
     reward_condition::String
     len_y::Int
     len_x::Int
+    grid_locations::Matrix
 
-    function GridWorldEnv(starting_loc::Tuple{Int, Int}, cue1_loc::Tuple{Int, Int}, cue2::String, reward_condition::String)
+    function GridWorldEnv(starting_loc::Tuple{Int, Int}, cue1_loc::Tuple{Int, Int}, cue2::String, reward_condition::String, grid_locations::Matrix)
         len_y, len_x = size(grid_locations)
         new(starting_loc, starting_loc, cue1_loc, cue2, reward_condition)
     end
