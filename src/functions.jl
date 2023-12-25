@@ -67,7 +67,8 @@ end
 """Function for Plotting Likelihood"""
 function plot_likelihood(A)
     # Create the heatmap
-    heatmap(A, color=:greys, clim=(0, 1),aspect_ratio = :equal, yflip=true, legend=false,xticks=1:9, yticks=1:9, xlabel="STATES", ylabel="OBSERVATIONS" )
+    x_max, y_max = size(A)
+    heatmap(A, color=:greys, clim=(0, 1),aspect_ratio = :equal, yflip=true, legend=false,xticks=1:x_max, yticks=1:y_max, xlabel="STATES", ylabel="OBSERVATIONS" )
 end
 
 
