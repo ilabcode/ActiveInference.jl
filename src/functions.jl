@@ -4,7 +4,6 @@ using IterTools
 
 include("environment.jl")
 
-
 """Creates an array of "Any" with the desired number of sub-arrays"""
 function array_of_any(num_arr::Int) 
     return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.
@@ -329,6 +328,14 @@ function compute_prob_actions(actions, policies, Q_pi)
     P_u = norm_dist(P_u)
   
     return P_u
+end
+
+
+"""Testing"""
+function reset!(env)
+    env.current_loc = env.init_loc
+
+    return env.current_loc
 end
 
 
