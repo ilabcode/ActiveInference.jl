@@ -2,6 +2,7 @@ using LinearAlgebra
 using Plots
 using IterTools
 
+include("environment.jl")
 
 
 """Creates an array of "Any" with the desired number of sub-arrays"""
