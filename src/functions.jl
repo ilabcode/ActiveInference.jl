@@ -333,9 +333,9 @@ end
 
 """Testing"""
 function reset!(env)
-    env.current_loc = env.init_loc
+    env.current_state = env.init_state
 
-    return env.current_loc
+    return env.current_state
 end
 
 
