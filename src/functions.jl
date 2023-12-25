@@ -4,6 +4,9 @@ using IterTools
 
 include("environment.jl")
 
+reset! = reset_GWE!
+step! = step_GWE!
+
 """Creates an array of "Any" with the desired number of sub-arrays"""
 function array_of_any(num_arr::Int) 
     return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.

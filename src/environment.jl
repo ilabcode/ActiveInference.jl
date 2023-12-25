@@ -106,7 +106,7 @@ mutable struct GridWorldEnv
 end
 
 """Function for how to "step" in the Grid World"""
-function step!(env::GridWorldEnv, action_label::String)
+function step_GWE!(env::GridWorldEnv, action_label::String)
     y, x = env.current_state
     next_y, next_x = y, x
 
@@ -128,7 +128,7 @@ end
 
 """Reset function"""
 
-function reset!(env::GridWorldEnv)
+function reset_GWE!(env::GridWorldEnv)
     env.current_state = env.init_state
     println("Re-initialized location to ", env.init_state)
     return env.current_state
