@@ -21,7 +21,7 @@ export array_of_any, array_of_any_zeros, plot_beliefs, plot_gridworld, plot_like
 
     include("environment.jl")
     
-    export GridWorldEnv, step!, reset!
+    export GridWorldEnv, EpistChainEnv, step!, reset!
        
     end;
 
