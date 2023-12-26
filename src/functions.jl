@@ -16,6 +16,16 @@ function array_of_any_zeros(shape_list)
     return arr
 end
 
+"""Creates an array of "Any" as a uniform categorical distribution"""
+function array_of_any_uniform(shape_list)
+    arr = Array{Any}(undef, length(shape_list))  
+    for i in eachindex(shape_list)
+        shape = shape_list[i]
+        arr[i] = norm_dist(ones(shape))  
+    end
+    return arr
+end
+
 """Function for Plotting Beliefs"""
 function plot_beliefs(belief_dist, title_str="")
     if abs(sum(belief_dist) - 1.0) > 1e-6
