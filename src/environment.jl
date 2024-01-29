@@ -54,6 +54,7 @@ function step!(env::EpistChainEnv, action_label::String)
 
     # Needed for reward condition indexing
     reward_conditions = ["TOP", "BOTTOM"]
+    reward_locations = [(2,6), (4,6)]
     rew_cond_idx = Dict(reward_conditions[1] => 1, reward_conditions[2] => 2)
     #------------------------------------
 
