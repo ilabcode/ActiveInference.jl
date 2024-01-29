@@ -2,7 +2,7 @@ using LinearAlgebra
 using IterTools
 
 
-"""Grid World for Epistemic Chaining"""
+""" Pre-defined Environment: Epistemic Chaining Grid-World"""
 
 mutable struct EpistChainEnv
     init_loc::Tuple{Int, Int}
@@ -52,19 +52,16 @@ function step!(env::EpistChainEnv, action_label::String)
         cue1_obs = "Null"
     end
 
-    # Needed for reward condition indexing
     reward_conditions = ["TOP", "BOTTOM"]
     reward_locations = [(2,6), (4,6)]
     rew_cond_idx = Dict(reward_conditions[1] => 1, reward_conditions[2] => 2)
-    #------------------------------------
-
+    #-------------------------------------------------------
 
     if env.current_loc == cue2_loc
         cue2_obs = cue2_names[rew_cond_idx[env.reward_condition] + 1]
     else
         cue2_obs = "Null"
     end
-
 
     if env.current_loc == reward_locations[1]
         if env.reward_condition == "TOP"
