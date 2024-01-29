@@ -37,7 +37,7 @@ function step!(env::EpistChainEnv, action_label::String)
     env.current_loc = (next_y, next_x)
 
     loc_obs = env.current_loc
-
+    cue2_names = ["Null", "reward_on_top", "reward_on_bottom"]
     cue2_loc_names = ["L1","L2","L3","L4"]
     cue2_locs = [(1, 3), (2, 4), (4, 4), (5, 3)]
 
