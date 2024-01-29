@@ -36,7 +36,7 @@ end
 
 
 """Function for Calculating Entropy of A-Matrix"""
-function entropy(A)
+function entropy_A(A)
     
     H_A = .- sum((A .* spm_log_single(A)), dims = 1)
 

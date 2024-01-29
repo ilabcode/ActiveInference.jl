@@ -11,7 +11,7 @@ export # maths.jl
        sample_category,
        softmax,
        spm_log_single,
-       entropy,
+       entropy_A,
        kl_divergence,
        get_joint_likelihood,
        dot_likelihood,
