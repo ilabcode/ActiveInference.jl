@@ -2,7 +2,6 @@
 
 using LinearAlgebra
 
-
 mutable struct Agent
     A::Array{Any,1}
     B::Array{Any,1}

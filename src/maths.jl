@@ -200,3 +200,12 @@ function spm_MDP_G(A, x)
     G = G - dot(qo, spm_log_single(qo))
     return G
 end
+
+""" Normalizes muliple arrays """
+function norm_dist_array(obj_arr::Array{Any})
+    normed_obj_array = Array{Any}(undef, length(obj_arr))
+    for i in 1:length(obj_arr)
+        normed_obj_array[i] = norm_dist(obj_arr[i])  
+    end
+    return normed_obj_array
+end

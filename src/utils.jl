@@ -3,13 +3,15 @@
 using LinearAlgebra
 using Plots
 using IterTools
+using Random
+using Distributions
 
-"""Creates an array of "Any" with the desired number of sub-arrays"""
+""" Creates an array of "Any" with the desired number of sub-arrays"""
 function array_of_any(num_arr::Int) 
     return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.
 end
 
-"""Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
+""" Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
 function array_of_any_zeros(shape_list)
     arr = Array{Any}(undef, length(shape_list))
     for (i, shape) in enumerate(shape_list)
@@ -18,7 +20,7 @@ function array_of_any_zeros(shape_list)
     return arr
 end
 
-"""Creates an array of "Any" as a uniform categorical distribution"""
+""" Creates an array of "Any" as a uniform categorical distribution"""
 function array_of_any_uniform(shape_list)
     arr = Array{Any}(undef, length(shape_list))  
     for i in eachindex(shape_list)
@@ -28,7 +30,7 @@ function array_of_any_uniform(shape_list)
     return arr
 end
 
-"""Function for Creating onehots"""
+""" Function for Creating onehots"""
 # Creates a vector filled with 0's and a 1 in a given location
 function onehot(value, num_values)
     arr = zeros(Float64, num_values)
@@ -124,7 +126,7 @@ function get_model_dimensions(A = nothing, B = nothing)
 end
 
 
-""""Equivalent to pymdp's "to_obj_array" [Recommendation to avoid using at as much as possible] """
+""" Equivalent to pymdp's "to_obj_array" [Recommendation to avoid using at as much as possible] """
 function to_array_of_any(arr::Array)
     # Check if arr is already an array of arrays
     if typeof(arr) == Array{Array,1}
@@ -137,8 +139,25 @@ function to_array_of_any(arr::Array)
 end
 
 
+""" Selects the highest value from Array -- used for deterministic action sampling """
+function select_highest(options_array::Array{Float64})
+    options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]
+    max_value = maximum(value for (idx, value) in options_with_idx)
+    same_prob = [idx for (idx, value) in options_with_idx if abs(value - max_value) <= 1e-8]
+
+    if length(same_prob) > 1
+        return same_prob[rand(1:length(same_prob))]
+    else
+        return same_prob[1]
+    end
+end
 
 
+""" Selects action from computed actions probabilities -- used for stochastic action sampling """
+function action_select(probabilities)
+    sample_onehot = rand(Multinomial(1, probabilities))
+    return findfirst(sample_onehot .== 1)
+end
 
 
 

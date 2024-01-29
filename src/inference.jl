@@ -223,3 +223,31 @@ function calc_states_info_gain(A, qs_pi)
 
     return states_surprise
 end
+
+### Action Sampling ###
+
+function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
+    num_factors = length(num_controls)
+    action_marginals = array_of_any_zeros(num_controls)
+    selected_policy = zeros(num_factors)
+    
+    for (pol_idx, policy) in enumerate(policies)
+        for (factor_i, action_i) in enumerate(policy[1,:])
+            action_marginals[factor_i][action_i] += q_pi[pol_idx]
+        end
+    end
+
+    action_marginals = norm_dist_array(action_marginals)
+
+    for factor_i in 1:num_factors
+        if action_selection == "deterministic"
+            selected_policy[factor_i] = select_highest(action_marginals[factor_i])
+        elseif action_selection == "stochastic"
+            log_marginal_f = spm_log_single(action_marginals[factor_i])
+            p_actions = softmax(log_marginal_f * alpha)
+            selected_policy[factor_i] = action_select(p_actions)
+        end
+    end
+    return selected_policy
+end
+

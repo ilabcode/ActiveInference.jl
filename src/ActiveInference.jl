@@ -20,6 +20,7 @@ export # maths.jl
        spm_cross,
        spm_dot,
        spm_MDP_G,
+       norm_dist_array,
 
 
        # utils.jl
@@ -32,6 +33,8 @@ export # maths.jl
        process_observation,
        get_model_dimensions,
        to_array_of_any,
+       select_highest,
+       action_select,
 
 
        # agent.jl
@@ -49,7 +52,8 @@ export # maths.jl
        update_posterior_policies,
        get_expected_obs,
        calc_expected_utility,
-       calc_states_info_gain
+       calc_states_info_gain,
+       sample_action
 
 
     # From Environments\\EpistChainEnv.jl
