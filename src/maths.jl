@@ -27,7 +27,7 @@ end
 
 
 """Function for Taking Natural logarithm"""
-# This is the one named log_simple in the active inference tutorial
+# This is the one named after log_single in SPM 
 # Should maybe be renamed??
 function spm_log_single(arr)
     EPS_VAL = 1e-16
@@ -63,7 +63,7 @@ function get_joint_likelihood(A, obs_processed, num_states)
     return ll
 end
 
-
+""" Dot-Product Function """
 function dot_likelihood(A, obs)
     # Adjust the shape of obs to match A
     reshaped_obs = reshape(obs, (length(obs), 1, 1, 1))  
@@ -77,6 +77,7 @@ function dot_likelihood(A, obs)
     return LL
 end
 
+""" Apply spm_log to array of arrays """
 function spm_log_array_any(arr)
     # Initialize an empty array
     arr_logged = Any[nothing for _ in 1:length(arr)]
@@ -86,4 +87,116 @@ function spm_log_array_any(arr)
     end
 
     return arr_logged
+end
+
+""" Softmax Function for array of arrays """
+function softmax_array(arr)
+    output = Array{Any}(undef, length(arr))
+    
+    # Iterate through each index in arr and apply softmax
+    for idx in eachindex(arr)
+        output[idx] = softmax(arr[idx])
+    end
+    
+    return output
+end
+
+
+""" Multi-dimensional outer product """
+function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
+    # If only x is provided and it is a vector of arrays, recursively call spm_cross on its elements.
+    if y === nothing && isempty(args)
+        if x isa AbstractVector
+            return reduce((a, b) -> spm_cross(a, b), x)
+        elseif typeof(x) <: Number || typeof(x) <: AbstractArray
+            return x
+        else
+            throw(ArgumentError("Invalid input to spm_cross (\$x)"))
+        end
+    end
+
+    # If y is provided, perform the cross multiplication.
+    if y !== nothing
+        reshape_dims_x = tuple(size(x)..., ones(Int, ndims(y))...)
+        A = reshape(x, reshape_dims_x)
+
+        reshape_dims_y = tuple(ones(Int, ndims(x))..., size(y)...)
+        B = reshape(y, reshape_dims_y)
+
+        z = A .* B
+    else
+        z = x
+    end
+
+    # Recursively call spm_cross for additional arguments
+    for arg in args
+        z = spm_cross(z, arg; remove_singleton_dims=remove_singleton_dims)
+    end
+
+    # remove singleton dimension if true--
+    if remove_singleton_dims
+        z = dropdims(z, dims = tuple(findall(size(z) .== 1)...))
+    end
+
+    return z
+end
+
+""" Multi-dimensional inner product """
+#= Instead of summing over all indices, the function sums over only the last three
+dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X. =#
+
+function spm_dot(X, x)
+
+    if all(isa.(x, AbstractArray))  
+        n_factors = length(x)
+    else
+        x = [x]  
+        n_factors = length(x)
+    end
+
+    ndims_X = ndims(X)
+    dims = collect(ndims_X - n_factors + 1 : ndims_X)
+    Y = zeros(size(X, 1))
+
+    for indices in Iterators.product((1:size(X, i) for i in 1:ndims_X)...)
+        product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
+        Y[indices[1]] += product
+    end
+
+    if prod(size(Y)) <= 1
+        Y = only(Y)
+        Y = [float(Y)]  
+    end
+
+    return Y
+end
+
+
+""" Calculate Bayesian Surprise """
+function spm_MDP_G(A, x)
+    qx = spm_cross(x)
+    G = 0.0
+    qo = Float64[]
+    idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
+    index_vector = []
+
+    for i in idx   
+        po = ones(1)
+        for (_, A_m) in enumerate(A)
+            index_vector = (1:size(A_m, 1),)  
+            for additional_index in i  
+                index_vector = (index_vector..., additional_index)  
+            end
+            po = spm_cross(po, A_m[index_vector...])
+        end
+        po = vec(po) 
+        if isempty(qo)
+            resize!(qo, length(po))
+            fill!(qo, 0.0)
+        end
+        qo += qx[i...] * po
+        G += qx[i...] * dot(po, log.(po .+ exp(-16)))
+    end
+    G = G - dot(qo, spm_log_single(qo))
+    return G
 end

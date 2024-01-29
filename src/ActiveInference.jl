@@ -16,6 +16,11 @@ export # maths.jl
        get_joint_likelihood,
        dot_likelihood,
        spm_log_array_any,
+       softmax_array,
+       spm_cross,
+       spm_dot,
+       spm_MDP_G,
+
 
        # utils.jl
        array_of_any, 
@@ -40,7 +45,11 @@ export # maths.jl
        update_posterior_states,
        fixed_point_iteration,
        compute_accuracy,
-       calc_free_energy
+       calc_free_energy,
+       update_posterior_policies,
+       get_expected_obs,
+       calc_expected_utility,
+       calc_states_info_gain
 
 
     # From Environments\\EpistChainEnv.jl

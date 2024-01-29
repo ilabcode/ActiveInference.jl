@@ -133,3 +133,93 @@ function calc_free_energy(qs, prior, n_factors, likelihood=nothing)
     
     return free_energy
 end
+
+#### Policy Inference #### 
+
+""" Update Posterior over Policies """
+function update_posterior_policies(qs, A, B, C, policies, use_utility=true, use_states_info_gain=true,E = nothing, gamma=16.0)
+    n_policies = length(policies)
+    G = zeros(n_policies)
+    q_pi = zeros(n_policies, 1)
+    qs_pi = []
+    qo_pi = []
+  
+    if isnothing(E)
+        lnE = spm_log_single(ones(n_policies) / n_policies)
+    else
+        lnE = spm_log_single(E)
+    end
+
+    for (idx, policy) in enumerate(policies)
+        qs_pi = get_expected_states(qs, B, policy)
+        qo_pi = get_expected_obs(qs_pi, A)
+
+        if use_utility
+            G[idx] += calc_expected_utility(qo_pi, C)
+        end
+
+        if use_states_info_gain
+            G[idx] += calc_states_info_gain(A, qs_pi)
+        end
+    end
+
+    q_pi = softmax(G * gamma + lnE)
+    return q_pi, G
+end
+
+""" Get Expected Observations """
+function get_expected_obs(qs_pi, A)
+    n_steps = length(qs_pi)
+    qo_pi = []
+
+    for t in 1:n_steps
+        qo_pi_t = array_of_any(length(A))
+        qo_pi = push!(qo_pi, qo_pi_t)
+    end
+
+    for t in 1:n_steps
+        for (modality, A_m) in enumerate(A)
+            qo_pi[t][modality] = spm_dot(A_m, qs_pi[t])
+        end
+    end
+
+    return qo_pi
+end
+
+""" Calculate Expected Utility """
+function calc_expected_utility(qo_pi, C)
+    n_steps = length(qo_pi)
+    expected_utility = 0.0
+    num_modalities = length(C)
+
+    modalities_to_tile = [modality_i for modality_i in 1:num_modalities if ndims(C[modality_i]) == 1]
+
+    C_tiled = deepcopy(C)
+    for modality in modalities_to_tile
+        modality_data = reshape(C_tiled[modality], :, 1)
+        C_tiled[modality] = repeat(modality_data, 1, n_steps)
+    end
+    
+    C_prob = softmax_array(C_tiled)
+    lnC =[]
+    for t in 1:n_steps
+        for modality in 1:num_modalities
+            lnC = spm_log_single(C_prob[modality][:, t])
+            expected_utility += dot(qo_pi[t][modality], lnC) 
+        end
+    end
+
+    return expected_utility
+end
+
+""" Calculate States Information Gain """
+function calc_states_info_gain(A, qs_pi)
+    n_steps = length(qs_pi)
+    states_surprise = 0.0
+
+    for t in 1:n_steps
+        states_surprise += spm_MDP_G(A, qs_pi[t])
+    end
+
+    return states_surprise
+end
