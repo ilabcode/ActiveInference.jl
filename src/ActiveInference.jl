@@ -26,7 +26,7 @@ export array_of_any, array_of_any_zeros, array_of_any_uniform, plot_beliefs, plo
     end;
 
 
-end;
+end
 
 
 
