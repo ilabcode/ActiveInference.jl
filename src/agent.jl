@@ -1,5 +1,6 @@
 """ -------- Agent Mutable Struct -------- """
 
+using LinearAlgebra
 
 
 mutable struct Agent

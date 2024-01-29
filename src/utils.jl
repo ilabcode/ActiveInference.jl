@@ -77,6 +77,86 @@ function construct_policies_full(num_states; num_controls=nothing, policy_len=1,
     return transformed_policies
 end
 
+""" Process Observation to the Correct Format """
+function process_observation(obs, num_modalities, num_observations)
+    processed_obs = []
+
+    # Check if obs is an integer, and num_modalities is 1, then it's a single modality observation
+    if isa(obs, Int) && num_modalities == 1
+        one_hot = zeros(Float64, num_observations[1])
+        one_hot[obs] = 1.0
+        push!(processed_obs, one_hot)
+    elseif (isa(obs, Array) || isa(obs, Tuple)) && length(obs) == num_modalities
+        # If obs is an array or tuple, and its length matches num_modalities, process each modality
+        for (m, o) in enumerate(obs)
+            one_hot = zeros(Float64, num_observations[m])
+            one_hot[o] = 1.0
+            push!(processed_obs, one_hot)
+        end
+    else
+        throw(ArgumentError("Observation does not match expected modalities or format"))
+    end
+
+    return processed_obs
+end
+
+""" Get Model Dimensions from either A or B Matrix """
+function get_model_dimensions(A = nothing, B = nothing)
+    if A === nothing && B === nothing
+        throw(ArgumentError("Must provide either `A` or `B`"))
+    end
+    num_obs, num_modalities, num_states, num_factors = nothing, nothing, nothing, nothing
+
+    if A !== nothing
+        num_obs = [size(a, 1) for a in A]
+        num_modalities = length(num_obs)
+    end
+
+    if B !== nothing
+        num_states = [size(b, 1) for b in B]
+        num_factors = length(num_states)
+    elseif A !== nothing
+        num_states = [size(A[1], i) for i in 2:ndims(A[1])]
+        num_factors = length(num_states)
+    end
+
+    return num_obs, num_states, num_modalities, num_factors
+end
+
+
+""""Equivalent to pymdp's "to_obj_array" [Recommendation to avoid using at as much as possible] """
+function to_array_of_any(arr::Array)
+    # Check if arr is already an array of arrays
+    if typeof(arr) == Array{Array,1}
+        return arr
+    end
+    # Create an array_out and assign squeezed array to the first element
+    obj_array_out = Array{Any,1}(undef, 1)
+    obj_array_out[1] = dropdims(arr, dims = tuple(findall(size(arr) .== 1)...))  
+    return obj_array_out
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
