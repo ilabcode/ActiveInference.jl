@@ -5,18 +5,19 @@ include("Environments\\EpistChainEnv.jl")
 include("agent.jl")
 include("utils.jl")
 # From functions.jl
-export array_of_any, 
+export # utils.jl
+       array_of_any, 
        array_of_any_zeros, 
        array_of_any_uniform, 
        onehot,
        construct_policies_full,
+       plot_gridworld,
 
-
-
-
-
-
-       plot_gridworld
+       #agent.jl
+       initialize_agent,
+       infer_states!,
+       infer_policies!,
+       sample_action!
 
     # From maths.jl
     module Maths
