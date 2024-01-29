@@ -225,7 +225,7 @@ function calc_states_info_gain(A, qs_pi)
 end
 
 ### Action Sampling ###
-
+""" Sample Action [Stochastic or Deterministic] """
 function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
     action_marginals = array_of_any_zeros(num_controls)
@@ -251,3 +251,19 @@ function sample_action(q_pi, policies, num_controls; action_selection="stochasti
     return selected_policy
 end
 
+""" Edited Compute Accuracy [Still needs to be nested within Fixed-Point Iteration] """
+function compute_accuracy_new(log_likelihood, qs)
+    n_factors = length(qs)
+    ndims_ll = ndims(log_likelihood)
+    dims = (ndims_ll - n_factors + 1) : ndims_ll
+
+    result_size = size(log_likelihood, 1) 
+    results = zeros(result_size)
+
+    for indices in Iterators.product((1:size(log_likelihood, i) for i in 1:ndims_ll)...)
+        product = log_likelihood[indices...] * prod(qs[factor][indices[dims[factor]]] for factor in 1:n_factors)
+        results[indices[1]] += product
+    end
+
+    return results
+end
