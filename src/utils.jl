@@ -160,38 +160,6 @@ function action_select(probabilities)
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 """Function for Plotting Grid World"""
 function plot_gridworld(grid_locations)
     # Determine the size of the grid
