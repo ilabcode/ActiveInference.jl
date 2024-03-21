@@ -102,7 +102,8 @@ function init_aif(A, B, C, D; E = nothing,
 
     if isnothing(parameters)
         @warn "No parameters provided, default parameters will be used."
-        parameters = Dict("gamma" => 16.0, "alpha" => 16.0)
+        parameters = Dict("gamma" => 16.0,
+                          "alpha" => 16.0)
     end
 
     # Extract parameters and settings from the dictionaries or use defaults
