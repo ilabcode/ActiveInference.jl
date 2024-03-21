@@ -84,7 +84,7 @@ function init_aif(A, B, C, D; E = nothing,
 
     # Throw warning if no E-vector is provided. 
     if isnothing(E)
-        @warn "No E vector provided, a uniform distribution will be used."
+        @warn "No E-vector provided, a uniform distribution will be used."
     end           
     
     # Check if settings and parameters are provided or use defaults
@@ -140,15 +140,28 @@ function infer_states!(agent::Agent, obs)
     else
         agent.prior = agent.D
     end
+
+    # Update posterior over states
     agent.qs_current = update_posterior_states(agent.A, obs, prior=agent.prior) 
+
+    # Push changes to agent's history
+    push!(agent.states["prior"], copy(agent.prior))
+    push!(agent.states["posterior_states"], copy(agent.qs_current))
+
 end
 
 # Update the agent's beliefs over policies
 function infer_policies!(agent::Agent)
+    # Update posterior over policies and expected free energies of policies
     q_pi, G = update_posterior_policies(agent.qs_current, agent.A, agent.B, agent.C, agent.policies, agent.use_utility, agent.use_states_info_gain,agent.E, agent.gamma)
 
     agent.Q_pi = q_pi
     agent.G = G  
+
+    # Push changes to agent's history
+    push!(agent.states["posterior_policies"], copy(agent.Q_pi))
+    push!(agent.states["expected_free_energies"], copy(agent.G))
+
     return q_pi, G
 end
 
@@ -156,7 +169,11 @@ end
 function sample_action!(agent::Agent)
     action = sample_action(agent.Q_pi, agent.policies, agent.num_controls; action_selection=agent.action_selection, alpha=agent.alpha)
 
-    # Agent sample action
     agent.action = action 
+
+    # Push action to agent's history
+    push!(agent.states["action"], copy(agent.action))
+
+
     return action
 end
