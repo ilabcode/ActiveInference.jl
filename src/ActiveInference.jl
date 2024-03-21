@@ -38,7 +38,7 @@ export # maths.jl
 
 
        # agent.jl
-       initialize_agent,
+       init_aif,
        infer_states!,
        infer_policies!,
        sample_action!,
