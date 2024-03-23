@@ -1,10 +1,13 @@
 module ActiveInference
 
+
+
 include("maths.jl")
 include("Environments\\EpistChainEnv.jl")
 include("agent.jl")
 include("utils.jl")
 include("inference.jl")
+include("ActionModelsExtensions/get_states.jl")
 
 export # maths.jl
        norm_dist,
@@ -53,7 +56,10 @@ export # maths.jl
        get_expected_obs,
        calc_expected_utility,
        calc_states_info_gain,
-       sample_action
+       sample_action,
+
+       # ActionModelsExtensions
+       get_states
 
 
     # From Environments\\EpistChainEnv.jl

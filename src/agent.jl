@@ -1,8 +1,8 @@
-""" -------- Agent Mutable Struct -------- """
+""" -------- AIF Mutable Struct -------- """
 
 using LinearAlgebra
 
-mutable struct Agent
+mutable struct AIF
     A::Array{Any,1}
     B::Array{Any,1}
     C::Array{Any,1}  
@@ -28,7 +28,7 @@ mutable struct Agent
 end
 
 # Create ActiveInference Agent 
-function create_agent(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=1, num_controls=nothing, control_fac_idx=nothing, use_utility=true, use_states_info_gain=true, action_selection="stochastic")
+function create_aif(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=1, num_controls=nothing, control_fac_idx=nothing, use_utility=true, use_states_info_gain=true, action_selection="stochastic")
     num_states = [size(B[f], 1) for f in eachindex(B)]
 
     # if num_controls are not given, they are inferred from the B matrix
@@ -74,7 +74,7 @@ function create_agent(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=
         "action_selection" => action_selection
     )
 
-    return Agent(A, B, C, D, E, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, action_selection, states, parameters, settings)
+    return AIF(A, B, C, D, E, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, action_selection, states, parameters, settings)
 end
 
 # Initialize active inference agent 
@@ -117,8 +117,8 @@ function init_aif(A, B, C, D; E = nothing,
     use_states_info_gain = get(settings, "use_states_info_gain", true)
     action_selection = get(settings, "action_selection", "stochastic")
 
-    # Call create_agent 
-    agent = create_agent(A, B, C, D, E; 
+    # Call create_aif 
+    aif = create_aif(A, B, C, D, E; 
                          gamma=gamma,
                          alpha=alpha, 
                          policy_len=policy_len,
@@ -128,51 +128,51 @@ function init_aif(A, B, C, D; E = nothing,
                          use_states_info_gain=use_states_info_gain, 
                          action_selection=action_selection)
     
-    println("Agent initialized successfully!")
-    return agent
+    println("AIF Agent initialized successfully!")
+    return aif
 end
 
-# Update the agent's beliefs over states
-function infer_states!(agent::Agent, obs)
-    if !isempty(agent.action)
-        int_action = round.(Int, agent.action)
-        agent.prior = get_expected_states(agent.qs_current, agent.B, reshape(int_action, 1, length(int_action)))[1]
+# Update the agents's beliefs over states
+function infer_states!(aif::AIF, obs)
+    if !isempty(aif.action)
+        int_action = round.(Int, aif.action)
+        aif.prior = get_expected_states(aif.qs_current, aif.B, reshape(int_action, 1, length(int_action)))[1]
     else
-        agent.prior = agent.D
+        aif.prior = aif.D
     end
 
     # Update posterior over states
-    agent.qs_current = update_posterior_states(agent.A, obs, prior=agent.prior) 
+    aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior) 
 
     # Push changes to agent's history
-    push!(agent.states["prior"], copy(agent.prior))
-    push!(agent.states["posterior_states"], copy(agent.qs_current))
+    push!(aif.states["prior"], copy(aif.prior))
+    push!(aif.states["posterior_states"], copy(aif.qs_current))
 
 end
 
-# Update the agent's beliefs over policies
-function infer_policies!(agent::Agent)
+# Update the agents's beliefs over policies
+function infer_policies!(aif::AIF)
     # Update posterior over policies and expected free energies of policies
-    q_pi, G = update_posterior_policies(agent.qs_current, agent.A, agent.B, agent.C, agent.policies, agent.use_utility, agent.use_states_info_gain,agent.E, agent.gamma)
+    q_pi, G = update_posterior_policies(aif.qs_current, aif.A, aif.B, aif.C, aif.policies, aif.use_utility, aif.use_states_info_gain,aif.E, aif.gamma)
 
-    agent.Q_pi = q_pi
-    agent.G = G  
+    aif.Q_pi = q_pi
+    aif.G = G  
 
     # Push changes to agent's history
-    push!(agent.states["posterior_policies"], copy(agent.Q_pi))
-    push!(agent.states["expected_free_energies"], copy(agent.G))
+    push!(aif.states["posterior_policies"], copy(aif.Q_pi))
+    push!(aif.states["expected_free_energies"], copy(aif.G))
 
     return q_pi, G
 end
 
 # Sample action from the beliefs over policies
-function sample_action!(agent::Agent)
-    action = sample_action(agent.Q_pi, agent.policies, agent.num_controls; action_selection=agent.action_selection, alpha=agent.alpha)
+function sample_action!(aif::AIF)
+    action = sample_action(aif.Q_pi, aif.policies, aif.num_controls; action_selection=aif.action_selection, alpha=aif.alpha)
 
-    agent.action = action 
+    aif.action = action 
 
     # Push action to agent's history
-    push!(agent.states["action"], copy(agent.action))
+    push!(aif.states["action"], copy(aif.action))
 
 
     return action
