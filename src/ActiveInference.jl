@@ -8,6 +8,8 @@ include("agent.jl")
 include("utils.jl")
 include("inference.jl")
 include("ActionModelsExtensions/get_states.jl")
+include("ActionModelsExtensions/get_parameters.jl")
+
 
 export # maths.jl
        norm_dist,
@@ -59,7 +61,8 @@ export # maths.jl
        sample_action,
 
        # ActionModelsExtensions
-       get_states
+       get_states,
+       get_parameters
 
 
     # From Environments\\EpistChainEnv.jl

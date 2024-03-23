@@ -4,10 +4,10 @@ This module extends the "get_states" functionality of the ActionModels package t
     get_states(aif::AIF, target_states::Vector{String})
 Retrieves multiple states from an AIF agent. 
 
-    ActionModels.get_states(aif::AIF, target_state::String)
+    get_states(aif::AIF, target_state::String)
 Retrieves a single state from an AIF agent.
 
-    ActionModels.get_states(aif::AIF)
+    get_states(aif::AIF)
 Retrieves all states from an AIF agent.
 """
 
