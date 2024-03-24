@@ -75,7 +75,7 @@ export # maths.jl
 
     include("Environments\\EpistChainEnv.jl")
     
-    export EpistChainEnv, step!, reset!
+    export EpistChainEnv, step!, reset_env!
        
     end
 end

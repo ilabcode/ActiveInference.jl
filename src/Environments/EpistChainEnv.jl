@@ -83,7 +83,7 @@ function step!(env::EpistChainEnv, action_label::String)
     return loc_obs, cue1_obs, cue2_obs, reward_obs
 end
 
-function reset!(env::EpistChainEnv)
+function reset_env!(env::EpistChainEnv)
     env.current_loc = env.init_loc
     println("Re-initialized location to $(env.init_loc)")
     return env.current_loc
