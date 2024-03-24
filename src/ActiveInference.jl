@@ -9,6 +9,7 @@ include("utils.jl")
 include("inference.jl")
 include("ActionModelsExtensions/get_states.jl")
 include("ActionModelsExtensions/get_parameters.jl")
+include("ActionModelsExtensions/get_history.jl")
 
 
 export # maths.jl
@@ -62,7 +63,8 @@ export # maths.jl
 
        # ActionModelsExtensions
        get_states,
-       get_parameters
+       get_parameters,
+       get_history
 
 
     # From Environments\\EpistChainEnv.jl

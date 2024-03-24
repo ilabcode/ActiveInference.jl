@@ -5,7 +5,7 @@ This module extends the "get_states" functionality of the ActionModels package t
 Retrieves multiple states from an AIF agent. 
 
     get_states(aif::AIF, target_state::String)
-Retrieves a single state from an AIF agent.
+Retrieves a single target state from an AIF agent.
 
     get_states(aif::AIF)
 Retrieves all states from an AIF agent.
@@ -36,10 +36,16 @@ end
 
 # Retrieve a single state
 function ActionModels.get_states(aif::AIF, target_state::String)
-    # Check if the state is in the AIF's states
+    # Check if the state is in the agent's states
     if haskey(aif.states, target_state)
-
-        return aif.states[target_state]
+        #  Directly store the constructed policies
+        if target_state == "policies"
+            return aif.states[target_state]
+        else
+            # Retrieve the latest value of the target state
+            state_history = aif.states[target_state]
+            return state_history isa AbstractVector ? last(state_history) : state_history
+        end
     else
         # If the target state is not found, throw an ArgumentError
         throw(ArgumentError("The specified state $target_state does not exist"))
@@ -49,7 +55,18 @@ end
 
 # Retrieve all states
 function ActionModels.get_states(aif::AIF)
-    return aif.states
+    all_states = Dict()
+    for (key, state_history) in aif.states
+        #  Directly store the constructed policies
+        if key == "policies"
+            all_states[key] = state_history
+        else
+            # For other keys, store the latest value of each state
+            all_states[key] = state_history isa AbstractVector ? last(state_history) : state_history
+        end
+    end
+    return all_states
 end
+
 
 
