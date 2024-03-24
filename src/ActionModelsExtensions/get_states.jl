@@ -36,18 +36,15 @@ end
 
 # Retrieve a single state
 function ActionModels.get_states(aif::AIF, target_state::String)
-    # Check if the state is in the agent's states
     if haskey(aif.states, target_state)
-        #  Directly store the constructed policies
+        state_history = aif.states[target_state]
         if target_state == "policies"
-            return aif.states[target_state]
+            return state_history
         else
-            # Retrieve the latest value of the target state
-            state_history = aif.states[target_state]
-            return state_history isa AbstractVector ? last(state_history) : state_history
+            # return the latest state or missing
+            return isempty(state_history) ? missing : last(state_history)
         end
     else
-        # If the target state is not found, throw an ArgumentError
         throw(ArgumentError("The specified state $target_state does not exist"))
     end
 end
@@ -57,12 +54,11 @@ end
 function ActionModels.get_states(aif::AIF)
     all_states = Dict()
     for (key, state_history) in aif.states
-        #  Directly store the constructed policies
         if key == "policies"
             all_states[key] = state_history
         else
-            # For other keys, store the latest value of each state
-            all_states[key] = state_history isa AbstractVector ? last(state_history) : state_history
+            # get the latest state or missing
+            all_states[key] = isempty(state_history) ? missing : last(state_history)
         end
     end
     return all_states
