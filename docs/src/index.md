@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = Actify
+CurrentModule = ActiveInference
 ```
 
-# Actify
+# ActiveInference
 
-Documentation for [Actify](https://github.com/samuelnehrer02/ActiveInference.jl).
+Documentation for [ActiveInference](https://github.com/samuelnehrer02/ActiveInference.jl).
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [Actify]
+Modules = [ActiveInference]
 ```
