@@ -127,8 +127,22 @@ function init_aif(A, B, C, D; E = nothing,
                          use_utility=use_utility, 
                          use_states_info_gain=use_states_info_gain, 
                          action_selection=action_selection)
+
+    #Print out agent settings
+    settings_summary = 
+    """
+    AIF Agent initialized successfully with the following settings and parameters:
+    - Gamma (γ): $(aif.gamma)
+    - Alpha (α): $(aif.alpha)
+    - Policy Length: $(aif.policy_len)
+    - Number of Controls: $(aif.num_controls)
+    - Controllable Factors Indices: $(aif.control_fac_idx)
+    - Use Utility: $(aif.use_utility)
+    - Use States Information Gain: $(aif.use_states_info_gain)
+    - Action Selection: $(aif.action_selection)
+    """
+    println(settings_summary)
     
-    println("AIF Agent initialized successfully!")
     return aif
 end
 

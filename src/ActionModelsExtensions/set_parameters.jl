@@ -13,13 +13,15 @@ using ActionModels
 
 # Setting a single parameter
 function ActionModels.set_parameters!(aif::AIF, target_param::String, param_value::Any)
-    # Check if the target parameter exists within the AIF's parameters
-    if haskey(aif.parameters, target_param)
-        # Set the parameter
-        aif.parameters[target_param] = param_value
+    # Update the parameters dictionary
+    aif.parameters[target_param] = param_value
+    # Update the struct's field based on the target_param
+    if target_param == "alpha"
+        aif.alpha = param_value
+    elseif target_param == "gamma"
+        aif.gamma = param_value
     else
-        # If the target parameter does not exist
-        throw(ArgumentError("The parameter $target_param does not exist within the AIF's parameters."))
+        throw(ArgumentError("The parameter $target_param is not recognized."))
     end
 end
 
