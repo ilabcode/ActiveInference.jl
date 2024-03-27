@@ -197,6 +197,29 @@ function plot_gridworld(grid_locations)
     return heatmap_plot
 end
 
+""" Function to get log action marginal probabilities """
+function get_log_action_marginals(aif)
+    num_factors = length(aif.num_controls)
+    action_marginals = array_of_any_zeros(aif.num_controls)
+    log_action_marginals = array_of_any(num_factors)
+    q_pi = get_states(aif, "posterior_policies")
+    policies = get_states(aif, "policies")
+    
+    for (pol_idx, policy) in enumerate(policies)
+        for (factor_i, action_i) in enumerate(policy[1,:])
+            action_marginals[factor_i][action_i] += q_pi[pol_idx]
+        end
+    end
+
+    action_marginals = norm_dist_array(action_marginals)
+
+    for factor_i in 1:num_factors
+        log_marginal_f = spm_log_single(action_marginals[factor_i])
+        log_action_marginals[factor_i] = log_marginal_f
+    end
+
+    return log_action_marginals
+end
 
 #=
 """Function for creating the B-Matrix || Needs to be made generic! """

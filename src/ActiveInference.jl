@@ -12,6 +12,7 @@ include("ActionModelsExtensions/get_parameters.jl")
 include("ActionModelsExtensions/get_history.jl")
 include("ActionModelsExtensions/set_parameters.jl")
 include("ActionModelsExtensions/reset.jl")
+include("POMDP.jl")
 
 
 
@@ -63,6 +64,9 @@ export # maths.jl
        calc_expected_utility,
        calc_states_info_gain,
        sample_action,
+
+       # POMDP.jl
+       action_pomdp!,
 
        # ActionModelsExtensions
        get_states,
