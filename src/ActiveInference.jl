@@ -12,7 +12,9 @@ include("ActionModelsExtensions/get_parameters.jl")
 include("ActionModelsExtensions/get_history.jl")
 include("ActionModelsExtensions/set_parameters.jl")
 include("ActionModelsExtensions/reset.jl")
+include("ActionModelsExtensions/give_inputs.jl")
 include("POMDP.jl")
+
 
 
 
@@ -73,7 +75,8 @@ export # maths.jl
        get_parameters,
        get_history,
        set_parameters!,
-       reset!
+       reset!,
+       single_input!
 
 
     # From Environments\\EpistChainEnv.jl

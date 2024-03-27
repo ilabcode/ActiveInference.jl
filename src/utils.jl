@@ -197,7 +197,7 @@ function plot_gridworld(grid_locations)
     return heatmap_plot
 end
 
-""" Function to get log action marginal probabilities """
+""" Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
     action_marginals = array_of_any_zeros(aif.num_controls)
