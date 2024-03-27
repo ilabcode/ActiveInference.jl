@@ -6,6 +6,8 @@ This module contains models of Partially Observable Markov Decision Processes un
 
 ### Action Model:  Returns probability distributions for actions per factor
 
+# NOTE: Add action_distribution -> aif.states["action_probability"]
+
 function action_pomdp!(aif, obs)
 
     ### Get parameters 
