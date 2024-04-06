@@ -3,7 +3,6 @@ module ActiveInference
 
 
 include("maths.jl")
-include("Environments\\EpistChainEnv.jl")
 include("agent.jl")
 include("utils.jl")
 include("inference.jl")
@@ -82,7 +81,7 @@ export # maths.jl
     # From Environments\\EpistChainEnv.jl
     module Environments
 
-    include("Environments\\EpistChainEnv.jl")
+    include("Environments/EpistChainEnv.jl")
     
     export EpistChainEnv, step!, reset_env!
        
