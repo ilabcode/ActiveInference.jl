@@ -144,7 +144,7 @@ end
 """ Multi-dimensional inner product """
 #= Instead of summing over all indices, the function sums over only the last three
 dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X. =#
-
+    """
 function spm_dot(X, x)
 
     if all(isa.(x, AbstractArray))  
@@ -166,6 +166,46 @@ function spm_dot(X, x)
     if prod(size(Y)) <= 1
         Y = only(Y)
         Y = [float(Y)]  
+    end
+
+    return Y
+end
+"""
+
+function spm_dot(X, x)
+    if all(isa.(x, AbstractArray))
+        n_factors = length(x)
+    else
+        x = [x]
+        n_factors = length(x)
+    end
+
+    ndims_X = ndims(X)
+    dims = collect(ndims_X - n_factors + 1 : ndims_X)
+    Y = zeros(size(X, 1))
+
+    # thread-local storage for accumulators
+    Y_local = [zeros(size(X, 1)) for _ in 1:Threads.nthreads()]
+
+    all_indices = collect(Iterators.product([1:size(X, i) for i in 1:ndims_X]...))
+
+    Threads.@threads for idx_tuple in all_indices
+        tid = Threads.threadid()  
+        indices = Tuple(idx_tuple)
+        product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
+        Y_local[tid][indices[1]] += product 
+    end
+
+    Y .= Y_local[1]
+    for i in eachindex(Y_local)
+        if i != 1
+            Y .+= Y_local[i]
+        end
+    end
+
+    if prod(size(Y)) <= 1
+        Y = only(Y)
+        Y = [float(Y)]
     end
 
     return Y
