@@ -11,7 +11,7 @@ Give a single observation to an AIF agent.
 using ActionModels
 
 ### Give single observation to the agent
-function ActionModels.single_input!(aif::AIF, obs)
+function ActionModels.single_input!(aif::AIF, obs::Vector)
 
     # Running the action model to retrieve the action distributions
     action_distributions = action_pomdp!(aif, obs)
@@ -41,4 +41,15 @@ function ActionModels.single_input!(aif::AIF, obs)
     push!(aif.states["action"], aif.action)
 
     return aif.action
+end
+
+function ActionModels.give_inputs!(aif::AIF, observations::Vector{Any})
+
+    for observation in observations
+
+        ActionModels.single_input!(aif, observation)
+
+    end
+
+
 end

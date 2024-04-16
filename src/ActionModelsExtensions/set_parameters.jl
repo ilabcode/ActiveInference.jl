@@ -26,7 +26,7 @@ function ActionModels.set_parameters!(aif::AIF, target_param::String, param_valu
 end
 
 # Setting multiple parameters
-function ActionModels.set_parameters!(aif::AIF, parameters::Dict{String, Float64})
+function ActionModels.set_parameters!(aif::AIF, parameters::Dict)
     # For each parameter in the input dictionary
     for (target_param, param_value) in parameters
         # Directly set each parameter

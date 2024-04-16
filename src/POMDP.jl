@@ -8,11 +8,13 @@ This module contains models of Partially Observable Markov Decision Processes un
 
 # NOTE: Add action_distribution -> aif.states["action_probability"]
 
-function action_pomdp!(aif, obs)
+function action_pomdp!(agent::Agent, obs)
+
+    aif = agent.substruct
 
     ### Get parameters 
     alpha = get_parameters(aif, "alpha")
-    n_factors = length(aif.num_controls)
+    n_factors = length(aif.settings["num_controls"])
 
     # Initialize an empty arrays for action distribution per factor
     action_p = array_of_any(n_factors)
