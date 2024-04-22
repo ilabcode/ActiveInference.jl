@@ -18,7 +18,8 @@ function action_pomdp!(agent::Agent, obs)
 
     # Initialize an empty arrays for action distribution per factor
     action_p = array_of_any(n_factors)
-    action_distribution = array_of_any(n_factors)
+    action_distribution = Vector{Categorical{Float64}}(undef, n_factors)
+
 
     ### Infer states & policies
 

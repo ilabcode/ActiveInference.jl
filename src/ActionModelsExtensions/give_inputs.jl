@@ -51,5 +51,4 @@ function ActionModels.give_inputs!(aif::AIF, observations::Vector{Any})
 
     end
 
-
 end
