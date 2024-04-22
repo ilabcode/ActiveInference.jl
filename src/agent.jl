@@ -7,7 +7,18 @@ mutable struct AIF
     B::Array{Any,1}
     C::Array{Any,1}  
     D::Array{Any,1}
-    E::Any # E - vector (Habits)
+    E::Union{Array{Any, 1}, Nothing} # E - vector (Habits)
+    pA::Union{Array{Any,1}, Nothing}
+    pB::Union{Array{Any,1}, Nothing}
+    pD::Union{Array{Any,1}, Nothing}
+    lr_pA::Float64 # pA learning parameter
+    fr_pA::Float64 # pA forgetting parameter, should be 1 for no forgetting
+    lr_pB::Float64
+    fr_pB::Float64
+    lr_pD::Float64
+    fr_pD::Float64
+    modalities_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# modality"
+    factors_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# factor"
     gamma::Float64 # Gamma parameter
     alpha::Float64 # Alpha parameter
     policies::Array  # Inferred from the B matrix
@@ -21,6 +32,7 @@ mutable struct AIF
     action::Vector{Float64} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
+    use_param_info_gain::Bool # Include the novelty value in the learning parameters
     action_selection::String # Action selection: can be either "deterministic" or "stochastic"   
     states::Dict{String,Array{Any,1}} # States Dictionary
     parameters::Dict{String,Float64} # Parameters Dictionary
@@ -28,7 +40,29 @@ mutable struct AIF
 end
 
 # Create ActiveInference Agent 
-function create_aif(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=1, num_controls=nothing, control_fac_idx=nothing, use_utility=true, use_states_info_gain=true, action_selection="stochastic")
+function create_aif(A, B, C, D, E=nothing; 
+                    pA = nothing, 
+                    pB = nothing, 
+                    pD = nothing, 
+                    lr_pA = 1.0, 
+                    fr_pA = 1.0, 
+                    lr_pB = 1.0, 
+                    fr_pB = 1.0, 
+                    lr_pD = 1.0, 
+                    fr_pD = 1.0, 
+                    modalities_to_learn = "all", 
+                    factors_to_learn = "all", 
+                    gamma=16.0, 
+                    alpha=16.0, 
+                    policy_len=1, 
+                    num_controls=nothing, 
+                    control_fac_idx=nothing, 
+                    use_utility=true, 
+                    use_states_info_gain=true, 
+                    use_param_info_gain = false, 
+                    action_selection="stochastic"
+    )
+
     num_states = [size(B[f], 1) for f in eachindex(B)]
 
     # if num_controls are not given, they are inferred from the B matrix
@@ -55,13 +89,19 @@ function create_aif(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=1,
         "prior" => Vector{Any}[],
         "posterior_policies" => Vector{Any}[],
         "expected_free_energies" => Vector{Any}[],
-        "policies" => policies  
+        "policies" => policies
     )
 
     # initialize parameters dictionary
     parameters = Dict(
         "gamma" => gamma,
-        "alpha" => alpha
+        "alpha" => alpha,
+        "lr_pA" => lr_pA,
+        "fr_pA" => fr_pA,
+        "lr_pB" => lr_pB,
+        "fr_pB" => fr_pB,
+        "lr_pD" => lr_pD,
+        "fr_pD" => fr_pD
     )
 
     # initialize settings dictionary
@@ -71,14 +111,17 @@ function create_aif(A, B, C, D, E=nothing; gamma=16.0, alpha=16.0, policy_len=1,
         "control_fac_idx" => control_fac_idx,
         "use_utility" => use_utility,
         "use_states_info_gain" => use_states_info_gain,
-        "action_selection" => action_selection
+        "use_param_info_gain" => use_param_info_gain,
+        "action_selection" => action_selection,
+        "modalities_to_learn" => modalities_to_learn,
+        "factors_to_learn" => factors_to_learn
     )
 
-    return AIF(A, B, C, D, E, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, action_selection, states, parameters, settings)
+    return AIF(A, B, C, D, E, pA, pB, pD, lr_pA, fr_pA, lr_pB, fr_pB, lr_pD, fr_pD, modalities_to_learn, factors_to_learn, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, use_param_info_gain, action_selection, states, parameters, settings)
 end
 
 # Initialize active inference agent 
-function init_aif(A, B, C, D; E = nothing,
+function init_aif(A, B, C, D; E = nothing, pA = nothing, pB = nothing, pD = nothing,
                   parameters::Union{Nothing, Dict{String,Float64}} = nothing,
                   settings::Union{Nothing, Dict} = nothing)
 
@@ -96,37 +139,71 @@ function init_aif(A, B, C, D; E = nothing,
             "control_fac_idx" => nothing, 
             "use_utility" => true, 
             "use_states_info_gain" => true, 
-            "action_selection" => "stochastic"
+            "use_param_info_gain" => false,
+            "action_selection" => "stochastic", 
+            "modalities_to_learn" => "all",
+            "factors_to_learn" => "all"
         )
     end
 
     if isnothing(parameters)
         @warn "No parameters provided, default parameters will be used."
         parameters = Dict("gamma" => 16.0,
-                          "alpha" => 16.0)
+                          "alpha" => 16.0,
+                          "lr_pA" => 1.0,
+                          "fr_pA" => 1.0,
+                          "lr_pB" => 1.0,
+                          "fr_pB" => 1.0,
+                          "lr_pD" => 1.0,
+                          "fr_pD" => 1.0
+                          )
     end
 
     # Extract parameters and settings from the dictionaries or use defaults
     gamma = get(parameters, "gamma", 16.0)  
     alpha = get(parameters, "alpha", 16.0)
+    lr_pA = get(parameters, "lr_pA", 1.0)
+    fr_pA = get(parameters, "fr_pA", 1.0)
+    lr_pB = get(parameters, "lr_pB", 1.0)
+    fr_pB = get(parameters, "fr_pB", 1.0)
+    lr_pD = get(parameters, "lr_pD", 1.0)
+    fr_pD = get(parameters, "fr_pD", 1.0)
+
     
     policy_len = get(settings, "policy_len", 1)
     num_controls = get(settings, "num_controls", nothing)
     control_fac_idx = get(settings, "control_fac_idx", nothing)
     use_utility = get(settings, "use_utility", true)
     use_states_info_gain = get(settings, "use_states_info_gain", true)
+    use_param_info_gain = get(settings, "use_param_info_gain", false)
     action_selection = get(settings, "action_selection", "stochastic")
+    modalities_to_learn = get(settings, "modalities_to_learn", "all" )
+    factors_to_learn = get(settings, "factors_to_learn", "all" )
+
 
     # Call create_aif 
     aif = create_aif(A, B, C, D, E; 
-                         gamma=gamma,
-                         alpha=alpha, 
-                         policy_len=policy_len,
-                         num_controls=num_controls,
-                         control_fac_idx=control_fac_idx, 
-                         use_utility=use_utility, 
-                         use_states_info_gain=use_states_info_gain, 
-                         action_selection=action_selection)
+                        pA,
+                        pB,
+                        pD,
+                        lr_pA = lr_pA, 
+                        fr_pA = fr_pA, 
+                        lr_pB = lr_pB, 
+                        fr_pB = fr_pB, 
+                        lr_pD = lr_pD, 
+                        fr_pD = fr_pD,
+                        modalities_to_learn=modalities_to_learn,
+                        factors_to_learn=factors_to_learn,
+                        gamma=gamma,
+                        alpha=alpha, 
+                        policy_len=policy_len,
+                        num_controls=num_controls,
+                        control_fac_idx=control_fac_idx, 
+                        use_utility=use_utility, 
+                        use_states_info_gain=use_states_info_gain, 
+                        use_param_info_gain=use_param_info_gain,
+                        action_selection=action_selection
+                         )
 
     #Print out agent settings
     settings_summary = 
@@ -139,7 +216,10 @@ function init_aif(A, B, C, D; E = nothing,
     - Controllable Factors Indices: $(aif.control_fac_idx)
     - Use Utility: $(aif.use_utility)
     - Use States Information Gain: $(aif.use_states_info_gain)
+    - Use Parameter Inforomation Gain: $(aif.use_param_info_gain)
     - Action Selection: $(aif.action_selection)
+    - Modalities to Learn = $(aif.modalities_to_learn)
+    - Factors to Learn = $(aif.factors_to_learn)
     """
     println(settings_summary)
     
@@ -167,7 +247,7 @@ end
 # Update the agents's beliefs over policies
 function infer_policies!(aif::AIF)
     # Update posterior over policies and expected free energies of policies
-    q_pi, G = update_posterior_policies(aif.qs_current, aif.A, aif.B, aif.C, aif.policies, aif.use_utility, aif.use_states_info_gain,aif.E, aif.gamma)
+    q_pi, G = update_posterior_policies(aif.qs_current, aif.A, aif.B, aif.C, aif.policies, aif.use_utility, aif.use_states_info_gain, aif.use_param_info_gain, aif.pA, aif.pB, aif.E, aif.gamma)
 
     aif.Q_pi = q_pi
     aif.G = G  
@@ -190,4 +270,34 @@ function sample_action!(aif::AIF)
 
 
     return action
+end
+
+function update_A!(aif::AIF, obs)
+
+    qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
+    
+    aif.pA = qA
+    aif.A = norm_dist_array(qA)
+
+    return qA
+end
+
+function update_B!(aif::AIF, qs_prev)
+
+    qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
+
+    aif.pB = qB
+    aif.B = norm_dist_array(qB)
+
+    return qB
+end
+
+function update_D!(aif::AIF, qs_t1)
+
+    qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
+
+    aif.pD = qD
+    aif.D = norm_dist_array(qD)
+
+    return qD
 end

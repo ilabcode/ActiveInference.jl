@@ -249,3 +249,15 @@ function norm_dist_array(obj_arr::Array{Any})
     end
     return normed_obj_array
 end
+
+""" SPM_wnorm """
+function spm_wnorm(A)
+    EPS_VAL = 1e-16
+
+    A .+= EPS_VAL
+    norm = 1.0 ./ sum(A, dims = 1)
+    avg = 1 ./ A
+    wA = norm .- avg
+
+    return wA
+end

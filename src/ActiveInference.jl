@@ -4,6 +4,7 @@ module ActiveInference
 
 include("maths.jl")
 include("agent.jl")
+include("learning.jl")
 include("utils.jl")
 include("inference.jl")
 include("ActionModelsExtensions/get_states.jl")
@@ -45,14 +46,16 @@ export # maths.jl
        get_model_dimensions,
        to_array_of_any,
        select_highest,
-       action_select,
-
+       action_select,       
 
        # agent.jl
        init_aif,
        infer_states!,
        infer_policies!,
        sample_action!,
+       update_A!,
+       update_B!,
+       update_D!,
 
        # inference.jl
        get_expected_states,
