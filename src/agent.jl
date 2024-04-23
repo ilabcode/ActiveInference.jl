@@ -216,7 +216,7 @@ function init_aif(A, B, C, D; E = nothing, pA = nothing, pB = nothing, pD = noth
     - Controllable Factors Indices: $(aif.control_fac_idx)
     - Use Utility: $(aif.use_utility)
     - Use States Information Gain: $(aif.use_states_info_gain)
-    - Use Parameter Inforomation Gain: $(aif.use_param_info_gain)
+    - Use Parameter Information Gain: $(aif.use_param_info_gain)
     - Action Selection: $(aif.action_selection)
     - Modalities to Learn = $(aif.modalities_to_learn)
     - Factors to Learn = $(aif.factors_to_learn)
