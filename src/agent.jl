@@ -40,7 +40,10 @@ mutable struct AIF
 end
 
 # Create ActiveInference Agent 
-function create_aif(A, B, C, D, E=nothing; 
+function create_aif(A, B;
+                    C = nothing,
+                    D=nothing,
+                    E=nothing,
                     pA = nothing, 
                     pB = nothing, 
                     pD = nothing, 
@@ -64,6 +67,15 @@ function create_aif(A, B, C, D, E=nothing;
     )
 
     num_states = [size(B[f], 1) for f in eachindex(B)]
+    num_obs = [size(A[f], 1) for f in eachindex(A)]
+
+    if isnothing(C)
+        C = array_of_any_zeros(num_obs)
+    end
+
+    if isnothing(D)
+        D = array_of_any_uniform(num_states)
+    end
 
     # if num_controls are not given, they are inferred from the B matrix
     if isnothing(num_controls)
@@ -121,9 +133,19 @@ function create_aif(A, B, C, D, E=nothing;
 end
 
 # Initialize active inference agent 
-function init_aif(A, B, C, D; E = nothing, pA = nothing, pB = nothing, pD = nothing,
+function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
                   parameters::Union{Nothing, Dict{String,Float64}} = nothing,
                   settings::Union{Nothing, Dict} = nothing)
+
+    # Throw warning if no D-vector is provided. 
+    if isnothing(C)
+        @warn "No C-vector provided, no prior preferences will be used."
+    end 
+
+    # Throw warning if no D-vector is provided. 
+    if isnothing(D)
+        @warn "No D-vector provided, a uniform distribution will be used."
+    end 
 
     # Throw warning if no E-vector is provided. 
     if isnothing(E)
@@ -182,28 +204,31 @@ function init_aif(A, B, C, D; E = nothing, pA = nothing, pB = nothing, pD = noth
 
 
     # Call create_aif 
-    aif = create_aif(A, B, C, D, E; 
-                        pA,
-                        pB,
-                        pD,
-                        lr_pA = lr_pA, 
-                        fr_pA = fr_pA, 
-                        lr_pB = lr_pB, 
-                        fr_pB = fr_pB, 
-                        lr_pD = lr_pD, 
-                        fr_pD = fr_pD,
-                        modalities_to_learn=modalities_to_learn,
-                        factors_to_learn=factors_to_learn,
-                        gamma=gamma,
-                        alpha=alpha, 
-                        policy_len=policy_len,
-                        num_controls=num_controls,
-                        control_fac_idx=control_fac_idx, 
-                        use_utility=use_utility, 
-                        use_states_info_gain=use_states_info_gain, 
-                        use_param_info_gain=use_param_info_gain,
-                        action_selection=action_selection
-                         )
+    aif = create_aif(A, B,
+                    C=C,
+                    D=D,
+                    E=E,
+                    pA=pA,
+                    pB=pB,
+                    pD=pD,
+                    lr_pA = lr_pA, 
+                    fr_pA = fr_pA, 
+                    lr_pB = lr_pB, 
+                    fr_pB = fr_pB, 
+                    lr_pD = lr_pD, 
+                    fr_pD = fr_pD,
+                    modalities_to_learn=modalities_to_learn,
+                    factors_to_learn=factors_to_learn,
+                    gamma=gamma,
+                    alpha=alpha, 
+                    policy_len=policy_len,
+                    num_controls=num_controls,
+                    control_fac_idx=control_fac_idx, 
+                    use_utility=use_utility, 
+                    use_states_info_gain=use_states_info_gain, 
+                    use_param_info_gain=use_param_info_gain,
+                    action_selection=action_selection
+                    )
 
     #Print out agent settings
     settings_summary = 
