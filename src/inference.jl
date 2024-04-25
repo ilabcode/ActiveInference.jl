@@ -25,7 +25,7 @@ function get_expected_states(qs, B, policy)
 end
 
 """ Update Posterior States """
-function update_posterior_states(A, obs; prior=nothing, kwargs...)
+function update_posterior_states(A::Vector{Any}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
@@ -34,7 +34,7 @@ end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A, obs, num_obs, num_states; prior=nothing, num_iter=10, dF=1.0, dF_tol=0.001)
+function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter=10, dF=1.0, dF_tol=0.001)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -137,12 +137,25 @@ end
 #### Policy Inference #### 
 
 """ Update Posterior over Policies """
-function update_posterior_policies(qs, A, B, C, policies, use_utility=true, use_states_info_gain=true, use_param_info_gain = false, pA = nothing, pB = nothing, E = nothing, gamma=16.0)
+function update_posterior_policies(
+    qs::Vector{Any},
+    A::Vector{Any},
+    B::Vector{Any},
+    C::Vector{Any},
+    policies::Vector{Any},
+    use_utility::Bool=true,
+    use_states_info_gain::Bool=true,
+    use_param_info_gain::Bool=false,
+    pA = nothing,
+    pB = nothing,
+    E = nothing,
+    gamma::Float64=16.0
+)
     n_policies = length(policies)
     G = zeros(n_policies)
     q_pi = zeros(n_policies, 1)
-    qs_pi = []
-    qo_pi = []
+    qs_pi = Vector{Float64}[]
+    qo_pi = Vector{Float64}[]
   
     if isnothing(E)
         lnE = spm_log_single(ones(n_policies) / n_policies)
@@ -178,7 +191,7 @@ function update_posterior_policies(qs, A, B, C, policies, use_utility=true, use_
 end
 
 """ Get Expected Observations """
-function get_expected_obs(qs_pi, A)
+function get_expected_obs(qs_pi, A::Vector{Any})
     n_steps = length(qs_pi)
     qo_pi = []
 

@@ -3,20 +3,20 @@
 using LinearAlgebra
 
 mutable struct AIF
-    A::Array{Any,1}
-    B::Array{Any,1}
-    C::Array{Any,1}  
-    D::Array{Any,1}
+    A::Array{Any,1} # A-matrix
+    B::Array{Any,1} # B-matrix
+    C::Array{Any,1} # C-vectors
+    D::Array{Any,1} # D-vectors
     E::Union{Array{Any, 1}, Nothing} # E - vector (Habits)
     pA::Union{Array{Any,1}, Nothing}
     pB::Union{Array{Any,1}, Nothing}
     pD::Union{Array{Any,1}, Nothing}
-    lr_pA::Float64 # pA learning parameter
-    fr_pA::Float64 # pA forgetting parameter, should be 1 for no forgetting
-    lr_pB::Float64
-    fr_pB::Float64
-    lr_pD::Float64
-    fr_pD::Float64
+    lr_pA::Float64 # pA Learning Parameter
+    fr_pA::Float64 # pA Forgetting Parameter,  1.0 for no forgetting
+    lr_pB::Float64 # pB learning Parameter
+    fr_pB::Float64 # pB Forgetting Parameter
+    lr_pD::Float64 # pD Learning parameter
+    fr_pD::Float64 # PD Forgetting parameter
     modalities_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# modality"
     factors_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# factor"
     gamma::Float64 # Gamma parameter
@@ -42,8 +42,8 @@ end
 # Create ActiveInference Agent 
 function create_aif(A, B;
                     C = nothing,
-                    D=nothing,
-                    E=nothing,
+                    D = nothing,
+                    E = nothing,
                     pA = nothing, 
                     pB = nothing, 
                     pD = nothing, 
@@ -69,10 +69,12 @@ function create_aif(A, B;
     num_states = [size(B[f], 1) for f in eachindex(B)]
     num_obs = [size(A[f], 1) for f in eachindex(A)]
 
+    # If C-vectors are not provided
     if isnothing(C)
         C = array_of_any_zeros(num_obs)
     end
 
+    # If D-vectors are not provided
     if isnothing(D)
         D = array_of_any_uniform(num_states)
     end
@@ -152,7 +154,7 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
         @warn "No E-vector provided, a uniform distribution will be used."
     end           
     
-    # Check if settings and parameters are provided or use defaults
+    # Check if settings are provided or use defaults
     if isnothing(settings)
         @warn "No settings provided, default settings will be used."
         settings = Dict(
@@ -168,6 +170,7 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
         )
     end
 
+    # Check if parameters are provided or use defaults
     if isnothing(parameters)
         @warn "No parameters provided, default parameters will be used."
         parameters = Dict("gamma" => 16.0,
@@ -252,7 +255,7 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
 end
 
 # Update the agents's beliefs over states
-function infer_states!(aif::AIF, obs)
+function infer_states!(aif::AIF, obs::Vector{Int64})
     if !isempty(aif.action)
         int_action = round.(Int, aif.action)
         aif.prior = get_expected_states(aif.qs_current, aif.B, reshape(int_action, 1, length(int_action)))[1]
@@ -297,7 +300,8 @@ function sample_action!(aif::AIF)
     return action
 end
 
-function update_A!(aif::AIF, obs)
+# Update A-matrix
+function update_A!(aif::AIF, obs::Vector{Int64})
 
     qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
     
@@ -307,6 +311,7 @@ function update_A!(aif::AIF, obs)
     return qA
 end
 
+# Update B-matrix
 function update_B!(aif::AIF, qs_prev)
 
     qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
@@ -317,6 +322,7 @@ function update_B!(aif::AIF, qs_prev)
     return qB
 end
 
+# Update D-matrix
 function update_D!(aif::AIF, qs_t1)
 
     qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
