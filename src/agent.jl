@@ -37,6 +37,7 @@ mutable struct AIF
     states::Dict{String,Array{Any,1}} # States Dictionary
     parameters::Dict{String,Float64} # Parameters Dictionary
     settings::Dict{String,Any} # Settings Dictionary
+    save_history::Bool # Save history boolean flag
 end
 
 # Create ActiveInference Agent 
@@ -63,7 +64,8 @@ function create_aif(A, B;
                     use_utility=true, 
                     use_states_info_gain=true, 
                     use_param_info_gain = false, 
-                    action_selection="stochastic"
+                    action_selection="stochastic",
+                    save_history=true
     )
 
     num_states = [size(B[f], 1) for f in eachindex(B)]
@@ -131,13 +133,14 @@ function create_aif(A, B;
         "factors_to_learn" => factors_to_learn
     )
 
-    return AIF(A, B, C, D, E, pA, pB, pD, lr_pA, fr_pA, lr_pB, fr_pB, lr_pD, fr_pD, modalities_to_learn, factors_to_learn, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, use_param_info_gain, action_selection, states, parameters, settings)
+    return AIF(A, B, C, D, E, pA, pB, pD, lr_pA, fr_pA, lr_pB, fr_pB, lr_pD, fr_pD, modalities_to_learn, factors_to_learn, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, use_param_info_gain, action_selection, states, parameters, settings, save_history)
 end
 
 # Initialize active inference agent 
 function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
                   parameters::Union{Nothing, Dict{String,Float64}} = nothing,
-                  settings::Union{Nothing, Dict} = nothing)
+                  settings::Union{Nothing, Dict} = nothing,
+                  save_history::Bool = true)
 
     # Throw warning if no D-vector is provided. 
     if isnothing(C)
@@ -230,7 +233,8 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
                     use_utility=use_utility, 
                     use_states_info_gain=use_states_info_gain, 
                     use_param_info_gain=use_param_info_gain,
-                    action_selection=action_selection
+                    action_selection=action_selection,
+                    save_history=save_history
                     )
 
     #Print out agent settings
