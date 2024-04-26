@@ -1,7 +1,5 @@
 module ActiveInference
 
-
-
 include("maths.jl")
 include("agent.jl")
 include("learning.jl")
@@ -14,9 +12,6 @@ include("ActionModelsExtensions/set_parameters.jl")
 include("ActionModelsExtensions/reset.jl")
 include("ActionModelsExtensions/give_inputs.jl")
 include("POMDP.jl")
-
-
-
 
 export # maths.jl
        norm_dist,
