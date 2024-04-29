@@ -1,5 +1,7 @@
 module ActiveInference
 
+using ActionModels
+
 include("maths.jl")
 include("agent.jl")
 include("learning.jl")
