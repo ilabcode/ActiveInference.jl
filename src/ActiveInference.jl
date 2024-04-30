@@ -1,6 +1,6 @@
 module ActiveInference
 
-
+using ActionModels
 
 include("maths.jl")
 include("agent.jl")
@@ -13,10 +13,8 @@ include("ActionModelsExtensions/get_history.jl")
 include("ActionModelsExtensions/set_parameters.jl")
 include("ActionModelsExtensions/reset.jl")
 include("ActionModelsExtensions/give_inputs.jl")
+include("ActionModelsExtensions/set_save_history.jl")
 include("POMDP.jl")
-
-
-
 
 export # maths.jl
        norm_dist,
@@ -78,7 +76,8 @@ export # maths.jl
        get_history,
        set_parameters!,
        reset!,
-       single_input!
+       single_input!,
+       set_save_history!
 
 
     # From Environments\\EpistChainEnv.jl

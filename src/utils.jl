@@ -126,7 +126,7 @@ function get_model_dimensions(A = nothing, B = nothing)
 end
 
 
-""" Equivalent to pymdp's "to_obj_array" [Recommendation to avoid using at as much as possible] """
+""" Equivalent to pymdp's "to_obj_array" """
 function to_array_of_any(arr::Array)
     # Check if arr is already an array of arrays
     if typeof(arr) == Array{Array,1}
