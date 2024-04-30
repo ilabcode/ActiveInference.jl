@@ -20,6 +20,8 @@ function ActionModels.set_parameters!(aif::AIF, target_param::String, param_valu
         aif.alpha = param_value
     elseif target_param == "gamma"
         aif.gamma = param_value
+    elseif target_param == "lr_pA"
+        aif.lr_pA = param_value
     else
         throw(ArgumentError("The parameter $target_param is not recognized."))
     end
