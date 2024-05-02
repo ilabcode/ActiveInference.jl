@@ -9,7 +9,7 @@ ActiveInference_path = dirname(dirname(pathof(ActiveInference)))
 
     @testset "quick tests" begin
         # Include quick tests similar to pre-commit tests
-        include(test_path * "quicktests.jl")
+        include("quicktests.jl")
     end
 
     # List the Julia filenames in the testsuite
@@ -17,6 +17,6 @@ ActiveInference_path = dirname(dirname(pathof(ActiveInference)))
 
     # For each file
     for filename in filenames
-        include(test_path * filename)
+        include(filename)
     end
 end
