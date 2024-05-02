@@ -1,6 +1,7 @@
 using IterTools
 using LinearAlgebra
 using ActiveInference
+using Tests
 
 """ Test Agent """
 
