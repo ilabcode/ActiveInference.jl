@@ -16,6 +16,10 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     alpha = agent.parameters["alpha"]
     n_factors = length(agent.settings["num_controls"])
 
+
+    #gamma = agent.parameters["gamma"]
+    #aif.gamma = gamma
+
     # Initialize an empty arrays for action distribution per factor
     action_p = array_of_any(n_factors)
     action_distribution = Vector(undef, n_factors)
@@ -24,6 +28,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
 
     # Run state inference 
     infer_states!(aif, obs)
+    #update_A!(aif, obs)
 
     # Run policy inference 
     infer_policies!(aif)
@@ -37,7 +42,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
     end
 
-    
+
     return action_distribution[1]
 end
 
