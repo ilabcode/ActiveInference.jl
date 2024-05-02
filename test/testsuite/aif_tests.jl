@@ -1,7 +1,7 @@
 using IterTools
 using LinearAlgebra
 using ActiveInference
-using Tests
+using Test
 
 """ Test Agent """
 
