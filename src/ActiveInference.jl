@@ -44,7 +44,8 @@ export # maths.jl
        get_model_dimensions,
        to_array_of_any,
        select_highest,
-       action_select,       
+       action_select,  
+       generate_random_GM,     
 
        # agent.jl
        init_aif,

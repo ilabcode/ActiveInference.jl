@@ -16,7 +16,6 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     alpha = agent.parameters["alpha"]
     n_factors = length(agent.settings["num_controls"])
 
-
     #gamma = agent.parameters["gamma"]
     #aif.gamma = gamma
 
@@ -41,7 +40,6 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
         action_p[factor] = softmax(log_action_marginals[factor] * alpha)
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
     end
-
 
     return action_distribution[1]
 end
