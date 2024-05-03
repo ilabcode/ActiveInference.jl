@@ -1,6 +1,7 @@
 using IterTools
 using LinearAlgebra
 using ActiveInference
+using ActionModels
 using Test
 
 """ Test Utils & ActionModels.jl Extensions """
@@ -80,3 +81,36 @@ end
 
 
 end
+
+
+@testset "ActionModels Agent and Multiple Factors" begin
+
+    # Initializse States, Observations, and Controls
+    states = [25,2]
+    observations = [25,2]
+    controls = [5,1]
+
+    # Generate random Generative Model 
+    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+
+    # Initialize agent with default settings/parameters
+    aif = init_aif(A_matrix, B_matrix);
+
+    observation = [rand(1:observations[i]) for i in axes(observations, 1)]
+
+    single_input!(aif, observation)
+
+    reset!(aif)
+
+    agent = init_agent(
+    action_pomdp!,
+    substruct = aif,
+    settings = aif.settings,
+    parameters= aif.parameters
+)
+    inputs =   [[25,1],[24,1]]
+    give_inputs!(agent, inputs)
+    reset!(agent)
+
+end
+
