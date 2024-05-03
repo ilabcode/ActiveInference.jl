@@ -41,7 +41,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
     end
 
-    return action_distribution[1]
+    return action_distribution
 end
 
 function action_pomdp!(aif::AIF, obs::Vector{Int64})
@@ -52,7 +52,7 @@ function action_pomdp!(aif::AIF, obs::Vector{Int64})
 
     # Initialize an empty arrays for action distribution per factor
     action_p = array_of_any(n_factors)
-    action_distribution = Vector{Categorical{Float64}}(undef, n_factors)
+    action_distribution = Vector(undef, n_factors)
 
     ### Infer states & policies
 

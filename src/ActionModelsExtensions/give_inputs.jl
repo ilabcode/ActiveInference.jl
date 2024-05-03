@@ -21,7 +21,8 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
 
     # if there is only one factor
     if num_factors == 1
-        aif.action = rand(action_distributions)
+        action = rand(action_distributions[1])
+        push!(aif.action, action)
         push!(aif.states["action"], aif.action)
 
 
