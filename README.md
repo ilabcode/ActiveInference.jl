@@ -77,7 +77,9 @@ aif = init_aif(A_matrix,
                B_matrix;
                settings = settings,
                parameters = parameters);
-
+````
+![Agent Output](.github/agent_output.PNG)
+````@example Introduction
 # Give observation to the agent and run state inference.
 observation = [3,1]
 infer_states!(aif, observation)
