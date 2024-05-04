@@ -12,7 +12,7 @@ ActiveInference.jl is a new Julia package designed to implement active inference
 ![Maze Animation](.github/animation_maze.gif)
 * Example visualization of an agent navigating a maze, inspired by the one described in [Bruineberg et al., 2018](https://www.sciencedirect.com/science/article/pii/S0022519318303151?via%3Dihub).
 Left: A synthetic agent wants to reach the end of the maze environment while avoiding dark-colored locations.
-Right: The agent's noisy prior expectations about the state of the environment parameterized by Dirichlet distributions being updated dynamically as it moves through the maze.
+Right: The agent's noisy prior expectations about the state of the environment parameterized by Dirichlet distributions are updated dynamically as it moves through the maze.
 
 ## Installation
 Install ActiveInference.jl using the Julia package manager:
@@ -62,3 +62,38 @@ size(A_matrix[2]) # Array{Float64, 3} with these dimensions: (2, 25, 2)
 
 ````
 More detailed description of Julia arrays can be found in the official [Julia Documentation](https://docs.julialang.org/en/v1/base/arrays/)
+
+### Basic Usage 
+
+````@example Introduction
+
+# Define settings as a dictionary.
+settings = Dict(
+    "num_controls" => [2, 1],
+    "factors_to_learn" => "all",
+    "policy_len" => 1,
+    "use_param_info_gain" => false,
+    "control_fac_idx" => [1],
+    "modalities_to_learn" => "all",
+    "use_states_info_gain" => true,
+    "action_selection" => "stochastic",
+    "use_utility" => true)
+
+# Define parameters as a dictionary.
+parameters = Dict(
+    "lr_pA" => 1.0,
+    "fr_pA" => 1.0,
+    "lr_pB" => 1.0,
+    "lr_pD" => 1.0,
+    "alpha" => 16.0,
+    "gamma" => 16.0,
+    "fr_pB" => 1.0,
+    "fr_pD" => 1.0,
+)
+
+# Initialize the AIF-type agent. 
+aif = init_aif(A_matrix,
+               B_matrix;
+               settings = settings,
+               parameters = parameters);
+````
