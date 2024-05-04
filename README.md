@@ -26,3 +26,38 @@ using ActiveInference
 
 ## Getting Started 
 
+### Understanding Vector Data Types in ActiveInference.jl
+The generative model is defined using arrays of type Array{Any}, where each element can itself be a multi-dimensional array or matrix. For Example: 
+
+If there is only one modality 
+````@example Introduction
+
+# Initializse States, Observations, and Controls
+states = [25]
+observations = [25]
+controls = [2] # Two controls (e.g. left and right)
+
+# Generate random Generative Model 
+A_matrix, B_matrix = generate_random_GM(states, observations, controls);
+
+# Here, the A_matrix is a one element Vector{Any} (alias for Array{Any, 1}) where the element is a 25x25 Matrix
+size(A_matrix[1]) 
+
+````
+
+If there are more modalities
+````@example Introduction
+
+# Initializse States, Observations, and Controls
+states = [25,2] 
+observations = [25,2]
+controls = [2,1] # Only the first factor is controllable (e.g. left and right)
+
+# Generate random Generative Model 
+A_matrix, B_matrix = generate_random_GM(states, observations, controls);
+
+# Each modality is stored as a separate element.
+size(A_matrix[1]) # Array{Float64, 3} with these dimensions: (25, 25, 2)
+size(A_matrix[2]) # Array{Float64, 3} with these dimensions: (2, 25, 2)
+
+````
