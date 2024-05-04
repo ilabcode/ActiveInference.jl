@@ -112,5 +112,7 @@ end
     give_inputs!(agent, inputs)
     reset!(agent)
 
+    action_pomdp!(agent, observation)
+
 end
 
