@@ -1,14 +1,22 @@
 using ActiveInference
 using Test
+using Glob
 
+ActiveInference_path = dirname(dirname(pathof(ActiveInference)))
 
+@testset "all tests" begin
+    test_path = ActiveInference_path * "/test/"
 
-categorical_dist = rand(3)
-categorical_dist = norm_dist(categorical_dist)
+    @testset "quick tests" begin
+        # Include quick tests similar to pre-commit tests
+        include(test_path * "quicktests.jl")
+    end
 
+    # List the Julia filenames in the testsuite
+    filenames = glob("*.jl", test_path * "testsuite")
 
-
-
-@testset "ActiveInference.jl" begin
-      
+    # For each file
+    for filename in filenames
+        include(test_path * filename)
+    end
 end

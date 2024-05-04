@@ -29,7 +29,7 @@ mutable struct AIF
     prior::Array{Any,1}  # Prior beliefs about states
     Q_pi::Array{Float64,1} # Posterior beliefs over policies
     G::Array{Float64,1} # Expected free energy of policy
-    action::Vector{Float64} # Last action
+    action::Vector{Any} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
@@ -96,7 +96,7 @@ function create_aif(A, B;
     prior = D
     Q_pi = ones(length(policies)) / length(policies)  
     G = zeros(length(policies))
-    action = Float64[]
+    action = []
 
     # initialize states dictionary
     states = Dict(

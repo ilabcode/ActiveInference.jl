@@ -221,43 +221,32 @@ function get_log_action_marginals(aif)
     return log_action_marginals
 end
 
-#=
-"""Function for creating the B-Matrix || Needs to be made generic! """
-function create_B_matrix(grid_locations, actions)
-    num_states = length(grid_locations)
-    num_actions = length(actions)
-    B = zeros(num_states, num_states, num_actions)
-    
-    len_y, len_x = size(grid_locations)
+""" Generate Random Generative Model as A and B matrices """
+function generate_random_GM(n_states::Vector{Int64}, n_obs::Vector{Int64}, n_controls::Vector{Int64})
 
-    # Create a map from grid locations to the index 
-    location_to_index = Dict(loc => idx for (idx, loc) in enumerate(grid_locations))
+    # Initialize A matrices:
+    A_shapes = [[o_dim; n_states] for o_dim in n_obs]
+    A = array_of_any_zeros(A_shapes)
 
-    for (action_id, action_label) in enumerate(actions)
-        for (curr_state, grid_location) in enumerate(grid_locations)
-            y, x = grid_location
-
-            # Compute next location
-            next_y, next_x = y, x
-            if action_label == "DOWN" # UP and DOWN is reversed
-                next_y = y < len_y ? y + 1 : y
-            elseif action_label == "UP"
-                next_y = y > 1 ? y - 1 : y
-            elseif action_label == "LEFT"
-                next_x = x > 1 ? x - 1 : x
-            elseif action_label == "RIGHT"
-                next_x = x < len_x ? x + 1 : x
-            elseif action_label == "STAY"    
-            end
-
-            new_location = (next_y, next_x)
-            next_state = location_to_index[new_location]
-
-            # Populating the B matrix
-            B[next_state, curr_state, action_id] = 1
+    # Fill A matrices with random probabilities
+    for (i, matrix) in enumerate(A)
+        for idx in CartesianIndices(matrix)
+            matrix[idx] = rand()
         end
+        A[i] = norm_dist(matrix)
     end
 
-    return B
-end 
-=# 
+    # Initialize B matrices
+    B_shapes = [[ns, ns, n_controls[f]] for (f, ns) in enumerate(n_states)]
+    B = array_of_any_zeros(B_shapes)
+
+    # Fill B matrices with random probabilities
+    for (i, matrix) in enumerate(B)
+        for idx in CartesianIndices(matrix)
+            matrix[idx] = rand()
+        end
+        B[i] = norm_dist(matrix)
+    end
+
+    return A, B
+end
