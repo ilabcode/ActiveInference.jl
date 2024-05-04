@@ -66,34 +66,26 @@ More detailed description of Julia arrays can be found in the official [Julia Do
 ### Basic Usage 
 
 ````@example Introduction
+# Define some settings as a dictionary.
+settings = Dict( "policy_len" => 3)
 
-# Define settings as a dictionary.
-settings = Dict(
-    "num_controls" => [2, 1],
-    "factors_to_learn" => "all",
-    "policy_len" => 1,
-    "use_param_info_gain" => false,
-    "control_fac_idx" => [1],
-    "modalities_to_learn" => "all",
-    "use_states_info_gain" => true,
-    "action_selection" => "stochastic",
-    "use_utility" => true)
+# Define some parameters as a dictionary.
+parameters = Dict("alpha" => 16.0 )
 
-# Define parameters as a dictionary.
-parameters = Dict(
-    "lr_pA" => 1.0,
-    "fr_pA" => 1.0,
-    "lr_pB" => 1.0,
-    "lr_pD" => 1.0,
-    "alpha" => 16.0,
-    "gamma" => 16.0,
-    "fr_pB" => 1.0,
-    "fr_pD" => 1.0,
-)
-
-# Initialize the AIF-type agent. 
+# Initialize the AIF-type agent.
 aif = init_aif(A_matrix,
                B_matrix;
                settings = settings,
                parameters = parameters);
+
+# Give observation to the agent and run state inference.
+observation = [3,1]
+infer_states!(aif, observation)
+
+# Infer policies 
+infer_policies!(aif)
+
+# Sample action
+sample_action!(aif)
+
 ````
