@@ -29,7 +29,7 @@ using ActiveInference
 ### Understanding Vector Data Types in ActiveInference.jl
 The generative model is defined using arrays of type Array{Any}, where each element can itself be a multi-dimensional array or matrix. For Example: 
 
-If there is only one modality 
+*If there is only one modality
 ````@example Introduction
 
 # Initializse States, Observations, and Controls
@@ -45,7 +45,7 @@ size(A_matrix[1])
 
 ````
 
-If there are more modalities
+*If there are more modalities
 ````@example Introduction
 
 # Initializse States, Observations, and Controls
@@ -61,3 +61,4 @@ size(A_matrix[1]) # Array{Float64, 3} with these dimensions: (25, 25, 2)
 size(A_matrix[2]) # Array{Float64, 3} with these dimensions: (2, 25, 2)
 
 ````
+More detailed description of Julia arrays can be found in the official [Julia Documentation](https://docs.julialang.org/en/v1/base/arrays/)
