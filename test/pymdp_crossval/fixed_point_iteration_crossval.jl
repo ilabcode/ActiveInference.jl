@@ -2,6 +2,7 @@ using Pkg
 using PyCall
 using LinearAlgebra
 using ActiveInference
+using Revise
 
 #Pkg.develop(path = raw"C:\Users\jonat\Desktop\University\Exam\4_Semester\Continued_ActiveInference\Dev_Branch\ActiveInference.jl")
 
@@ -29,10 +30,27 @@ pymdp.utils.onehot(1, 5)
 @pyimport pymdp.agent as pymdp_agent
 Agent_py = pymdp_agent.Agent
 
+# Creating an numpy array in  julia
+empty_array = PyObject[]
+
+for _ in 1:4
+    push!(empty_array, PyObject[])
+end
+
+A_py = PyObject(empty_array)
+A_py = np.array(A_py)
 
 
-# Copying the A-matrix
-A_py = utils.obj_array(length(A))
+
+# Checkin the type of python object
+#pytype = pybuiltin("type")
+#pytype(numpy_array_of_arrays)
+
+A_py[1] = np.array(A[1])
+
+A[1]
+
+np.array(A[1])
 
 for i in 1:length(A)
     A_py[i] = np.array(A[i])
@@ -47,6 +65,8 @@ for i in 1:length(B)
 end
 
 B_py
+
+
 
 # Checking if the arrays are as they are supposed to be
 pyeval("A_py[0]", A_py=A_py)
