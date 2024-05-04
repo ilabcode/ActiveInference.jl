@@ -945,10 +945,7 @@ deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
 git-tree-sha1 = "18144f3e9cbe9b15b070288eef858f71b291ce37"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
 version = "0.3.27"
-<<<<<<< HEAD
 weakdeps = ["ChainRulesCore", "ChangesOfVariables", "InverseFunctions"]
-=======
->>>>>>> 66ab382d4377606564d078ea4e3f1dc29bbd39e5
 
     [deps.LogExpFunctions.extensions]
     LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
