@@ -78,6 +78,7 @@ export # maths.jl
        set_parameters!,
        reset!,
        single_input!,
+       give_inputs!,
        set_save_history!
 
 

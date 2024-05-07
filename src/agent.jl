@@ -136,7 +136,35 @@ function create_aif(A, B;
     return AIF(A, B, C, D, E, pA, pB, pD, lr_pA, fr_pA, lr_pB, fr_pB, lr_pD, fr_pD, modalities_to_learn, factors_to_learn, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, use_param_info_gain, action_selection, states, parameters, settings, save_history)
 end
 
-# Initialize active inference agent 
+"""
+Initialize Active Inference Agent
+function init_aif(
+        A,
+        B;
+        C=nothing,
+        D=nothing,
+        E = nothing,
+        pA = nothing,
+        pB = nothing, 
+        pD = nothing,
+        parameters::Union{Nothing, Dict{String,Float64}} = nothing,
+        settings::Union{Nothing, Dict} = nothing,
+        save_history::Bool = true)
+
+# Arguments
+- 'A': Relationship between hidden states and observations.
+- 'B': Transition probabilities.
+- 'C = nothing': Prior preferences over observations.
+- 'D = nothing': Prior over initial hidden states.
+- 'E = nothing': Prior over policies. (habits)
+- 'pA = nothing':
+- 'pB = nothing':
+- 'pD = nothing':
+- 'parameters::Union{Nothing, Dict{String,Float64}} = nothing':
+- 'settings::Union{Nothing, Dict} = nothing':
+- 'settings::Union{Nothing, Dict} = nothing':
+
+"""
 function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
                   parameters::Union{Nothing, Dict{String,Float64}} = nothing,
                   settings::Union{Nothing, Dict} = nothing,
@@ -258,7 +286,7 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
     return aif
 end
 
-# Update the agents's beliefs over states
+""" Update the agents's beliefs over states """
 function infer_states!(aif::AIF, obs::Vector{Int64})
     if !isempty(aif.action)
         int_action = round.(Int, aif.action)
@@ -276,7 +304,7 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
 
 end
 
-# Update the agents's beliefs over policies
+""" Update the agents's beliefs over policies """
 function infer_policies!(aif::AIF)
     # Update posterior over policies and expected free energies of policies
     q_pi, G = update_posterior_policies(aif.qs_current, aif.A, aif.B, aif.C, aif.policies, aif.use_utility, aif.use_states_info_gain, aif.use_param_info_gain, aif.pA, aif.pB, aif.E, aif.gamma)
@@ -291,7 +319,7 @@ function infer_policies!(aif::AIF)
     return q_pi, G
 end
 
-# Sample action from the beliefs over policies
+""" Sample action from the beliefs over policies """
 function sample_action!(aif::AIF)
     action = sample_action(aif.Q_pi, aif.policies, aif.num_controls; action_selection=aif.action_selection, alpha=aif.alpha)
 
@@ -304,7 +332,7 @@ function sample_action!(aif::AIF)
     return action
 end
 
-# Update A-matrix
+""" Update A-matrix """
 function update_A!(aif::AIF, obs::Vector{Int64})
 
     qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
@@ -315,7 +343,7 @@ function update_A!(aif::AIF, obs::Vector{Int64})
     return qA
 end
 
-# Update B-matrix
+""" Update B-matrix """
 function update_B!(aif::AIF, qs_prev)
 
     qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
@@ -326,7 +354,7 @@ function update_B!(aif::AIF, qs_prev)
     return qB
 end
 
-# Update D-matrix
+""" Update D-matrix """
 function update_D!(aif::AIF, qs_t1)
 
     qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)

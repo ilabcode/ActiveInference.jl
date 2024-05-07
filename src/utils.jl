@@ -30,8 +30,7 @@ function array_of_any_uniform(shape_list)
     return arr
 end
 
-""" Function for Creating onehots"""
-# Creates a vector filled with 0's and a 1 in a given location
+""" Creates a onehot encoded vector """
 function onehot(value, num_values)
     arr = zeros(Float64, num_values)
     arr[value] = 1.0
