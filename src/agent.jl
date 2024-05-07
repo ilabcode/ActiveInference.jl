@@ -92,7 +92,7 @@ function create_aif(A, B;
     end
 
     policies = construct_policies_full(num_states, num_controls=num_controls, policy_len=policy_len, control_fac_idx=control_fac_idx)
-    qs_current = onehot(1, size(B, 1))
+    qs_current = array_of_any_uniform(num_states)
     prior = D
     Q_pi = ones(length(policies)) / length(policies)  
     G = zeros(length(policies))

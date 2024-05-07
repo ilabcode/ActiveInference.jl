@@ -39,7 +39,7 @@ function update_state_likelihood_dirichlet(pB, B, actions, qs, qs_prev; lr = 1.0
 
     for factor in factors
         dfdb = spm_cross(qs[factor], qs_prev[factor])
-        dfdb .*= (B[factor][:,:,Int(actions[factor])])
+        dfdb .*= (B[factor][:,:,Int(actions[factor])] .> 0)
         qB[factor][:,:,Int(actions[factor])] = qB[factor][:,:,Int(actions[factor])]*fr .+ (lr .* dfdb)
     end
 

@@ -9,7 +9,7 @@ using ActionModels
 
 function ActionModels.reset!(aif::AIF)
     # Reset the agent's state fields to initial conditions
-    aif.qs_current = onehot(1, size(aif.B, 1))
+    aif.qs_current = array_of_any_uniform([size(aif.B[f], 1) for f in eachindex(aif.B)])
     aif.prior = aif.D
     aif.Q_pi = ones(length(aif.policies)) / length(aif.policies)
     aif.G = zeros(length(aif.policies))
