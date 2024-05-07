@@ -141,7 +141,7 @@ function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
     return z
 end
 
-""" Multi-dimensional inner product """
+#Multi-dimensional inner product
 #= Instead of summing over all indices, the function sums over only the last three
 dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X. =#
     """
@@ -171,7 +171,7 @@ function spm_dot(X, x)
     return Y
 end
 """
-
+""" Multi-dimensional inner product """
 function spm_dot(X, x)
     if all(isa.(x, AbstractArray))
         n_factors = length(x)

@@ -62,7 +62,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
         qL = dot_likelihood(likelihood, qs[1])  
         return to_array_of_any(softmax(qL .+ prior[1]))
     else
-        # Run Iteration [NOTE: Tensor operations can be made more efficient perhaps?]
+        # Run Iteration 
         curr_iter = 0
         while curr_iter < num_iter && dF >= dF_tol
             qs_all = qs[1]
@@ -101,7 +101,7 @@ function compute_accuracy(log_likelihood, qs)
     ndims_ll = ndims(log_likelihood)
     dims = (ndims_ll - n_factors + 1) : ndims_ll
 
-    # Calculate the accuracy term using array comprehension and reduction [NOTE: Tensor operations can be made more efficient perhaps?]
+    # Calculate the accuracy term
     accuracy = sum(
         log_likelihood[indices...] * prod(qs[factor][indices[dims[factor]]] for factor in 1:n_factors)
         for indices in Iterators.product((1:size(log_likelihood, i) for i in 1:ndims_ll)...)
@@ -118,9 +118,9 @@ function calc_free_energy(qs, prior, n_factors, likelihood=nothing)
     
     # Calculate free energy for each factor
     for factor in 1:n_factors
-        # Neg-entropy of posterior marginal H(q[f])
+        # Neg-entropy of posterior marginal
         negH_qs = dot(qs[factor], log.(qs[factor] .+ 1e-16))
-        # Cross entropy of posterior marginal with prior marginal H(q[f],p[f])
+        # Cross entropy of posterior marginal with prior marginal
         xH_qp = -dot(qs[factor], prior[factor])
         # Add to total free energy
         free_energy += negH_qs + xH_qp
@@ -135,7 +135,6 @@ function calc_free_energy(qs, prior, n_factors, likelihood=nothing)
 end
 
 #### Policy Inference #### 
-
 """ Update Posterior over Policies """
 function update_posterior_policies(
     qs::Vector{Any},
