@@ -239,7 +239,6 @@ for i in 1:3
     D_julia_res[i] = h5read(file_path_res_julia, "D_julia_res_$i")
 end
 
-
 # pymdp
 qD_python_res = array_of_any(3)
 for i in 1:3
