@@ -2,7 +2,7 @@ using ActiveInference
 using HDF5
 
 # Path to file with generative model
-file_path_gm = "test/pymdp_crossval/generative_model_creation/gm_data/A_B_matrices.h5"
+file_path_gm = "test/pymdp_cross_val/generative_model_creation/gm_data/A_B_matrices.h5"
 
 #############################################
 ### Loading Generative Model from h5 file ###
@@ -55,7 +55,7 @@ action = h5read(file_path_gm, "action")
 ###################################################
 
 # Specifying the file path for the results
-file_path_res = "test/pymdp_crossval/data/cross_val_results_data_julia.h5"
+file_path_res = "test/pymdp_cross_val/data/cross_val_results_data_julia.h5"
 
 # Creating agent
 cross_agent = init_aif(A_cross, B_cross);

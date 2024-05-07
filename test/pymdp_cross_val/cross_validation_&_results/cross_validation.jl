@@ -6,8 +6,8 @@ using ExcelFiles
 
 #-------------------------- ActiveInference.jl & pymdp cross validation --------------------------
 
-file_path_res_julia = "test/pymdp_crossval/data/cross_val_results_data_julia.h5"
-file_path_res_python = "test/pymdp_crossval/data/cross_val_results_data_python.h5"
+file_path_res_julia = "test/pymdp_cross_val/data/cross_val_results_data_julia.h5"
+file_path_res_python = "test/pymdp_cross_val/data/cross_val_results_data_python.h5"
 
 ################################
 ### infer_states() cross_val ###

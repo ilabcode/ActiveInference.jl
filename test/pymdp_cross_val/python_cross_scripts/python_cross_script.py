@@ -5,7 +5,7 @@ from pymdp import utils, maths, learning, control, inference
 from pymdp.agent import Agent
 
 # Path to file with generative model
-file_path_gm = "test/pymdp_crossval/generative_model_creation/gm_data/A_B_matrices.h5"
+file_path_gm = "test/pymdp_cross_val/generative_model_creation/gm_data/A_B_matrices.h5"
 
 #############################################
 ### Loading Generative Model from h5 file ###
@@ -75,7 +75,7 @@ action = action - 1
 ###################################################
 
 # Specifying the file path for the results
-file_path_res = "test/pymdp_crossval/data/cross_val_results_data_python.h5"
+file_path_res = "test/pymdp_cross_val/data/cross_val_results_data_python.h5"
 
 # Creating agent
 cross_agent = Agent(A = A_cross, B = B_cross)
