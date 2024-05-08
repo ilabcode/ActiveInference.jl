@@ -159,43 +159,6 @@ function action_select(probabilities)
 end
 
 
-"""Function for Plotting Grid World"""
-function plot_gridworld(grid_locations)
-    # Determine the size of the grid
-    max_x = maximum(x -> x[2], grid_locations)
-    max_y = maximum(y -> y[1], grid_locations)
-
-    # Initialize a matrix for the heatmap
-    heatmap_matrix = zeros(max_y, max_x)
-
-    # Fill the matrix with state ids
-    for (index, (y, x)) in enumerate(grid_locations)
-        heatmap_matrix[y, x] = index
-    end
-
-    # Create the heatmap
-    heatmap_plot = heatmap(1:max_x, 1:max_y, heatmap_matrix, 
-                           aspect_ratio=:equal, 
-                           xticks=1:max_x,
-                           yticks=1:max_y, 
-                           legend=false, 
-                           color=:viridis,
-                           yflip=true
-                           )
-
-
-    max_row, max_col = size(grid_locations)
-
-    index_matrix = zeros(Int, max_row, max_col)
-
-    for (index, (x, y)) in enumerate(grid_locations)
-    index_matrix[x, y] = index
-    annotate!(y, x, text(string(index), :center, 8, :white))
-    end
-
-    return heatmap_plot
-end
-
 """ Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
