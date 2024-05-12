@@ -29,7 +29,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
     # if there are multiple factors
     else
         # Initialize a vector for sampled actions 
-        sampled_actions = zeros(num_factors)
+        sampled_actions = zeros(Real,num_factors)
 
         # Sample action per factor
         for factor in eachindex(action_distributions)

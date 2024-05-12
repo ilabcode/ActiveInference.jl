@@ -11,31 +11,31 @@ mutable struct AIF
     pA::Union{Array{Any,1}, Nothing}
     pB::Union{Array{Any,1}, Nothing}
     pD::Union{Array{Any,1}, Nothing}
-    lr_pA::Float64 # pA Learning Parameter
-    fr_pA::Float64 # pA Forgetting Parameter,  1.0 for no forgetting
-    lr_pB::Float64 # pB learning Parameter
-    fr_pB::Float64 # pB Forgetting Parameter
-    lr_pD::Float64 # pD Learning parameter
-    fr_pD::Float64 # PD Forgetting parameter
+    lr_pA::Real # pA Learning Parameter
+    fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
+    lr_pB::Real # pB learning Parameter
+    fr_pB::Real # pB Forgetting Parameter
+    lr_pD::Real # pD Learning parameter
+    fr_pD::Real # PD Forgetting parameter
     modalities_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# modality"
     factors_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# factor"
-    gamma::Float64 # Gamma parameter
-    alpha::Float64 # Alpha parameter
+    gamma::Real # Gamma parameter
+    alpha::Real # Alpha parameter
     policies::Array  # Inferred from the B matrix
     num_controls::Array{Int,1}  # Number of actions per factor
     control_fac_idx::Array{Int,1}  # Indices of controllable factors
     policy_len::Int  # Policy length
     qs_current::Array{Any,1}  # Current beliefs about states
     prior::Array{Any,1}  # Prior beliefs about states
-    Q_pi::Array{Float64,1} # Posterior beliefs over policies
-    G::Array{Float64,1} # Expected free energy of policy
+    Q_pi::Array{Real,1} # Posterior beliefs over policies
+    G::Array{Real,1} # Expected free energy of policy
     action::Vector{Any} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
     action_selection::String # Action selection: can be either "deterministic" or "stochastic"   
     states::Dict{String,Array{Any,1}} # States Dictionary
-    parameters::Dict{String,Float64} # Parameters Dictionary
+    parameters::Dict{String,Real} # Parameters Dictionary
     settings::Dict{String,Any} # Settings Dictionary
     save_history::Bool # Save history boolean flag
 end
@@ -94,13 +94,13 @@ function create_aif(A, B;
     policies = construct_policies_full(num_states, num_controls=num_controls, policy_len=policy_len, control_fac_idx=control_fac_idx)
     qs_current = array_of_any_uniform(num_states)
     prior = D
-    Q_pi = ones(length(policies)) / length(policies)  
-    G = zeros(length(policies))
+    Q_pi = ones(Real,length(policies)) / length(policies)  
+    G = zeros(Real,length(policies))
     action = []
 
     # initialize states dictionary
     states = Dict(
-        "action" => Vector{Float64}[],
+        "action" => Vector{Real}[],
         "posterior_states" => Vector{Any}[],
         "prior" => Vector{Any}[],
         "posterior_policies" => Vector{Any}[],
@@ -147,7 +147,7 @@ function init_aif(
         pA = nothing,
         pB = nothing, 
         pD = nothing,
-        parameters::Union{Nothing, Dict{String,Float64}} = nothing,
+        parameters::Union{Nothing, Dict{String,Real}} = nothing,
         settings::Union{Nothing, Dict} = nothing,
         save_history::Bool = true)
 
@@ -160,13 +160,13 @@ function init_aif(
 - 'pA = nothing':
 - 'pB = nothing':
 - 'pD = nothing':
-- 'parameters::Union{Nothing, Dict{String,Float64}} = nothing':
+- 'parameters::Union{Nothing, Dict{String,Real}} = nothing':
 - 'settings::Union{Nothing, Dict} = nothing':
 - 'settings::Union{Nothing, Dict} = nothing':
 
 """
 function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
-                  parameters::Union{Nothing, Dict{String,Float64}} = nothing,
+                  parameters::Union{Nothing, Dict{String,Real}} = nothing,
                   settings::Union{Nothing, Dict} = nothing,
                   save_history::Bool = true)
 
