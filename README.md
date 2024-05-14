@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Julia Package for Active Inference.
-ActiveInference.jl is a new Julia package designed to implement active inference within discrete state-spaces using Partially Observable Markov Decision Processes (POMDP's). With ActiveInference.jl you can define a generative model for active inference and run agent-based simulations. Additionally, we provide a functionality for fitting experimental data for parameter recovery. 
+ActiveInference.jl is a new Julia package for the computational modeling of active inference. We provide the necessary infrastructure for defining active inference models, currently implemented as partially observable Markov decision processes. After defining the generative model, you can simulate actions using agent-based simulations. We also provide the functionality to fit experimental data to active inference models for parameter recovery. 
 
 ![Maze Animation](.github/animation_maze.gif)
 * Example visualization of an agent navigating a maze, inspired by the one described in [Bruineberg et al., 2018](https://www.sciencedirect.com/science/article/pii/S0022519318303151?via%3Dihub).
