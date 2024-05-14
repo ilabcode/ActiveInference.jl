@@ -1,10 +1,7 @@
 [deps]
 ActionModels = "320cf53b-cc3b-4b34-9a10-0ecb113566a3"
-ActiveInference = "688b0e7a-0122-4325-8669-5ff08899a59e"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
-Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
