@@ -59,7 +59,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
 
     # Single factor condition
     if n_factors == 1
-        qL = dot_likelihood(likelihood, qs[1])  
+        qL = spm_dot(likelihood, qs[1])  
         return to_array_of_any(softmax(qL .+ prior[1]))
     else
         # Run Iteration 

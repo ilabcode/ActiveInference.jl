@@ -2,7 +2,6 @@ using HDF5
 using ActiveInference
 using DataFrames
 using CSV
-using ExcelFiles
 
 #-------------------------- ActiveInference.jl & pymdp cross validation --------------------------
 
