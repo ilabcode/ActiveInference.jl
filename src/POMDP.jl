@@ -10,6 +10,8 @@ This module contains models of Partially Observable Markov Decision Processes un
 
 function action_pomdp!(agent::Agent, obs::Vector{Int64})
 
+
+    # Small change
     aif = agent.substruct
 
     ### Get parameters 

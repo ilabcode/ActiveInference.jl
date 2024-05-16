@@ -15,7 +15,7 @@ end
 function array_of_any_zeros(shape_list)
     arr = Array{Any}(undef, length(shape_list))
     for (i, shape) in enumerate(shape_list)
-        arr[i] = zeros(Float64, shape...)
+        arr[i] = zeros(Real, shape...)
     end
     return arr
 end
@@ -25,14 +25,14 @@ function array_of_any_uniform(shape_list)
     arr = Array{Any}(undef, length(shape_list))  
     for i in eachindex(shape_list)
         shape = shape_list[i]
-        arr[i] = norm_dist(ones(shape))  
+        arr[i] = norm_dist(ones(Real, shape))  
     end
     return arr
 end
 
 """ Creates a onehot encoded vector """
 function onehot(value, num_values)
-    arr = zeros(Float64, num_values)
+    arr = zeros(Real, num_values)
     arr[value] = 1.0
     return arr
 end
@@ -84,13 +84,13 @@ function process_observation(obs, num_modalities, num_observations)
 
     # Check if obs is an integer, and num_modalities is 1, then it's a single modality observation
     if isa(obs, Int) && num_modalities == 1
-        one_hot = zeros(Float64, num_observations[1])
+        one_hot = zeros(Real, num_observations[1])
         one_hot[obs] = 1.0
         push!(processed_obs, one_hot)
     elseif (isa(obs, Array) || isa(obs, Tuple)) && length(obs) == num_modalities
         # If obs is an array or tuple, and its length matches num_modalities, process each modality
         for (m, o) in enumerate(obs)
-            one_hot = zeros(Float64, num_observations[m])
+            one_hot = zeros(Real, num_observations[m])
             one_hot[o] = 1.0
             push!(processed_obs, one_hot)
         end
@@ -139,7 +139,7 @@ end
 
 
 """ Selects the highest value from Array -- used for deterministic action sampling """
-function select_highest(options_array::Array{Float64})
+function select_highest(options_array::Array{Real})
     options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]
     max_value = maximum(value for (idx, value) in options_with_idx)
     same_prob = [idx for (idx, value) in options_with_idx if abs(value - max_value) <= 1e-8]
@@ -158,43 +158,6 @@ function action_select(probabilities)
     return findfirst(sample_onehot .== 1)
 end
 
-
-"""Function for Plotting Grid World"""
-function plot_gridworld(grid_locations)
-    # Determine the size of the grid
-    max_x = maximum(x -> x[2], grid_locations)
-    max_y = maximum(y -> y[1], grid_locations)
-
-    # Initialize a matrix for the heatmap
-    heatmap_matrix = zeros(max_y, max_x)
-
-    # Fill the matrix with state ids
-    for (index, (y, x)) in enumerate(grid_locations)
-        heatmap_matrix[y, x] = index
-    end
-
-    # Create the heatmap
-    heatmap_plot = heatmap(1:max_x, 1:max_y, heatmap_matrix, 
-                           aspect_ratio=:equal, 
-                           xticks=1:max_x,
-                           yticks=1:max_y, 
-                           legend=false, 
-                           color=:viridis,
-                           yflip=true
-                           )
-
-
-    max_row, max_col = size(grid_locations)
-
-    index_matrix = zeros(Int, max_row, max_col)
-
-    for (index, (x, y)) in enumerate(grid_locations)
-    index_matrix[x, y] = index
-    annotate!(y, x, text(string(index), :center, 8, :white))
-    end
-
-    return heatmap_plot
-end
 
 """ Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
