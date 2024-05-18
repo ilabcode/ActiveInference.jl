@@ -139,7 +139,7 @@ end
 
 
 """ Selects the highest value from Array -- used for deterministic action sampling """
-function select_highest(options_array::Array{Real})
+function select_highest(options_array::Array{Float64})
     options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]
     max_value = maximum(value for (idx, value) in options_with_idx)
     same_prob = [idx for (idx, value) in options_with_idx if abs(value - max_value) <= 1e-8]

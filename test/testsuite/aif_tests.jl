@@ -137,7 +137,7 @@ end
         )
 
     # Give custom parameters to agent
-    parameters = Dict(
+    parameters = Dict{String, Real}(
         "lr_pA" => 0.5,
         "fr_pA" => 1.0,
         "lr_pB" => 0.6,
