@@ -168,25 +168,25 @@ function init_aif(
 function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
                   parameters::Union{Nothing, Dict{String,Real}} = nothing,
                   settings::Union{Nothing, Dict} = nothing,
-                  save_history::Bool = true)
+                  save_history::Bool = true, verbose::Bool = true)
 
     # Throw warning if no D-vector is provided. 
-    if isnothing(C)
+    if verbose == true && isnothing(C)
         @warn "No C-vector provided, no prior preferences will be used."
     end 
 
     # Throw warning if no D-vector is provided. 
-    if isnothing(D)
+    if verbose == true && isnothing(D)
         @warn "No D-vector provided, a uniform distribution will be used."
     end 
 
     # Throw warning if no E-vector is provided. 
-    if isnothing(E)
+    if verbose == true && isnothing(E)
         @warn "No E-vector provided, a uniform distribution will be used."
     end           
     
     # Check if settings are provided or use defaults
-    if isnothing(settings)
+    if verbose == true && isnothing(settings)
         @warn "No settings provided, default settings will be used."
         settings = Dict(
             "policy_len" => 1, 
@@ -202,7 +202,7 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
     end
 
     # Check if parameters are provided or use defaults
-    if isnothing(parameters)
+    if verbose == true && isnothing(parameters)
         @warn "No parameters provided, default parameters will be used."
         parameters = Dict("gamma" => 16.0,
                           "alpha" => 16.0,
@@ -266,22 +266,24 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
                     )
 
     #Print out agent settings
-    settings_summary = 
-    """
-    AIF Agent initialized successfully with the following settings and parameters:
-    - Gamma (γ): $(aif.gamma)
-    - Alpha (α): $(aif.alpha)
-    - Policy Length: $(aif.policy_len)
-    - Number of Controls: $(aif.num_controls)
-    - Controllable Factors Indices: $(aif.control_fac_idx)
-    - Use Utility: $(aif.use_utility)
-    - Use States Information Gain: $(aif.use_states_info_gain)
-    - Use Parameter Information Gain: $(aif.use_param_info_gain)
-    - Action Selection: $(aif.action_selection)
-    - Modalities to Learn = $(aif.modalities_to_learn)
-    - Factors to Learn = $(aif.factors_to_learn)
-    """
-    println(settings_summary)
+    if verbose == true
+        settings_summary = 
+        """
+        AIF Agent initialized successfully with the following settings and parameters:
+        - Gamma (γ): $(aif.gamma)
+        - Alpha (α): $(aif.alpha)
+        - Policy Length: $(aif.policy_len)
+        - Number of Controls: $(aif.num_controls)
+        - Controllable Factors Indices: $(aif.control_fac_idx)
+        - Use Utility: $(aif.use_utility)
+        - Use States Information Gain: $(aif.use_states_info_gain)
+        - Use Parameter Information Gain: $(aif.use_param_info_gain)
+        - Action Selection: $(aif.action_selection)
+        - Modalities to Learn = $(aif.modalities_to_learn)
+        - Factors to Learn = $(aif.factors_to_learn)
+        """
+        println(settings_summary)
+    end
     
     return aif
 end
