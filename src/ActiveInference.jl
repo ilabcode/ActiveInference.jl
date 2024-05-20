@@ -88,6 +88,10 @@ export # maths.jl
     include("Environments/EpistChainEnv.jl")
     
     export EpistChainEnv, step!, reset_env!
+
+    include("Environments/TMazeEnv.jl")
+
+    export TMazeEnv, step_TMaze!, reset_TMaze!, initialize_gp
        
     end
 end

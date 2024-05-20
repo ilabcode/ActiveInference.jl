@@ -45,7 +45,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
     # Initialize posterior and prior
     qs = Array{Any}(undef, n_factors)
     for factor in 1:n_factors
-        qs[factor] = ones(num_states[factor]) / num_states[factor]
+        qs[factor] = ones(Real,num_states[factor]) / num_states[factor]
     end
 
     if prior === nothing
@@ -59,7 +59,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
 
     # Single factor condition
     if n_factors == 1
-        qL = dot_likelihood(likelihood, qs[1])  
+        qL = spm_dot(likelihood, qs[1])  
         return to_array_of_any(softmax(qL .+ prior[1]))
     else
         # Run Iteration 
@@ -67,12 +67,12 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
         while curr_iter < num_iter && dF >= dF_tol
             qs_all = qs[1]
             for factor in 2:n_factors
-                qs_all = qs_all .* reshape(qs[factor], tuple(ones(Int, factor - 1)..., :, 1))
+                qs_all = qs_all .* reshape(qs[factor], tuple(ones(Real, factor - 1)..., :, 1))
             end
             LL_tensor = likelihood .* qs_all
 
             for factor in 1:n_factors
-                qL = zeros(size(qs[factor]))
+                qL = zeros(Real,size(qs[factor]))
                 for i in 1:size(qs[factor], 1)
                     qL[i] = sum([LL_tensor[indices...] / qs[factor][i] for indices in Iterators.product([1:size(LL_tensor, dim) for dim in 1:n_factors]...) if indices[factor] == i])
                 end
@@ -148,16 +148,16 @@ function update_posterior_policies(
     pA = nothing,
     pB = nothing,
     E = nothing,
-    gamma::Float64=16.0
+    gamma::Real=16.0
 )
     n_policies = length(policies)
-    G = zeros(n_policies)
-    q_pi = zeros(n_policies, 1)
-    qs_pi = Vector{Float64}[]
-    qo_pi = Vector{Float64}[]
+    G = zeros(Real,n_policies)
+    q_pi = zeros(Real,n_policies, 1)
+    qs_pi = Vector{Real}[]
+    qo_pi = Vector{Real}[]
   
     if isnothing(E)
-        lnE = spm_log_single(ones(n_policies) / n_policies)
+        lnE = spm_log_single(ones(Real, n_policies) / n_policies)
     else
         lnE = spm_log_single(E)
     end
@@ -303,7 +303,7 @@ end
 function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
     action_marginals = array_of_any_zeros(num_controls)
-    selected_policy = zeros(num_factors)
+    selected_policy = zeros(Real,num_factors)
     
     for (pol_idx, policy) in enumerate(policies)
         for (factor_i, action_i) in enumerate(policy[1,:])
@@ -332,7 +332,7 @@ function compute_accuracy_new(log_likelihood, qs)
     dims = (ndims_ll - n_factors + 1) : ndims_ll
 
     result_size = size(log_likelihood, 1) 
-    results = zeros(result_size)
+    results = zeros(Real,result_size)
 
     for indices in Iterators.product((1:size(log_likelihood, i) for i in 1:ndims_ll)...)
         product = log_likelihood[indices...] * prod(qs[factor][indices[dims[factor]]] for factor in 1:n_factors)
