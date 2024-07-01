@@ -166,7 +166,7 @@ function construct_likelihood_dist(env::TMazeEnv)
     return A
 end
 
-function sample_dist(probabilities)
+function sample_dist(probabilities::Vector{Real})
 
     # Ensure probabilities sum to 1
     probabilities /= sum(probabilities)
