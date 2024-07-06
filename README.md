@@ -57,8 +57,8 @@ controls = [2,1] # Only the first factor is controllable (e.g. left and right)
 A_matrix, B_matrix = generate_random_GM(states, observations, controls);
 
 # Each modality is stored as a separate element.
-size(A_matrix[1]) # Array{Float64, 3} with these dimensions: (25, 25, 2)
-size(A_matrix[2]) # Array{Float64, 3} with these dimensions: (2, 25, 2)
+size(A_matrix[1]) # Array{Real, 3} with these dimensions: (25, 25, 2)
+size(A_matrix[2]) # Array{Real, 3} with these dimensions: (2, 25, 2)
 
 ````
 More detailed description of Julia arrays can be found in the official [Julia Documentation](https://docs.julialang.org/en/v1/base/arrays/)

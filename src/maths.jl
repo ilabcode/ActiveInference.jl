@@ -32,8 +32,8 @@ end
 function spm_log_single(arr)
     EPS_VAL = 1e-16
     return log.(ℯ, (arr .+ EPS_VAL))
+    #return log.(2.7182818284590, (arr .+ EPS_VAL))
 end
-
 
 """Function for Calculating Entropy of A-Matrix"""
 function entropy_A(A)
@@ -55,7 +55,7 @@ end
 
 """ Get Joint Likelihood """
 function get_joint_likelihood(A, obs_processed, num_states)
-    ll = ones(num_states...)
+    ll = ones(Real, num_states...)
     for modality in eachindex(A)
         ll .*= dot_likelihood(A[modality], obs_processed[modality])
     end
@@ -117,10 +117,10 @@ function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
 
     # If y is provided, perform the cross multiplication.
     if y !== nothing
-        reshape_dims_x = tuple(size(x)..., ones(Int, ndims(y))...)
+        reshape_dims_x = tuple(size(x)..., ones(Real, ndims(y))...)
         A = reshape(x, reshape_dims_x)
 
-        reshape_dims_y = tuple(ones(Int, ndims(x))..., size(y)...)
+        reshape_dims_y = tuple(ones(Real, ndims(x))..., size(y)...)
         B = reshape(y, reshape_dims_y)
 
         z = A .* B
@@ -142,8 +142,8 @@ function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
 end
 
 #Multidimensional inner product
-#= Instead of summing over all indices, the function sums over only the last three
-dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X.
+# Instead of summing over all indices, the function sums over only the last three
+# dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X.
 
 function spm_dot(X, x)
 
@@ -156,7 +156,7 @@ function spm_dot(X, x)
 
     ndims_X = ndims(X)
     dims = collect(ndims_X - n_factors + 1 : ndims_X)
-    Y = zeros(size(X, 1))
+    Y = zeros(Real, size(X, 1))
 
     for indices in Iterators.product((1:size(X, i) for i in 1:ndims_X)...)
         product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
@@ -170,59 +170,60 @@ function spm_dot(X, x)
 
     return Y
 end
-=#
 
-""" Multi-dimensional inner product """
-function spm_dot(X, x)
-    if all(isa.(x, AbstractArray))
-        n_factors = length(x)
-    else
-        x = [x]
-        n_factors = length(x)
-    end
 
-    ndims_X = ndims(X)
-    dims = collect(ndims_X - n_factors + 1 : ndims_X)
-    Y = zeros(size(X, 1))
+# """ Multi-dimensional inner product """
+# function spm_dot(X, x)
+#     if all(isa.(x, AbstractArray))
+#         n_factors = length(x)
+#     else
+#         x = [x]
+#         n_factors = length(x)
+#     end
 
-    # thread-local storage for accumulators
-    Y_local = [zeros(size(X, 1)) for _ in 1:Threads.nthreads()]
+#     ndims_X = ndims(X)
+#     dims = collect(ndims_X - n_factors + 1 : ndims_X)
+#     Y = zeros(size(X, 1))
 
-    all_indices = collect(Iterators.product([1:size(X, i) for i in 1:ndims_X]...))
+#     thread-local storage for accumulators
+#     Y_local = [zeros(size(X, 1)) for _ in 1:Threads.nthreads()]
 
-    Threads.@threads for idx_tuple in all_indices
-        tid = Threads.threadid()  
-        indices = Tuple(idx_tuple)
-        product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
-        Y_local[tid][indices[1]] += product 
-    end
+#     all_indices = collect(Iterators.product([1:size(X, i) for i in 1:ndims_X]...))
 
-    Y .= Y_local[1]
-    for i in eachindex(Y_local)
-        if i != 1
-            Y .+= Y_local[i]
-        end
-    end
+#     #Threads.@threads for idx_tuple in all_indices
+#     for idx_tuple in all_indices
+#         tid = Threads.threadid()  
+#         indices = Tuple(idx_tuple)
+#         product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
+#         Y_local[tid][indices[1]] += product 
+#     end
 
-    if prod(size(Y)) <= 1
-        Y = only(Y)
-        Y = [float(Y)]
-    end
+#     Y .= Y_local[1]
+#     for i in eachindex(Y_local)
+#         if i != 1
+#             Y .+= Y_local[i]
+#         end
+#     end
 
-    return Y
-end
+#     if prod(size(Y)) <= 1
+#         Y = only(Y)
+#         Y = [float(Y)]
+#     end
+
+#     return Y
+# end
 
 
 """ Calculate Bayesian Surprise """
 function spm_MDP_G(A, x)
     qx = spm_cross(x)
     G = 0.0
-    qo = Float64[]
+    qo = Real[]
     idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
     index_vector = []
 
     for i in idx   
-        po = ones(1)
+        po = ones(Real, 1)
         for (_, A_m) in enumerate(A)
             index_vector = (1:size(A_m, 1),)  
             for additional_index in i  
