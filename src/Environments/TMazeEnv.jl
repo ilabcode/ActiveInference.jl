@@ -166,7 +166,8 @@ function construct_likelihood_dist(env::TMazeEnv)
     return A
 end
 
-function sample_dist(probabilities::Vector{<:Real})
+
+function sample_dist(probabilities)
 
     probabilities = convert(Vector{Float64}, probabilities)
 
