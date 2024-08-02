@@ -212,3 +212,8 @@ function generate_random_GM(n_states::Vector{Int64}, n_obs::Vector{Int64}, n_con
 
     return A, B
 end
+
+""" Check if the array is a proper probability distribution """
+function check_normalization(arr)
+    return all(tensor -> all(isapprox.(sum(tensor, dims=1), 1.0, rtol=1e-5, atol=1e-8)), arr)
+end

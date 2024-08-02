@@ -42,7 +42,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     infer_policies!(aif)
 
     ### Retrieve log marginal probabilities of actions
-    log_action_marginals = ActiveInference.get_log_action_marginals(aif)
+    log_action_marginals = get_log_action_marginals(aif)
 
     ### Pass action marginals through softmax function to get action probabilities
     for factor in 1:n_factors

@@ -44,7 +44,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
     return aif.action
 end
 
-function ActionModels.give_inputs!(aif::AIF, observations::Vector{Any})
+function ActionModels.give_inputs!(aif::AIF, observations::Vector)
 
     for observation in observations
 
@@ -52,4 +52,5 @@ function ActionModels.give_inputs!(aif::AIF, observations::Vector{Any})
 
     end
 
+    return aif.states["action"]
 end
