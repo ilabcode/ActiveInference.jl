@@ -25,16 +25,16 @@ function get_expected_states(qs, B, policy)
 end
 
 """ Update Posterior States """
-function update_posterior_states(A::Vector{Any}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, kwargs...)
+function update_posterior_states(A::Vector{Any}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
-    return fixed_point_iteration(A, obs_processed, num_obs, num_states, prior=prior)
+    return fixed_point_iteration(A, obs_processed, num_obs, num_states, prior=prior, num_iter=num_iter, dF_tol = dF_tol)
 end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter=10, dF=1.0, dF_tol=0.001)
+function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 

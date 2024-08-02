@@ -8,9 +8,9 @@ mutable struct AIF
     C::Array{Any,1} # C-vectors
     D::Array{Any,1} # D-vectors
     E::Union{Array{Any, 1}, Nothing} # E - vector (Habits)
-    pA::Union{Array{Any,1}, Nothing}
-    pB::Union{Array{Any,1}, Nothing}
-    pD::Union{Array{Any,1}, Nothing}
+    pA::Union{Array{Any,1}, Nothing} # Dirichlet priors for A-matrix
+    pB::Union{Array{Any,1}, Nothing} # Dirichlet priors for B-matrix
+    pD::Union{Array{Any,1}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter
     fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
     lr_pB::Real # pB learning Parameter
@@ -21,19 +21,21 @@ mutable struct AIF
     factors_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# factor"
     gamma::Real # Gamma parameter
     alpha::Real # Alpha parameter
-    policies::Array  # Inferred from the B matrix
-    num_controls::Array{Int,1}  # Number of actions per factor
-    control_fac_idx::Array{Int,1}  # Indices of controllable factors
+    policies::Array # Inferred from the B matrix
+    num_controls::Array{Int,1} # Number of actions per factor
+    control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
-    qs_current::Array{Any,1}  # Current beliefs about states
-    prior::Array{Any,1}  # Prior beliefs about states
+    qs_current::Array{Any,1} # Current beliefs about states
+    prior::Array{Any,1} # Prior beliefs about states
     Q_pi::Array{Real,1} # Posterior beliefs over policies
     G::Array{Real,1} # Expected free energy of policy
     action::Vector{Any} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
-    action_selection::String # Action selection: can be either "deterministic" or "stochastic"   
+    action_selection::String # Action selection: can be either "deterministic" or "stochastic"
+    FPI_num_iter::Int # Number of iterations stopping condition in the FPI algorithm
+    FPI_dF_tol::Float64 # Free energy difference stopping condition in the FPI algorithm
     states::Dict{String,Array{Any,1}} # States Dictionary
     parameters::Dict{String,Real} # Parameters Dictionary
     settings::Dict{String,Any} # Settings Dictionary
@@ -65,6 +67,8 @@ function create_aif(A, B;
                     use_states_info_gain=true, 
                     use_param_info_gain = false, 
                     action_selection="stochastic",
+                    FPI_num_iter=10,
+                    FPI_dF_tol=0.001,
                     save_history=true
     )
 
@@ -92,6 +96,12 @@ function create_aif(A, B;
     end
 
     policies = construct_policies_full(num_states, num_controls=num_controls, policy_len=policy_len, control_fac_idx=control_fac_idx)
+
+    # Throw error if the E-vector does not match the length of policies
+    if !isnothing(E) && length(E) != length(policies)
+        error("Length of E-vector must match the number of policies.")
+    end
+
     qs_current = array_of_any_uniform(num_states)
     prior = D
     Q_pi = ones(Real,length(policies)) / length(policies)  
@@ -130,10 +140,48 @@ function create_aif(A, B;
         "use_param_info_gain" => use_param_info_gain,
         "action_selection" => action_selection,
         "modalities_to_learn" => modalities_to_learn,
-        "factors_to_learn" => factors_to_learn
+        "factors_to_learn" => factors_to_learn,
+        "FPI_num_iter" => FPI_num_iter,
+        "FPI_dF_tol" => FPI_dF_tol
     )
 
-    return AIF(A, B, C, D, E, pA, pB, pD, lr_pA, fr_pA, lr_pB, fr_pB, lr_pD, fr_pD, modalities_to_learn, factors_to_learn, gamma, alpha, policies, num_controls, control_fac_idx, policy_len, qs_current, prior, Q_pi, G, action, use_utility, use_states_info_gain, use_param_info_gain, action_selection, states, parameters, settings, save_history)
+    return AIF( A,
+                B,
+                C, 
+                D, 
+                E,
+                pA, 
+                pB, 
+                pD,
+                lr_pA, 
+                fr_pA, 
+                lr_pB, 
+                fr_pB, 
+                lr_pD, 
+                fr_pD, 
+                modalities_to_learn, 
+                factors_to_learn, 
+                gamma, 
+                alpha, 
+                policies, 
+                num_controls, 
+                control_fac_idx, 
+                policy_len, 
+                qs_current, 
+                prior, 
+                Q_pi, 
+                G, 
+                action, 
+                use_utility,
+                use_states_info_gain, 
+                use_param_info_gain, 
+                action_selection, 
+                FPI_num_iter, 
+                FPI_dF_tol,
+                states,
+                parameters, 
+                settings, 
+                save_history)
 end
 
 """
@@ -166,9 +214,22 @@ function init_aif(
 
 """
 function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
-                  parameters::Union{Nothing, Dict{String,Real}} = nothing,
+                  parameters::Union{Nothing, Dict{String, T}} where T<:Real = nothing,
                   settings::Union{Nothing, Dict} = nothing,
                   save_history::Bool = true, verbose::Bool = true)
+
+    # Throw error if A, B or D is not a proper probability distribution  
+    if !check_normalization(A)
+        error("The A matrix is not normalized.")
+    end
+
+    if !check_normalization(B)
+        error("The B matrix is not normalized.")
+    end
+
+    if !isnothing(D) && !check_normalization(D)
+        error("The D matrix is not normalized.")
+    end
 
     # Throw warning if no D-vector is provided. 
     if verbose == true && isnothing(C)
@@ -197,7 +258,9 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
             "use_param_info_gain" => false,
             "action_selection" => "stochastic", 
             "modalities_to_learn" => "all",
-            "factors_to_learn" => "all"
+            "factors_to_learn" => "all",
+            "FPI_num_iter" => 10,
+            "FPI_dF_tol" => 0.001
         )
     end
 
@@ -235,7 +298,8 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
     action_selection = get(settings, "action_selection", "stochastic")
     modalities_to_learn = get(settings, "modalities_to_learn", "all" )
     factors_to_learn = get(settings, "factors_to_learn", "all" )
-
+    FPI_num_iter = get(settings, "FPI_num_iter", 10 )
+    FPI_dF_tol = get(settings, "FPI_dF_tol", 0.001 )
 
     # Call create_aif 
     aif = create_aif(A, B,
@@ -262,6 +326,8 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
                     use_states_info_gain=use_states_info_gain, 
                     use_param_info_gain=use_param_info_gain,
                     action_selection=action_selection,
+                    FPI_num_iter=FPI_num_iter,
+                    FPI_dF_tol=FPI_dF_tol,
                     save_history=save_history
                     )
 
@@ -298,7 +364,7 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
     end
 
     # Update posterior over states
-    aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior) 
+    aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior, num_iter=aif.FPI_num_iter, dF_tol=aif.FPI_dF_tol)
 
     # Push changes to agent's history
     push!(aif.states["prior"], copy(aif.prior))
