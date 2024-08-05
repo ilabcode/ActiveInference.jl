@@ -1,8 +1,27 @@
 """
 This module contains models of Partially Observable Markov Decision Processes under Active Inference
-
-
 """
+##PTW_CR: This is not a module, just a function
+##PTW_CR: We discussed this: Here is my suggestions for a general structure: 
+##PTW_CR: There should be an AbstractGenerativeModel typeof
+##PTW_CR: Then there can be different subtypes of that - the currently implemented one is POMDPActiveInference
+##PTW_CR: There should be three functions that dispatches differently on different AbstractGenerativeModel subtypes:
+##PTW_CR: namely, perception!(), learning!() and action!()
+##PTW_CR: Then there can be this function, called active_inference!()
+##PTW_CR: This function runs on an AbstractGenerativeModel, and calls the three functions above in sequence
+##PTW_CR: action!() should return the action probability distribution
+##PTW_CR: Apart from that, neither function should return anything. They should modify the input AbstractGenerativeModel
+##PTW_CR: There can be a function which stores the sampled action in the AbstractGenerativeModel.
+##PTW_CR: Users can use this function to store the actions they sample if they run each aprt separately
+##PTW_CR: But it's also used when runnign active_inference on an ActionModels Agent, as below
+##PTW_CR: When running active_inference!() on an agent, it should just store the previous action in the substruct with the AbstractGenerativeModel
+##PTW_CR: And then run active_inference!() on the AbstractGenerativeModel
+##PTW_CR: Then learning!(), for example, will look in the settings part of the AbstractGenerativeModel subtype to see which matrices should be updated, etc
+##PTW_CR: Ultimately, perception!() and learning!() (and perhaps structure_learning!()) can be combined as one function, but that can wait
+##PTW_CR: I would also call this file active_inference!()
+##PTW_CR: And then I would have different folders for each AbstractGenerativeModel subtype we'll create - for now there is just one folders
+##PTW_CR: (We might make these into separate modules or even packages one day, but no rush)
+##PTW_CR: One other thing: we should consider in which order those three are called. Why does learning!() come after perception!()? Let me know if there is a good reason for this, otherwise I think it should be the other way around.
 
 ### Action Model:  Returns probability distributions for actions per factor
 
