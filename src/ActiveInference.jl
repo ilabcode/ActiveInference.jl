@@ -1,7 +1,12 @@
 module ActiveInference
 
+##PTW_CR: Put all the dependencies you use here at the beginning, not in the other files
+##PTW_CR: We want to have as few dependencies as possible - and to make sure that the dependencies we do have are well-supported packages. Consider if there are packages you don't need
 using ActionModels
 
+##PTW_CR: Conors original work is great. But we don't have to copy everything. I think I would have a slightly different structure to the files.
+##PTW_CR: I would have one folder with helper functions (including maths and utils - consider if they should be restructured)
+##PTW_CR: And one folder with the POMDP generative model (four files: the struct, inference, learning and action, perhaps)
 include("maths.jl")
 include("agent.jl")
 include("learning.jl")
@@ -16,6 +21,7 @@ include("ActionModelsExtensions/give_inputs.jl")
 include("ActionModelsExtensions/set_save_history.jl")
 include("POMDP.jl")
 
+##PTW_CR: Export anything that people shoudl be able to use, and nothing else
 export # maths.jl
        norm_dist,
        sample_category,
@@ -84,6 +90,9 @@ export # maths.jl
 
     # From Environments\\EpistChainEnv.jl
     module Environments
+    ##PTW_CR: I really think we should have an Envionrmnet type in ActionModels, and then have premade environments that can be added to it like premade agents. Then ActiveINference.jl can add some environments if they are fairly actinf-specific - or they can just be natively in ActionModels. Then you'd be contributors there and can perhaps join that paper too. 
+    ##PTW_CR: If we have a standard Environment type, we can also have standard functiosn for it (like step! and reset!
+    ##PTW_CR: Note that you can actually make perfectly fine environments as ActionModels Agent objets- We can talk about this.
 
     include("Environments/EpistChainEnv.jl")
     
