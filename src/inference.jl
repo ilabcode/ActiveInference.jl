@@ -1,16 +1,45 @@
+##PTW_CR: Make the title of the file a comment, not a string
 """ -------- Inference Functions -------- """
 
 using LinearAlgebra
 using IterTools
 
+##PTW_CR: Split state inference and policy inference into two separate files
+##PTW_CR: (i.e. perception and action)
 #### State Inference #### 
 
+##PTW_CR: I would perhgaps call this 'update prediction'
 """ Get Expected States """
+##PTW_CR: Remember to type the functions
 function get_expected_states(qs, B, policy)
+    ##PTW_CR: Again, have these stored in the struct to avoid having to recreate them on every timestep
     n_steps, n_factors = size(policy)
 
+    ##PTW_CR: There must most certainly be a way of avoiding a list comprehension of deepcopies here
     # initializing posterior predictive density as a list of beliefs over time
     qs_pi = [deepcopy(qs) for _ in 1:n_steps+1]
+
+    ##PTW_CR: Wait: an important distinction: 
+    ##PTW_CR: There is calculating the prediction at the current timesetp, given my previous action and beliefs
+    ##PTW_CR: There is also calculating the expected states at the next n timesteps given my current beliefs and a policy
+    ##PTW_CR: Which one is this? Put it under action!() if it is the latter
+  
+    ##PTW_CR: I am expecting it is the latter: this is predicting the hypothetical future given a policy
+
+    ##PTW_CR: This wil be one of the computationally heavy parts of the model, so we want to optimize it as much as possible
+    ##PTW_CR: Check it: but I think initializing a new matrix is faster than the deepcopy
+    ##PTW_CR: But even faster would be to already have the right size matrix, and just overwrite it every time
+    ##PTW_CR: (this avoids allocating memory all the time)
+    ##PTW_CR: Can that be done? Haing the full structure (outside of this function) and just overwriting its values? 
+    ##PTW_CR: I'll return to this at the place where this is run
+    ##PTW_CR: But in summary, I think it might be nice to have a function which gets the expected states for all timesteps for all policies.. 
+    ##PTW_CR: that shouldn't become such a high number that its too mcuh to hold in memory I think
+
+    ##PTW_CR: I guess there are no interactions between control Factors
+    ##PTW_CR: (btw: we need a third word: observation modality, state factor, and control something?)
+    ##PTW_CR: (Weird to use factor for just two of them I think)
+    ##PTW_CR: (It's all just different words for dimensionality)
+
 
     # expected states over time
     for t in 1:n_steps
@@ -25,16 +54,27 @@ function get_expected_states(qs, B, policy)
 end
 
 """ Update Posterior States """
+##PTW_CR: it should be posterior_states - but state_posterior (it is a posterior over states, not posterior states)
+##PTW_CR: so update_posterior() or update_state_posterior()
 function update_posterior_states(A::Vector{Any}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
+    ##PTW_CR: again, let them be pre-created
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
+    ##PTW_CR: same here
     obs_processed = process_observation(obs, num_modalities, num_obs)
+
+    ##PTW_CR: Probably there's no need to have this as a separate function
+    ##PTW_CR: Although: You might make a multiple dispatch, where there are different version of update_posterior for different types of optimization schemes
+    ##PTW_CR: And make types for each, with FixedPointIteration being one of them
     return fixed_point_iteration(A, obs_processed, num_obs, num_states, prior=prior, num_iter=num_iter, dF_tol = dF_tol)
 end
 
 
 """ Run State Inference via Fixed-Point Iteration """
 function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
+    ##PTW_CR: Remember comments. Write out variable names.
+    
+    ##PTW_CR: pre-constructed
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -42,43 +82,68 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
     likelihood = get_joint_likelihood(A, obs, num_states)
     likelihood = spm_log_single(likelihood)
 
+    ##PTW_CR: 
     # Initialize posterior and prior
     qs = Array{Any}(undef, n_factors)
     for factor in 1:n_factors
+        ##PTW_CR: Here you could use the @inbounds macro since you know that you can¨t end up indexing outside the num_states
         qs[factor] = ones(Real,num_states[factor]) / num_states[factor]
     end
 
+    ##PTW_CR: Just set this as default in the function signature
+    ##PTW_CR: When would there be a nothing prior? That should never be the case
     if prior === nothing
         prior = array_of_any_uniform(num_states)
     end
     
     prior = spm_log_array_any(prior) 
 
+    ##PTW_CR: Either use VFE and EFE - or use F and G (I prefer the former)
     # Initialize free energy
     prev_vfe = calc_free_energy(qs, prior, n_factors)
 
+    ##PTW_CR: Should explain to me - and in the paper - why we don't iterate if there is just one factor
+    ##PTW_CR: Is it because the fixed point is analytically calculateable in that case?
     # Single factor condition
     if n_factors == 1
+        ##PTW_CR: What does the L mean? Spell it out
+        ##PTW_CR: use first(qs) instead of qs[1]
         qL = spm_dot(likelihood, qs[1])  
         return to_array_of_any(softmax(qL .+ prior[1]))
     else
         # Run Iteration 
         curr_iter = 0
+        ##PTW_CR: call num_iter max_iterations
+        ##PTW_CR: I think perhaps there should be a struct somewhere (saved in the larger struct) which has the settings for the fixed-point updates
+        ##PTW_CR: And this function should multiple dispatch on that type
+        ##PTW_CR: So that there can easily be added other types
         while curr_iter < num_iter && dF >= dF_tol
+
+            ##PTW_CR: Use the prod.() function to get the product of every row
+            ##PTW_CR: https://stackoverflow.com/questions/67698311/how-to-get-product-of-all-elements-in-a-row-of-matrix-in-julia
             qs_all = qs[1]
             for factor in 2:n_factors
+                ##PTW_CR: Again, see if there is a way to avoid having to construct this tuple every time
+                ##PTW_CR: What is that colon doing in the typle ? 
                 qs_all = qs_all .* reshape(qs[factor], tuple(ones(Real, factor - 1)..., :, 1))
             end
+            ##PTW_CR: Spell it out. Does LL mean log-likelihood? Is the likelihood object here also in logspace? Then it should be LL - or btoh should be loglikelihood
             LL_tensor = likelihood .* qs_all
 
             for factor in 1:n_factors
+                ##PTW_CR: Check is there is a faster way of doing this than creating a whole new matrix every time
                 qL = zeros(Real,size(qs[factor]))
                 for i in 1:size(qs[factor], 1)
+                    ##PTW_CR: This is very hard to read. Can you split it into multiple lines ? 
+                    ##PTW_CR: Feel liek this if statement there in the end could be done better with just selecting all places where the factor is i
+                    ##PTW_CR: And then using map or broadcast to do the calculation on all of them
+                    ##PTW_CR: In general - isn't there a slightly more matrix-multipliationay way to do this ? 
                     qL[i] = sum([LL_tensor[indices...] / qs[factor][i] for indices in Iterators.product([1:size(LL_tensor, dim) for dim in 1:n_factors]...) if indices[factor] == i])
                 end
                 qs[factor] = softmax(qL + prior[factor])
             end
 
+            ##PTW_CR: Decide whether to use 'calc' or 'get' or 'compute' in these functions where you run an equation
             # Recompute free energy
             vfe = calc_free_energy(qs, prior, n_factors, likelihood)
 
@@ -92,6 +157,8 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector
         return qs
     end
 end
+
+
 
 
 

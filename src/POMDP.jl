@@ -120,3 +120,11 @@ end
 ##PTW_CR: So: People put in a template A; 
 ##PTW_CR: then optionally they put in a transform function (with it's own parameters); 
 ##PTW_CR: then optionally again, they put in a learning function for (some of) those parameters (with it's own hyperparameters)
+
+
+##PTW_CR: I think we should have a formatter either that is run locally, or which is run as a Github Action. I prefer locally.
+
+
+##PTW_CR: In many places, you can use the @inbounds macro to speed up the code. 
+##PTW_CR: This means that Julia doesn't check if you're going out of bounds (when indexing arrays etc)
+##PTW_CR: so only use it for for loops etc where you know that the index you give always will be within-bounds
