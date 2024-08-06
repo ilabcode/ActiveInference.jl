@@ -7,6 +7,7 @@ This module contains models of Partially Observable Markov Decision Processes un
 ##PTW_CR: Then there can be different subtypes of that - the currently implemented one is POMDPActiveInference
 ##PTW_CR: There should be three functions that dispatches differently on different AbstractGenerativeModel subtypes:
 ##PTW_CR: namely, perception!(), learning!() and action!()
+##PTW_CR: could also be called state_inference!(), parameter_inference!(), and action_inference!()
 ##PTW_CR: Then there can be this function, called active_inference!()
 ##PTW_CR: This function runs on an AbstractGenerativeModel, and calls the three functions above in sequence
 ##PTW_CR: action!() should return the action probability distribution

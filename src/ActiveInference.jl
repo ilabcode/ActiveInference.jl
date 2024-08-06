@@ -7,6 +7,7 @@ using ActionModels
 ##PTW_CR: Conors original work is great. But we don't have to copy everything. I think I would have a slightly different structure to the files.
 ##PTW_CR: I would have one folder with helper functions (including maths and utils - consider if they should be restructured)
 ##PTW_CR: And one folder with the POMDP generative model (four files: the struct, inference, learning and action, perhaps)
+##PTW_CR: I would also add a folder with premade generative model, like a premade T-mase actinf, a premade Multiple-Armed Bandit agetn, etc
 include("maths.jl")
 include("agent.jl")
 include("learning.jl")
