@@ -102,3 +102,21 @@ function action_pomdp!(aif::AIF, obs::Vector{Int64})
 
     return action_distribution
 end
+
+
+
+
+##PTW_CR: !! -- I'll use this place for other kinds of comments -- !!
+
+##PTW_CR: As we discussed, I think there should be a syntax for specifying a stransformation function
+##PTW_CR: Which goes from a template matrices to the actual matrices
+##PTW_CR: One of these being a softmax transformed
+##PTW_CR: Where they can specify parameters for the transform
+##PTW_CR: Which are then parameters that can be estimated form data with Turing
+##PTW_CR: Stuff like that - the precision of the A matrix - are often the questions asked
+##PTW_CR: For some transforms, specific parameter learning functions can also be implemented: 
+##PTW_CR: There is a way for the agent to learn the precision of the softmax ofn the A, for example
+##PTW_CR: Which is a much more data-effective parameter learning approach
+##PTW_CR: So: People put in a template A; 
+##PTW_CR: then optionally they put in a transform function (with it's own parameters); 
+##PTW_CR: then optionally again, they put in a learning function for (some of) those parameters (with it's own hyperparameters)
