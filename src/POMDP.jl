@@ -135,3 +135,16 @@ end
 
 ##PTW_CR: In general, we want this code to be _easily readable, understandable and modifiable_ if we want the poackage to survive and be used by others
 ##PTW_CR: That's why I advocate for good comments for and spelled-out-variable names
+
+
+##PTW_CR: !! -- Notes on the API -- !!
+##PTW_CR: Make it possible ot specify just a single number of matrix et when ther eis just one modality/factor instead of a vector of it (just make the init function put it inside a vector)
+
+##PTW_CR: Don't do multithreading inside the function here (if you still do that)
+
+##PTW_CR: I think you cna probably make all fice matrices potentially action-dependent. Consider how difficult that would be. Might even make the code more readable.
+
+##PTW_CR: Observations should be stored in the struct when they are set - so that rthey don't need to be re-input for all the different update functions
+
+##PTW_CR: It should be possible ot give a missing instead of an observation. In this case, essentailly a fully agnostic A matrix is just used instead - meaning no update based on the input, but still based on the B amtrix
+##PTW_CR: Shouldn't be too hard to implement, and I think it'll be pretty useful. 
