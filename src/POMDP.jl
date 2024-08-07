@@ -121,10 +121,17 @@ end
 ##PTW_CR: then optionally they put in a transform function (with it's own parameters); 
 ##PTW_CR: then optionally again, they put in a learning function for (some of) those parameters (with it's own hyperparameters)
 
-
 ##PTW_CR: I think we should have a formatter either that is run locally, or which is run as a Github Action. I prefer locally.
-
 
 ##PTW_CR: In many places, you can use the @inbounds macro to speed up the code. 
 ##PTW_CR: This means that Julia doesn't check if you're going out of bounds (when indexing arrays etc)
 ##PTW_CR: so only use it for for loops etc where you know that the index you give always will be within-bounds
+
+##PTW_CR: I have in general advocated for spelling out parameter names so that anyone would understand them without having to refer to and remember the mathematical notation
+##PTW_CR: Another option, if you prefer, is to write actual mathematical symbols, which you can do in Julia 
+##PTW_CR: and use them as variable names. This is also a good way to make the code more readable because it become much closer to the math
+##PTW_CR: I personally prefer the first though
+##PTW_CR: In any case: be consistent
+
+##PTW_CR: In general, we want this code to be _easily readable, understandable and modifiable_ if we want the poackage to survive and be used by others
+##PTW_CR: That's why I advocate for good comments for and spelled-out-variable names

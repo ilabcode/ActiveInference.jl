@@ -119,6 +119,7 @@ function dot_likelihood(A, obs)
 end
 
 ##PTW_CR: Just use map to apply log.() to all of the arrays in the list of arrays
+##PTW_CR: In any case, avoid using Any as much as possible. It's slow and not type-stable.
 """ Apply spm_log to array of arrays """
 function spm_log_array_any(arr)
     # Initialize an empty array
@@ -131,7 +132,7 @@ function spm_log_array_any(arr)
     return arr_logged
 end
 
-##PTW_CR: Again, just use map or broadcast. Should be much much faster
+##PTW_CR: Again, just use map or broadcast. Should be much faster
 """ Softmax Function for array of arrays """
 function softmax_array(arr)
     output = Array{Any}(undef, length(arr))
@@ -306,6 +307,10 @@ function spm_MDP_G(A, x)
 end
 
 ##PTW_CR: Just use mapm or broadcast instead of this
+##PTW_CR: In general, for all of these: perhaps run a little benchmark to see which approach is fastest
+##PTW_CR: Because the situation is the same with most of them
+##PTW_CR: If you use a for loop, typing has to be done right for it to be as fast as map
+##PTW_CR: https://stackoverflow.com/questions/77070947/julia-what-is-the-peformance-difference-between-for-loop-and-map-in-mathematica
 """ Normalizes muliple arrays """
 function norm_dist_array(obj_arr::Array{Any})
     normed_obj_array = Array{Any}(undef, length(obj_arr))

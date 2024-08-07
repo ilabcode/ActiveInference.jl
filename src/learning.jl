@@ -35,6 +35,8 @@ function update_obs_likelihood_dirichlet(pA, A, obs, qs; lr = 1.0, fr = 1.0, mod
 
     ##PTW_CR: You cna probably use a map() to do this instead of a deepcopy and a for loop
     ##PTW_CR: Just need a function which just runs those calculations there
+    ##PTW_CR: Okay, just checked: list comprehensions will be faster than map() in Julia
+    ##PTW_CR: But look for a way to avoid the deepcopy
     for modality in modalities
         ##PTW_CR: spell these names out.. these are the FE gradients
         dfda = spm_cross(obs[modality], qs_cross)
