@@ -22,9 +22,14 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
     # if there is only one factor
     if num_factors == 1
         action = rand(action_distributions[1])
-        push!(aif.action, action)
-        push!(aif.states["action"], aif.action)
 
+        if isempty(aif.action)
+            push!(aif.action, action)
+        else
+            aif.action[end] = action
+        end
+
+        push!(aif.states["action"], aif.action)
 
     # if there are multiple factors
     else
@@ -36,10 +41,16 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
             sampled_actions[factor] = rand(action_distributions[factor])
         end
 
-        aif.action = sampled_actions
+        if isempty(aif.action)
+            push!(aif.action, action)
+        else
+            aif.action[end] = action
+        end
+        
+        push!(aif.states["action"], aif.action)
     end
 
-    push!(aif.states["action"], aif.action)
+    
 
     return aif.action
 end
