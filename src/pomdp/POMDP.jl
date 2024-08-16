@@ -1,7 +1,6 @@
 """
 This module contains models of Partially Observable Markov Decision Processes under Active Inference
 
-
 """
 
 ### Action Model:  Returns probability distributions for actions per factor
