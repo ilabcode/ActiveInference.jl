@@ -1,11 +1,5 @@
 """ -------- Utility Functions -------- """
 
-using LinearAlgebra
-using Plots
-using IterTools
-using Random
-using Distributions
-
 """ Creates an array of "Any" with the desired number of sub-arrays"""
 function array_of_any(num_arr::Int) 
     return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.

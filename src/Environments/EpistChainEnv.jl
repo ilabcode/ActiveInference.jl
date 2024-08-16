@@ -1,7 +1,3 @@
-using LinearAlgebra
-using IterTools
-
-
 """ Pre-defined Environment: Epistemic Chaining Grid-World"""
 
 mutable struct EpistChainEnv

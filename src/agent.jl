@@ -1,7 +1,5 @@
 """ -------- AIF Mutable Struct -------- """
 
-using LinearAlgebra
-
 mutable struct AIF
     A::Array{Any,1} # A-matrix
     B::Array{Any,1} # B-matrix

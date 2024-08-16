@@ -1,6 +1,10 @@
 module ActiveInference
 
 using ActionModels
+using LinearAlgebra
+using IterTools
+using Random
+using Distributions
 
 include("maths.jl")
 include("agent.jl")
@@ -85,6 +89,10 @@ export # maths.jl
     # From Environments\\EpistChainEnv.jl
     module Environments
 
+    using LinearAlgebra
+    using ActiveInference
+    using Distributions
+    
     include("Environments/EpistChainEnv.jl")
     
     export EpistChainEnv, step!, reset_env!

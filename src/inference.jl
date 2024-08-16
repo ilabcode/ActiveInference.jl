@@ -1,8 +1,5 @@
 """ -------- Inference Functions -------- """
 
-using LinearAlgebra
-using IterTools
-
 #### State Inference #### 
 
 """ Get Expected States """
