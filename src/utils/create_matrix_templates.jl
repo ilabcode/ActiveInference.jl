@@ -1,5 +1,5 @@
 """
-    create_matrix_templates_custom(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64, template_type::String = "uniform")
+    create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64, template_type::String = "uniform")
 
 Creates templates for the A, B, C, D, and E matrices based on the specified parameters.
 
