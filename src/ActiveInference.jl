@@ -19,13 +19,18 @@ include("ActionModelsExtensions/reset.jl")
 include("ActionModelsExtensions/give_inputs.jl")
 include("ActionModelsExtensions/set_save_history.jl")
 include("pomdp/POMDP.jl")
+include("utils/helper_functions.jl")
+include("utils/create_matrix_templates.jl")
 
-export # maths.jl
+export # utils/create_matrix_templates.jl
+        create_matrix_templates,
+       
+       # utils/maths.jl
        norm_dist,
        softmax_array,
        norm_dist_array,
 
-       # utils.jl
+       # utils/utils.jl
        array_of_any, 
        array_of_any_zeros, 
        array_of_any_uniform, 
@@ -67,6 +72,7 @@ export # maths.jl
     export EpistChainEnv, step!, reset_env!
 
     include("Environments/TMazeEnv.jl")
+    include("utils/maths.jl")
 
     export TMazeEnv, step_TMaze!, reset_TMaze!, initialize_gp
        
