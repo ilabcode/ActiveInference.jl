@@ -1,10 +1,12 @@
-name: CI
+name: CI_small
 on:
   push:
     branches:
-      - master
+      - dev
     tags: ['*']
   pull_request:
+    branches:
+      - dev
   workflow_dispatch:
 concurrency:
   # Skip intermediate builds: always.
@@ -20,11 +22,8 @@ jobs:
       matrix:
         version:
           - '1'
-          - 'nightly'
         os:
           - ubuntu-latest
-          - macOS-latest
-          - windows-latest
         arch:
           - x64
     steps:
