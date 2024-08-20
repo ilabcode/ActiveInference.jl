@@ -4,4 +4,5 @@
 /Manifest.toml
 /docs/Manifest.toml
 /docs/build/
-.vscode/settings.json
+.vscode/
+/test/Manifest.toml
