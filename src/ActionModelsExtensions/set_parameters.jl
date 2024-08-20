@@ -11,9 +11,6 @@ Set multiple parameters in the AIF agent
 
 using ActionModels
 
-function ActionModels.set_parameters!() end
-
-
 # Setting a single parameter
 function ActionModels.set_parameters!(aif::AIF, target_param::String, param_value::Any)
     # Update the parameters dictionary
