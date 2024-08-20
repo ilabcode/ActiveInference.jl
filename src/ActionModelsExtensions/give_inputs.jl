@@ -21,11 +21,14 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
 
     # if there is only one factor
     if num_factors == 1
+        # Sample action from the action distribution
         action = rand(action_distributions[1])
 
+        # If the agent has not taken any actions yet
         if isempty(aif.action)
             push!(aif.action, action)
         else
+        # Put the action in the last element of the action vector
             aif.action[end] = action
         end
 
@@ -40,23 +43,22 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
         for factor in eachindex(action_distributions)
             sampled_actions[factor] = rand(action_distributions[factor])
         end
-
+        # If the agent has not taken any actions yet
         if isempty(aif.action)
-            push!(aif.action, action)
+            push!(aif.action, sampled_actions)
         else
-            aif.action[end] = action
+        # Put the action in the last element of the action vector
+            aif.action[end] = sampled_actions
         end
-        
+        # Push the action to agent's states
         push!(aif.states["action"], aif.action)
     end
-
-    
 
     return aif.action
 end
 
 function ActionModels.give_inputs!(aif::AIF, observations::Vector)
-
+    # For each individual observation run single_input! function
     for observation in observations
 
         ActionModels.single_input!(aif, observation)
