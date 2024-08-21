@@ -55,19 +55,6 @@ function get_model_dimensions(A = nothing, B = nothing)
 end
 
 
-""" Equivalent to pymdp's "to_obj_array" """
-function to_array_of_any(arr::Array)
-    # Check if arr is already an array of arrays
-    if typeof(arr) == Array{Array,1}
-        return arr
-    end
-    # Create an array_out and assign squeezed array to the first element
-    obj_array_out = Array{Any,1}(undef, 1)
-    obj_array_out[1] = dropdims(arr, dims = tuple(findall(size(arr) .== 1)...))  
-    return obj_array_out
-end
-
-
 """ Selects the highest value from Array -- used for deterministic action sampling """
 function select_highest(options_array::Array{Float64})
     options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]

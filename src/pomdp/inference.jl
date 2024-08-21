@@ -96,7 +96,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Vector{Real}}, num_ob
     likelihood = spm_log_single(likelihood)
 
     # Initialize posterior and prior
-    qs = Array{Any}(undef, n_factors)
+    qs = Vector{Vector{Real}}(undef, n_factors)
     for factor in 1:n_factors
         qs[factor] = ones(Real,num_states[factor]) / num_states[factor]
     end
@@ -113,7 +113,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Vector{Real}}, num_ob
     # Single factor condition
     if n_factors == 1
         qL = spm_dot(likelihood, qs[1])  
-        return to_array_of_any(softmax(qL .+ prior[1]))
+        return [softmax(qL .+ prior[1])]
     else
         # Run Iteration 
         curr_iter = 0
