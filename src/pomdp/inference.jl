@@ -138,7 +138,7 @@ function update_posterior_policies(
     A::Vector{Any},
     B::Vector{Any},
     C::Vector{Any},
-    policies::Vector{Any},
+    policies::Vector{Matrix{Int64}},
     use_utility::Bool=true,
     use_states_info_gain::Bool=true,
     use_param_info_gain::Bool=false,
