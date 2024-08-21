@@ -31,29 +31,6 @@ function onehot(index::Int, vector_length::Int)
     return vector
 end
 
-""" Process Observation to the Correct Format """
-function process_observation(obs, num_modalities, num_observations)
-    processed_obs = []
-
-    # Check if obs is an integer, and num_modalities is 1, then it's a single modality observation
-    if isa(obs, Int) && num_modalities == 1
-        one_hot = zeros(Real, num_observations[1])
-        one_hot[obs] = 1.0
-        push!(processed_obs, one_hot)
-    elseif (isa(obs, Array) || isa(obs, Tuple)) && length(obs) == num_modalities
-        # If obs is an array or tuple, and its length matches num_modalities, process each modality
-        for (m, o) in enumerate(obs)
-            one_hot = zeros(Real, num_observations[m])
-            one_hot[o] = 1.0
-            push!(processed_obs, one_hot)
-        end
-    else
-        throw(ArgumentError("Observation does not match expected modalities or format"))
-    end
-
-    return processed_obs
-end
-
 """ Get Model Dimensions from either A or B Matrix """
 function get_model_dimensions(A = nothing, B = nothing)
     if A === nothing && B === nothing
