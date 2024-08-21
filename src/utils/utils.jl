@@ -25,51 +25,10 @@ function array_of_any_uniform(shape_list)
 end
 
 """ Creates a onehot encoded vector """
-function onehot(value, num_values)
-    arr = zeros(Real, num_values)
-    arr[value] = 1.0
-    return arr
-end
-
-""" Construct Policies """
-function construct_policies_full(num_states; num_controls=nothing, policy_len=1, control_fac_idx=nothing)
-    num_factors = length(num_states)
-
-    # Loops for controllable factors
-    if isnothing(control_fac_idx)
-        if !isnothing(num_controls)
-            # If specific controls are given, find which factors have more than one control option
-            control_fac_idx = findall(x -> x > 1, num_controls)
-        else
-            # If no controls are specified, assume all factors are controllable
-            control_fac_idx = 1:num_factors
-        end
-    end
-
-    # Determine the number of controls for each factor
-    if isnothing(num_controls)
-        num_controls = [in(c_idx, control_fac_idx) ? num_states[c_idx] : 1 for c_idx in 1:num_factors]
-    end
-
-    # Create a list of possible actions for each time step
-    x = repeat(num_controls, policy_len)
-
-    # Generate all combinations of actions across all time steps
-    policies = collect(Iterators.product([1:i for i in x]...))
-
-    transformed_policies = []
-
-    for policy_tuple in policies
-        # Convert tuple to an array
-        policy_array = collect(policy_tuple)
-        
-        policy_matrix = reshape(policy_array, (length(policy_array) ÷ policy_len, policy_len))' 
-        
-        # Push the reshaped matrix to the list of transformed policies
-        push!(transformed_policies, policy_matrix)
-    end
-
-    return transformed_policies
+function onehot(index::Int, vector_length::Int)
+    vector = zeros(Real, vector_length)
+    vector[index] = 1.0
+    return vector
 end
 
 """ Process Observation to the Correct Format """

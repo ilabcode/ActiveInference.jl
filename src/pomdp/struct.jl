@@ -93,7 +93,7 @@ function create_aif(A, B;
         control_fac_idx = [f for f in eachindex(num_controls) if num_controls[f] > 1]
     end
 
-    policies = construct_policies_full(num_states, num_controls=num_controls, policy_len=policy_len, control_fac_idx=control_fac_idx)
+    policies = construct_policies(num_states, n_controls=num_controls, policy_length=policy_len, controllable_factors_indices=control_fac_idx)
 
     # Throw error if the E-vector does not match the length of policies
     if !isnothing(E) && length(E) != length(policies)
@@ -350,6 +350,70 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
     end
     
     return aif
+end
+
+### Struct related functions ###
+
+"""
+    construct_policies(n_states::Vector{T} where T <: Real; n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing, 
+                       policy_length::Int=1, controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing)
+
+Construct policies based on the number of states, controls, policy length, and indices of controllable state factors.
+
+# Arguments
+- `n_states::Vector{T} where T <: Real`: A vector containing the number of  states for each factor.
+- `n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing`: A vector specifying the number of allowable actions for each state factor. 
+- `policy_length::Int=1`: The length of policies. (planning horizon)
+- `controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing`: A vector of indices identifying which state factors are controllable.
+
+"""
+function construct_policies(
+    n_states::Vector{T} where T <: Real; 
+    n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing, 
+    policy_length::Int=1, 
+    controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing
+    )
+
+    # Determine the number of state factors
+    n_factors = length(n_states)
+
+    # If indices of controllable factors are not given 
+    if isnothing(controllable_factors_indices)
+        if !isnothing(n_controls)
+            # Determine controllable factors based on which factors have more than one control
+            controllable_factors_indices = findall(x -> x > 1, n_controls)
+        else
+            # If no controls are given, assume all factors are controllable
+            controllable_factors_indices = 1:n_factors
+        end
+    end
+
+    # if number of controls is not given, determine it based n_states and controllable_factors_indices
+    if isnothing(n_controls)
+        n_controls = [in(factor_index, controllable_factors_indices) ? n_states[factor_index] : 1 for factor_index in 1:n_factors]
+    end
+
+    # Create a vector of possible actions for each time step
+    x = repeat(n_controls, policy_length)
+
+    # Generate all combinations of actions across all time steps
+    policies = collect(Iterators.product([1:i for i in x]...))
+
+    # Initialize an empty vector to store transformed policies
+    transformed_policies = Vector{Matrix{Int64}}()
+
+    for policy_tuple in policies
+        # Convert tuple into a vector
+        policy_vector = collect(policy_tuple)
+        
+        # Reshape the policy vector into a matrix and transpose it
+        policy_matrix = reshape(policy_vector, (length(policy_vector) ÷ policy_length, policy_length))'
+        
+        # Push the reshaped matrix to the vector of transformed policies
+        push!(transformed_policies, policy_matrix)
+    end
+
+    return transformed_policies
 end
 
 """ Update the agents's beliefs over states """
