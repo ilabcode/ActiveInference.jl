@@ -36,7 +36,6 @@ export # utils/create_matrix_templates.jl
        array_of_any_uniform, 
        onehot,
        get_model_dimensions,
-       to_array_of_any,
        generate_random_GM,     
 
        # struct.jl
