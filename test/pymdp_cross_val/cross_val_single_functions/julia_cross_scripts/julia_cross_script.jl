@@ -2,7 +2,7 @@ using ActiveInference
 using HDF5
 
 # Path to file with generative model
-file_path_gm = "test/pymdp_cross_val/generative_model_creation/gm_data/A_B_matrices.h5"
+file_path_gm = raw"ActiveInference.jl\test\pymdp_cross_val\generative_model_creation\gm_data\A_B_matrices.h5"
 
 #############################################
 ### Loading Generative Model from h5 file ###

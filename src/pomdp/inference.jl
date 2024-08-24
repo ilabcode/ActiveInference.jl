@@ -313,7 +313,7 @@ function calc_pA_info_gain(pA, qo_pi, qs_pi)
     pA_info_gain = 0
 
     for modality in 1:num_modalities
-        wA_modality = wA[modality] .* pA[modality]
+        wA_modality = wA[modality] .* (pA[modality] .> 0)
 
         for t in 1:n_steps
             pA_info_gain -= dot(qo_pi[t][modality], spm_dot(wA_modality, qs_pi[t]))
@@ -344,7 +344,7 @@ function calc_pB_info_gain(pB, qs_pi, qs_prev, policy)
         policy_t = policy[t, :]
 
         for (factor, a_i) in enumerate(policy_t)
-            wB_factor_t = wB[factor][:,:,Int(a_i)] .* pB[factor][:,:,Int(a_i)]
+            wB_factor_t = wB[factor][:,:,Int(a_i)] .* (pB[factor][:,:,Int(a_i)] .> 0)
             pB_info_gain -= dot(qs_pi[t][factor], wB_factor_t * previous_qs[factor])
         end
     end

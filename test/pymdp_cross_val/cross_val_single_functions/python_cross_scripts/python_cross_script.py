@@ -5,7 +5,7 @@ from pymdp import utils, maths, learning, control, inference
 from pymdp.agent import Agent
 
 # Path to file with generative model
-file_path_gm = "test/pymdp_cross_val/generative_model_creation/gm_data/A_B_matrices.h5"
+file_path_gm = r"..\\..\\generative_model_creation\gm_data\A_B_matrices.h5"
 
 #############################################
 ### Loading Generative Model from h5 file ###
