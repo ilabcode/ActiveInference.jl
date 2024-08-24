@@ -211,22 +211,40 @@ function init_aif(
 - 'settings::Union{Nothing, Dict} = nothing':
 
 """
-function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
+function init_aif(A, B; C=nothing, D=nothing, E=nothing, pA=nothing, pB=nothing, pD=nothing,
                   parameters::Union{Nothing, Dict{String, T}} where T<:Real = nothing,
                   settings::Union{Nothing, Dict} = nothing,
                   save_history::Bool = true, verbose::Bool = true)
 
-    # Throw error if A, B or D is not a proper probability distribution  
-    if !check_normalization(A)
-        error("The A matrix is not normalized.")
+    # Catch error if A, B or D is not a proper probability distribution  
+    # Check A matrix
+    try
+        if !check_probability_distribution(A)
+            error("The A matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The A matrix is not a proper probability distribution. Details: $(e)")
     end
 
-    if !check_normalization(B)
-        error("The B matrix is not normalized.")
+    # Check B matrix
+    try
+        if !check_probability_distribution(B)
+            error("The B matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The B matrix is not a proper probability distribution. Details: $(e)")
     end
 
-    if !isnothing(D) && !check_normalization(D)
-        error("The D matrix is not normalized.")
+    # Check D matrix (if it's not nothing)
+    try
+        if !isnothing(D) && !check_probability_distribution(D)
+            error("The D matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The D matrix is not a proper probability distribution. Details: $(e)")
     end
 
     # Throw warning if no D-vector is provided. 

@@ -75,7 +75,6 @@ function action_select(probabilities)
     return findfirst(sample_onehot .== 1)
 end
 
-
 """ Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
@@ -100,7 +99,81 @@ function get_log_action_marginals(aif)
     return log_action_marginals
 end
 
-""" Check if the array is a proper probability distribution """
-function check_normalization(arr)
-    return all(tensor -> all(isapprox.(sum(tensor, dims=1), 1.0, rtol=1e-5, atol=1e-8)), arr)
+"""
+Check if the array of arrays is a proper probability distribution.
+
+# Arguments
+
+- (Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+
+Throws an error if the array is not a valid probability distribution:
+- The values must be non-negative.
+- The sum of the values must be approximately 1.
+"""
+function check_probability_distribution(Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+    for tensor in Array
+        # Check for non-negativity
+        if any(tensor .< 0)
+            throw(ArgumentError("All elements must be non-negative."))
+        end
+
+        # Check for normalization
+        if !all(isapprox.(sum(tensor, dims=1), 1.0, rtol=1e-5, atol=1e-8))
+            throw(ArgumentError("The array is not normalized."))
+        end
+    end
+
+    return true
+end
+
+"""
+Check if the array of real number arrays is a proper probability distribution.
+
+# Arguments
+
+- (Array::Vector{Array{T}}) where T<:Real
+
+Throws an error if the array is not a valid probability distribution:
+- The values must be non-negative.
+- The sum of the values must be approximately 1.
+"""
+function check_probability_distribution(Array::Vector{Array{T}}) where T<:Real
+    for vector in Array
+        # Check for non-negativity
+        if any(vector .< 0)
+            throw(ArgumentError("All elements must be non-negative."))
+        end
+
+        # Check for normalization
+        if !all(isapprox.(sum(vector), 1.0, rtol=1e-5, atol=1e-8))
+            throw(ArgumentError("The array is not normalized."))
+        end
+    end
+
+    return true
+end
+
+"""
+Check if the vector is a proper probability distribution.
+
+# Arguments
+
+- (Vector::Vector{T}) where T<:Real : The vector to be checked.
+
+Throws an error if the array is not a valid probability distribution:
+- The values must be non-negative.
+- The sum of the values must be approximately 1.
+"""
+function check_probability_distribution(Vector::Vector{T}) where T<:Real
+    # Check for non-negativity
+    if any(Vector .< 0)
+        throw(ArgumentError("All elements must be non-negative."))
+    end
+
+    # Check for normalization
+    if !all(isapprox.(sum(Vector, dims=1), 1.0, rtol=1e-5, atol=1e-8))
+        throw(ArgumentError("The array is not normalized."))
+    end
+
+    return true
 end
