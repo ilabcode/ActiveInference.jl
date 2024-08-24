@@ -100,36 +100,6 @@ function get_log_action_marginals(aif)
     return log_action_marginals
 end
 
-""" Generate Random Generative Model as A and B matrices """
-function generate_random_GM(n_states::Vector{Int64}, n_obs::Vector{Int64}, n_controls::Vector{Int64})
-
-    # Initialize A matrices:
-    A_shapes = [[o_dim; n_states] for o_dim in n_obs]
-    A = array_of_any_zeros(A_shapes)
-
-    # Fill A matrices with random probabilities
-    for (i, matrix) in enumerate(A)
-        for idx in CartesianIndices(matrix)
-            matrix[idx] = rand()
-        end
-        A[i] = norm_dist(matrix)
-    end
-
-    # Initialize B matrices
-    B_shapes = [[ns, ns, n_controls[f]] for (f, ns) in enumerate(n_states)]
-    B = array_of_any_zeros(B_shapes)
-
-    # Fill B matrices with random probabilities
-    for (i, matrix) in enumerate(B)
-        for idx in CartesianIndices(matrix)
-            matrix[idx] = rand()
-        end
-        B[i] = norm_dist(matrix)
-    end
-
-    return A, B
-end
-
 """ Check if the array is a proper probability distribution """
 function check_normalization(arr)
     return all(tensor -> all(isapprox.(sum(tensor, dims=1), 1.0, rtol=1e-5, atol=1e-8)), arr)

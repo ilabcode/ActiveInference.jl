@@ -13,9 +13,10 @@ Random.seed!(246)
 n_states = [35, 4, 2]
 n_obs = [35, 5, 3, 3]
 n_controls = [5, 1, 1]
+policy_length = 1
 
 # Using function for generating A and B matrices with random inputs
-A_cross, B_cross = generate_random_GM(n_states, n_obs, n_controls)
+A_cross, B_cross = create_matrix_templates(n_states, n_obs, n_controls, policy_length, "random");
 
 # Generating random C matrix
 C_cross = array_of_any(4)
