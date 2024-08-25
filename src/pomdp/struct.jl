@@ -75,12 +75,12 @@ function create_aif(A, B;
 
     # If C-vectors are not provided
     if isnothing(C)
-        C = array_of_any_zeros(num_obs)
+        C = create_matrix_templates(num_obs, "zeros")
     end
 
     # If D-vectors are not provided
     if isnothing(D)
-        D = array_of_any_uniform(num_states)
+        D = create_matrix_templates(num_states)
     end
 
     # if num_controls are not given, they are inferred from the B matrix
@@ -100,7 +100,7 @@ function create_aif(A, B;
         error("Length of E-vector must match the number of policies.")
     end
 
-    qs_current = array_of_any_uniform(num_states)
+    qs_current = create_matrix_templates(num_states)
     prior = D
     Q_pi = ones(Real,length(policies)) / length(policies)  
     G = zeros(Real,length(policies))

@@ -78,7 +78,7 @@ end
 """ Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
-    action_marginals = array_of_any_zeros(aif.num_controls)
+    action_marginals = create_matrix_templates(aif.num_controls, "zeros")
     log_action_marginals = array_of_any(num_factors)
     q_pi = get_states(aif, "posterior_policies")
     policies = get_states(aif, "policies")

@@ -102,7 +102,7 @@ function fixed_point_iteration(A::Vector{Any}, obs::Vector{Vector{Real}}, num_ob
     end
 
     if prior === nothing
-        prior = array_of_any_uniform(num_states)
+        prior = create_matrix_templates(num_states)
     end
     
     prior = spm_log_array_any(prior) 
@@ -355,7 +355,7 @@ end
 """ Sample Action [Stochastic or Deterministic] """
 function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
-    action_marginals = array_of_any_zeros(num_controls)
+    action_marginals = create_matrix_templates(num_controls, "zeros")
     selected_policy = zeros(Real,num_factors)
     
     for (pol_idx, policy) in enumerate(policies)

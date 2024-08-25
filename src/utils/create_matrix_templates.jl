@@ -1,3 +1,5 @@
+######################## Create Templates Based on states, observations, controls and policy length  ########################
+
 """
     create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64, template_type::String = "uniform")
 
@@ -14,8 +16,6 @@ Creates templates for the A, B, C, D, and E matrices based on the specified para
 - `A, B, C, D, E`: The generative model as matrices and vectors.
 
 """
-
-### Function for creating uniform matrices
 function create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64)
     
     # Calculate the number of policies based on the policy length
@@ -39,7 +39,6 @@ function create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector
     return A, B, C, D, E
 end
 
-### Function for specific template type, can be either 'random' or 'zeros'
 function create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64, template_type::String)
     
     # If the template_type is uniform
@@ -82,4 +81,113 @@ function create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector
     end
 
     return A, B, C, D, E
+end
+
+######################## Create Templates Based on Shapes ########################
+
+### Single Array Input 
+
+"""
+    create_matrix_templates(shapes::Vector{Int64})
+
+Creates uniform templates based on the specified shapes vector.
+
+# Arguments
+- `shapes::Vector{Int64}`: A vector specifying the dimensions of each template to create.
+
+# Returns
+- A vector of normalized arrays.
+
+"""
+function create_matrix_templates(shapes::Vector{Int64})
+
+    # Create arrays filled with ones and then normalize
+    return [norm_dist(ones(n)) for n in shapes]
+end
+
+"""
+    create_matrix_templates(shapes::Vector{Int64}, template_type::String)
+
+Creates templates based on the specified shapes vector and template type. Templates can be uniform, random, or filled with zeros.
+
+# Arguments
+- `shapes::Vector{Int64}`: A vector specifying the dimensions of each template to create.
+- `template_type::String`: The type of templates to create. Can be "uniform" (default), "random", or "zeros".
+
+# Returns
+- A vector of arrays, each corresponding to the shape given by the input vector.
+
+
+"""
+function create_matrix_templates(shapes::Vector{Int64}, template_type::String)
+
+    if template_type == "uniform"
+        # Create arrays filled with ones and then normalize
+        return [norm_dist(ones(n)) for n in shapes]
+
+    elseif template_type == "random"
+        # Create arrays filled with random values
+        return [norm_dist(rand(n)) for n in shapes]
+
+    elseif template_type == "zeros"
+        # Create arrays filled with zeros
+        return [zeros(n) for n in shapes]
+
+    else
+        # Throw error for invalid template type
+        throw(ArgumentError("Invalid type: $template_type. Choose either 'uniform', 'random' or 'zeros'."))
+    end
+end
+
+### Vector of Arrays Input 
+
+"""
+    create_matrix_templates(shapes::Vector{Vector{Int64}})
+
+Creates a uniform, multidimensional template based on the specified shapes vector.
+
+# Arguments
+- `shapes::Vector{Vector{Int64}}`: A vector of vectors, where each vector represent a dimension of the template to create.
+
+# Returns
+- A vector of normalized arrays (uniform distributions), each having the multi-dimensional shape specified in the input vector.
+
+"""
+function create_matrix_templates(shapes::Vector{Vector{Int64}})
+
+    # Create arrays filled with ones and then normalize
+    return [norm_dist(ones(shape...)) for shape in shapes]
+end
+
+"""
+    create_matrix_templates(shapes::Vector{Vector{Int64}}, template_type::String)
+
+Creates a multidimensional template based on the specified vector of shape vectors and template type. Templates can be uniform, random, or filled with zeros.
+
+# Arguments
+- `shapes::Vector{Vector{Int64}}`: A vector of vectors, where each vector represent a dimension of the template to create.
+- `template_type::String`: The type of templates to create. Can be "uniform" (default), "random", or "zeros".
+
+# Returns
+- A vector of arrays, each having the multi-dimensional shape specified in the input vector.
+
+"""
+function create_matrix_templates(shapes::Vector{Vector{Int64}}, template_type::String)
+
+    if template_type == "uniform"
+        # Create arrays filled with ones and then normalize
+        return [norm_dist(ones(shape...)) for shape in shapes]
+
+    elseif template_type == "random"
+        # Create arrays filled with random values
+        return [norm_dist(rand(shape...)) for shape in shapes]
+    
+    elseif template_type == "zeros"
+        # Create arrays filled with zeros
+        return [zeros(shape...) for shape in shapes]
+
+    else
+        # Throw error for invalid template type
+        throw(ArgumentError("Invalid type: $template_type. Choose either 'uniform', 'random' or 'zeros'."))
+    end
 end
