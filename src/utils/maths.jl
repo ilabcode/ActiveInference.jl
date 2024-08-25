@@ -241,12 +241,12 @@ function spm_MDP_G(A, x)
 end
 
 """ Normalizes muliple arrays """
-function norm_dist_array(obj_arr::Array{Any})
-    normed_obj_array = Array{Any}(undef, length(obj_arr))
-    for i in 1:length(obj_arr)
-        normed_obj_array[i] = norm_dist(obj_arr[i])  
+function norm_dist_array(array::Vector{<:Array{<:Real}})
+    normed_array = Array{Any}(undef, length(array))
+    for i in 1:length(array)
+        normed_array[i] = norm_dist(array[i])  
     end
-    return normed_obj_array
+    return normed_array
 end
 
 """ SPM_wnorm """
