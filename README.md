@@ -28,7 +28,7 @@ using ActiveInference
 ## Getting Started 
 
 ### Understanding Vector Data Types in ActiveInference.jl
-The generative model is defined using arrays of type Array{Any}, where each element can itself be a multi-dimensional array or matrix. For example: 
+The generative model is defined using vectors of arrays, where each element can itself be a multi-dimensional array or matrix. For example: 
 
 * If there is only one modality
 ````@example Introduction
@@ -37,12 +37,13 @@ The generative model is defined using arrays of type Array{Any}, where each elem
 states = [25]
 observations = [25]
 controls = [2] # Two controls (e.g. left and right)
+policy_length = 2
 
 # Generate random Generative Model 
-A_matrix, B_matrix = generate_random_GM(states, observations, controls);
+A, B = create_matrix_templates(states, observations, controls, policy_length);
 
-# Here, the A_matrix is a one element Vector{Any} where the element is a 25x25 Matrix
-size(A_matrix[1]) 
+# Here, the A_matrix is a one element Vector{Matrix{Float64}} where the element is a 25x25 Matrix
+size(A[1]) 
 
 ````
 
@@ -53,13 +54,14 @@ size(A_matrix[1])
 states = [25,2] 
 observations = [25,2]
 controls = [2,1] # Only the first factor is controllable (e.g. left and right)
+policy_length = 2
 
 # Generate random Generative Model 
-A_matrix, B_matrix = generate_random_GM(states, observations, controls);
+A, B = create_matrix_templates(states, observations, controls, policy_length);
 
 # Each modality is stored as a separate element.
-size(A_matrix[1]) # Array{Real, 3} with these dimensions: (25, 25, 2)
-size(A_matrix[2]) # Array{Real, 3} with these dimensions: (2, 25, 2)
+size(A[1]) # Array{Float64, 3} with these dimensions: (25, 25, 2)
+size(A[2]) # Array{Float64, 3} with these dimensions: (2, 25, 2)
 
 ````
 More detailed description of Julia arrays can be found in the official [Julia Documentation](https://docs.julialang.org/en/v1/base/arrays/)
@@ -74,8 +76,8 @@ settings = Dict( "policy_len" => 3)
 parameters = Dict("alpha" => 16.0 )
 
 # Initialize the AIF-type agent.
-aif = init_aif(A_matrix,
-               B_matrix;
+aif = init_aif(A,
+               B;
                settings = settings,
                parameters = parameters);
 ````
