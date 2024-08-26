@@ -33,7 +33,7 @@ D_cross[1] = rand(1:10, 35)
 D_cross[2] = rand(1:10, 4)
 D_cross[3] = rand(1:10, 2)
 
-D_cross = norm_dist_array(D_cross)
+D_cross = normalize_arrays(D_cross)
 
 # Setting file path for h5 file containing the dataframes
 
@@ -80,7 +80,7 @@ qs_prev = array_of_any(3)
 for (i, j) in enumerate(n_states)
     qs_prev[i] = rand(1:10, j)
 end
-qs_prev = norm_dist_array(qs_prev)
+qs_prev = normalize_arrays(qs_prev)
 
 h5write(file_path_gm, "qs_prev_1", qs_prev[1])
 h5write(file_path_gm, "qs_prev_2", qs_prev[2])

@@ -1,6 +1,6 @@
 """Normalizes a Categorical probability distribution"""
-function norm_dist(dist)
-    return dist ./ sum(dist, dims=1)
+function normalize_distribution(distribution)
+    return distribution ./ sum(distribution, dims=1)
 end
 
 
@@ -23,32 +23,55 @@ function softmax(dist)
 end
 
 
-"""Function for Taking Natural logarithm"""
-# This is the one named after log_single in SPM 
-# Should maybe be renamed??
-function spm_log_single(arr)
-    EPS_VAL = 1e-16
-    return log.(ℯ, (arr .+ EPS_VAL))
-    #return log.(2.7182818284590, (arr .+ EPS_VAL))
+"""
+    capped_log(x::Real)
+
+# Arguments
+- `x::Real`: A real number.
+
+Return the natural logarithm of x, capped at the machine epsilon value of x.
+"""
+function capped_log(x::Real)
+    return log(max(x, eps(x))) 
 end
 
-"""Function for Calculating Entropy of A-Matrix"""
-function entropy_A(A)
+"""
+    capped_log(x::AbstractArray{T}) where T <: Real
+
+# Arguments
+- `array::AbstractArray{T}`: An array of real numbers.
+
+Return the natural logarithm of x, capped at the machine epsilon value of x.
+"""
+function capped_log(array::AbstractArray{T}) where T <: Real
+    # convert Reals to Floats
+    x_float = float.(array) 
+    # return the capped log of each element in x
+    return log.(max.(x_float, eps(one(eltype(x_float)))))
+end
+
+### This method will be deprecated once all types in the package have been made more strict.
+"""
+    capped_log(array::Array{Any})
+
+# Arguments
+- `array::Array{Any}`: An array of real numbers.
+
+Return the natural logarithm of x, capped at the machine epsilon value of x.
+"""
+function capped_log(array::Array{Any})
+    # convert Reals to Floats
+    x_float = float.(array) 
+    # return the capped log of each element in x
+    return log.(max.(x_float, eps(one(eltype(x_float)))))
+end
+
+""" Apply capped_log to array of arrays """
+function capped_log_array(array)
     
-    H_A = .- sum((A .* spm_log_single(A)), dims = 1)
-
-    return H_A
+    return map(capped_log, array)
 end
 
-
-"""Function for getting KL-divergence"""
-function kl_divergence(qo_u, C)
-
-    #dist = (spm_log_single(qo_u) .- spm_log_single(C))
-    #kl_div = dot(dist, qo_u)
-
-    return dot((spm_log_single(qo_u) .- spm_log_single(C)), qo_u)
-end
 
 """ Get Joint Likelihood """
 function get_joint_likelihood(A, obs_processed, num_states)
@@ -74,18 +97,6 @@ function dot_likelihood(A, obs)
     return LL
 end
 
-""" Apply spm_log to array of arrays """
-function spm_log_array_any(arr)
-    # Initialize an empty array
-    arr_logged = Any[nothing for _ in 1:length(arr)]
-    # Apply spm_log_single to each element of arr
-    for (idx, sub_arr) in enumerate(arr)
-        arr_logged[idx] = spm_log_single(sub_arr)
-    end
-
-    return arr_logged
-end
-
 """ Softmax Function for array of arrays """
 function softmax_array(arr)
     output = Array{Any}(undef, length(arr))
@@ -100,15 +111,15 @@ end
 
 
 """ Multi-dimensional outer product """
-function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
-    # If only x is provided and it is a vector of arrays, recursively call spm_cross on its elements.
+function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
+    # If only x is provided and it is a vector of arrays, recursively call outer_product on its elements.
     if y === nothing && isempty(args)
         if x isa AbstractVector
-            return reduce((a, b) -> spm_cross(a, b), x)
+            return reduce((a, b) -> outer_product(a, b), x)
         elseif typeof(x) <: Number || typeof(x) <: AbstractArray
             return x
         else
-            throw(ArgumentError("Invalid input to spm_cross (\$x)"))
+            throw(ArgumentError("Invalid input to outer_product (\$x)"))
         end
     end
 
@@ -125,9 +136,9 @@ function spm_cross(x, y=nothing; remove_singleton_dims=true, args...)
         z = x
     end
 
-    # Recursively call spm_cross for additional arguments
+    # Recursively call outer_product for additional arguments
     for arg in args
-        z = spm_cross(z, arg; remove_singleton_dims=remove_singleton_dims)
+        z = outer_product(z, arg; remove_singleton_dims=remove_singleton_dims)
     end
 
     # remove singleton dimension if true--
@@ -142,7 +153,7 @@ end
 # Instead of summing over all indices, the function sums over only the last three
 # dimensions of X while keeping the first dimension separate, creating a sum for each "layer" of X.
 
-function spm_dot(X, x)
+function dot_product(X, x)
 
     if all(isa.(x, AbstractArray))  
         n_factors = length(x)
@@ -169,51 +180,9 @@ function spm_dot(X, x)
 end
 
 
-# """ Multi-dimensional inner product """
-# function spm_dot(X, x)
-#     if all(isa.(x, AbstractArray))
-#         n_factors = length(x)
-#     else
-#         x = [x]
-#         n_factors = length(x)
-#     end
-
-#     ndims_X = ndims(X)
-#     dims = collect(ndims_X - n_factors + 1 : ndims_X)
-#     Y = zeros(size(X, 1))
-
-#     thread-local storage for accumulators
-#     Y_local = [zeros(size(X, 1)) for _ in 1:Threads.nthreads()]
-
-#     all_indices = collect(Iterators.product([1:size(X, i) for i in 1:ndims_X]...))
-
-#     #Threads.@threads for idx_tuple in all_indices
-#     for idx_tuple in all_indices
-#         tid = Threads.threadid()  
-#         indices = Tuple(idx_tuple)
-#         product = X[indices...] * prod(x[factor][indices[dims[factor]]] for factor in 1:n_factors)
-#         Y_local[tid][indices[1]] += product 
-#     end
-
-#     Y .= Y_local[1]
-#     for i in eachindex(Y_local)
-#         if i != 1
-#             Y .+= Y_local[i]
-#         end
-#     end
-
-#     if prod(size(Y)) <= 1
-#         Y = only(Y)
-#         Y = [float(Y)]
-#     end
-
-#     return Y
-# end
-
-
 """ Calculate Bayesian Surprise """
-function spm_MDP_G(A, x)
-    qx = spm_cross(x)
+function calculate_bayesian_surprise(A, x)
+    qx = outer_product(x)
     G = 0.0
     qo = Real[]
     idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
@@ -226,7 +195,7 @@ function spm_MDP_G(A, x)
             for additional_index in i  
                 index_vector = (index_vector..., additional_index)  
             end
-            po = spm_cross(po, A_m[index_vector...])
+            po = outer_product(po, A_m[index_vector...])
         end
         po = vec(po) 
         if isempty(qo)
@@ -236,17 +205,13 @@ function spm_MDP_G(A, x)
         qo += qx[i...] * po
         G += qx[i...] * dot(po, log.(po .+ exp(-16)))
     end
-    G = G - dot(qo, spm_log_single(qo))
+    G = G - dot(qo, capped_log(qo))
     return G
 end
 
-""" Normalizes muliple arrays """
-function norm_dist_array(array::Vector{<:Array{<:Real}})
-    normed_array = Array{Any}(undef, length(array))
-    for i in 1:length(array)
-        normed_array[i] = norm_dist(array[i])  
-    end
-    return normed_array
+""" Normalizes multiple arrays """
+function normalize_arrays(array::Vector{<:Array{<:Real}})
+    return map(normalize_distribution, array)
 end
 
 """ SPM_wnorm """

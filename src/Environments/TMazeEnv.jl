@@ -172,7 +172,7 @@ end
 function get_observation(env::TMazeEnv)
 
     # Calculate the probability of observations based on the current state and the likelihood distribution
-    prob_obs = [spm_dot(A_m, env._state) for A_m in env.likelihood_dist]
+    prob_obs = [dot_product(A_m, env._state) for A_m in env.likelihood_dist]
 
     # Sample from the probability distributions to get actual observations
     obs = [sample_dist(po_i) for po_i in prob_obs]

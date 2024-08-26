@@ -26,9 +26,9 @@ export # utils/create_matrix_templates.jl
         create_matrix_templates,
        
        # utils/maths.jl
-       norm_dist,
+       normalize_distribution,
        softmax_array,
-       norm_dist_array,
+       normalize_arrays,
 
        # utils/utils.jl
        array_of_any, 

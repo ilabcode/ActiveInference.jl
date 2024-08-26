@@ -93,7 +93,7 @@ function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real
 
     # Get joint likelihood
     likelihood = get_joint_likelihood(A, obs, num_states)
-    likelihood = spm_log_single(likelihood)
+    likelihood = capped_log(likelihood)
 
     # Initialize posterior and prior
     qs = Vector{Vector{Real}}(undef, n_factors)
@@ -105,14 +105,14 @@ function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real
         prior = create_matrix_templates(num_states)
     end
     
-    prior = spm_log_array_any(prior) 
+    prior = capped_log_array(prior) 
 
     # Initialize free energy
     prev_vfe = calc_free_energy(qs, prior, n_factors)
 
     # Single factor condition
     if n_factors == 1
-        qL = spm_dot(likelihood, qs[1])  
+        qL = dot_product(likelihood, qs[1])  
         return [softmax(qL .+ prior[1])]
     else
         # Run Iteration 
@@ -210,9 +210,9 @@ function update_posterior_policies(
     qo_pi = Vector{Real}[]
   
     if isnothing(E)
-        lnE = spm_log_single(ones(Real, n_policies) / n_policies)
+        lnE = capped_log(ones(Real, n_policies) / n_policies)
     else
-        lnE = spm_log_single(E)
+        lnE = capped_log(E)
     end
 
     for (idx, policy) in enumerate(policies)
@@ -254,7 +254,7 @@ function get_expected_obs(qs_pi, A::Vector{Array{<:Real}})
 
     for t in 1:n_steps
         for (modality, A_m) in enumerate(A)
-            qo_pi[t][modality] = spm_dot(A_m, qs_pi[t])
+            qo_pi[t][modality] = dot_product(A_m, qs_pi[t])
         end
     end
 
@@ -279,7 +279,7 @@ function calc_expected_utility(qo_pi, C)
     lnC =[]
     for t in 1:n_steps
         for modality in 1:num_modalities
-            lnC = spm_log_single(C_prob[modality][:, t])
+            lnC = capped_log(C_prob[modality][:, t])
             expected_utility += dot(qo_pi[t][modality], lnC) 
         end
     end
@@ -293,7 +293,7 @@ function calc_states_info_gain(A, qs_pi)
     states_surprise = 0.0
 
     for t in 1:n_steps
-        states_surprise += spm_MDP_G(A, qs_pi[t])
+        states_surprise += calculate_bayesian_surprise(A, qs_pi[t])
     end
 
     return states_surprise
@@ -316,7 +316,7 @@ function calc_pA_info_gain(pA, qo_pi, qs_pi)
         wA_modality = wA[modality] .* (pA[modality] .> 0)
 
         for t in 1:n_steps
-            pA_info_gain -= dot(qo_pi[t][modality], spm_dot(wA_modality, qs_pi[t]))
+            pA_info_gain -= dot(qo_pi[t][modality], dot_product(wA_modality, qs_pi[t]))
         end
     end
     return pA_info_gain
@@ -364,13 +364,13 @@ function sample_action(q_pi, policies, num_controls; action_selection="stochasti
         end
     end
 
-    action_marginals = norm_dist_array(action_marginals)
+    action_marginals = normalize_arrays(action_marginals)
 
     for factor_i in 1:num_factors
         if action_selection == "deterministic"
             selected_policy[factor_i] = select_highest(action_marginals[factor_i])
         elseif action_selection == "stochastic"
-            log_marginal_f = spm_log_single(action_marginals[factor_i])
+            log_marginal_f = capped_log(action_marginals[factor_i])
             p_actions = softmax(log_marginal_f * alpha)
             selected_policy[factor_i] = action_select(p_actions)
         end

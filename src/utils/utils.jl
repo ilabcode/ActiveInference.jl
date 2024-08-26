@@ -19,7 +19,7 @@ function array_of_any_uniform(shape_list)
     arr = Array{Any}(undef, length(shape_list))  
     for i in eachindex(shape_list)
         shape = shape_list[i]
-        arr[i] = norm_dist(ones(Real, shape))  
+        arr[i] = normalize_distribution(ones(Real, shape))  
     end
     return arr
 end
@@ -89,10 +89,10 @@ function get_log_action_marginals(aif)
         end
     end
 
-    action_marginals = norm_dist_array(action_marginals)
+    action_marginals = normalize_arrays(action_marginals)
 
     for factor_i in 1:num_factors
-        log_marginal_f = spm_log_single(action_marginals[factor_i])
+        log_marginal_f = capped_log(action_marginals[factor_i])
         log_action_marginals[factor_i] = log_marginal_f
     end
 
