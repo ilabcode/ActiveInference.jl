@@ -1,16 +1,14 @@
 """ -------- AIF Mutable Struct -------- """
 
-using LinearAlgebra
-
 mutable struct AIF
-    A::Array{Any,1} # A-matrix
-    B::Array{Any,1} # B-matrix
-    C::Array{Any,1} # C-vectors
-    D::Array{Any,1} # D-vectors
-    E::Union{Array{Any, 1}, Nothing} # E - vector (Habits)
-    pA::Union{Array{Any,1}, Nothing} # Dirichlet priors for A-matrix
-    pB::Union{Array{Any,1}, Nothing} # Dirichlet priors for B-matrix
-    pD::Union{Array{Any,1}, Nothing} # Dirichlet priors for D-vector
+    A::Vector{Array{<:Real}} # A-matrix
+    B::Vector{Array{<:Real}} # B-matrix
+    C::Vector{Array{<:Real}} # C-vectors
+    D::Vector{Array{<:Real}} # D-vectors
+    E::Union{Vector{<:Real}, Nothing}  # E-vector (Habits)
+    pA::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for A-matrix
+    pB::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for B-matrix
+    pD::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter
     fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
     lr_pB::Real # pB learning Parameter
@@ -18,7 +16,7 @@ mutable struct AIF
     lr_pD::Real # pD Learning parameter
     fr_pD::Real # PD Forgetting parameter
     modalities_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# modality"
-    factors_to_learn::Union{String, Vector{Int64}} # Modalities can be eithe "all" or "# factor"
+    factors_to_learn::Union{String, Vector{Int64}} # Modalities can be either "all" or "# factor"
     gamma::Real # Gamma parameter
     alpha::Real # Alpha parameter
     policies::Array # Inferred from the B matrix
@@ -77,12 +75,12 @@ function create_aif(A, B;
 
     # If C-vectors are not provided
     if isnothing(C)
-        C = array_of_any_zeros(num_obs)
+        C = create_matrix_templates(num_obs, "zeros")
     end
 
     # If D-vectors are not provided
     if isnothing(D)
-        D = array_of_any_uniform(num_states)
+        D = create_matrix_templates(num_states)
     end
 
     # if num_controls are not given, they are inferred from the B matrix
@@ -95,14 +93,14 @@ function create_aif(A, B;
         control_fac_idx = [f for f in eachindex(num_controls) if num_controls[f] > 1]
     end
 
-    policies = construct_policies_full(num_states, num_controls=num_controls, policy_len=policy_len, control_fac_idx=control_fac_idx)
+    policies = construct_policies(num_states, n_controls=num_controls, policy_length=policy_len, controllable_factors_indices=control_fac_idx)
 
     # Throw error if the E-vector does not match the length of policies
     if !isnothing(E) && length(E) != length(policies)
         error("Length of E-vector must match the number of policies.")
     end
 
-    qs_current = array_of_any_uniform(num_states)
+    qs_current = create_matrix_templates(num_states)
     prior = D
     Q_pi = ones(Real,length(policies)) / length(policies)  
     G = zeros(Real,length(policies))
@@ -213,22 +211,40 @@ function init_aif(
 - 'settings::Union{Nothing, Dict} = nothing':
 
 """
-function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = nothing, pD = nothing,
+function init_aif(A, B; C=nothing, D=nothing, E=nothing, pA=nothing, pB=nothing, pD=nothing,
                   parameters::Union{Nothing, Dict{String, T}} where T<:Real = nothing,
                   settings::Union{Nothing, Dict} = nothing,
                   save_history::Bool = true, verbose::Bool = true)
 
-    # Throw error if A, B or D is not a proper probability distribution  
-    if !check_normalization(A)
-        error("The A matrix is not normalized.")
+    # Catch error if A, B or D is not a proper probability distribution  
+    # Check A matrix
+    try
+        if !check_probability_distribution(A)
+            error("The A matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The A matrix is not a proper probability distribution. Details: $(e)")
     end
 
-    if !check_normalization(B)
-        error("The B matrix is not normalized.")
+    # Check B matrix
+    try
+        if !check_probability_distribution(B)
+            error("The B matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The B matrix is not a proper probability distribution. Details: $(e)")
     end
 
-    if !isnothing(D) && !check_normalization(D)
-        error("The D matrix is not normalized.")
+    # Check D matrix (if it's not nothing)
+    try
+        if !isnothing(D) && !check_probability_distribution(D)
+            error("The D matrix is not a proper probability distribution.")
+        end
+    catch e
+        # Add context and rethrow the error
+        error("The D matrix is not a proper probability distribution. Details: $(e)")
     end
 
     # Throw warning if no D-vector is provided. 
@@ -354,6 +370,70 @@ function init_aif(A, B; C=nothing, D=nothing, E = nothing, pA = nothing, pB = no
     return aif
 end
 
+### Struct related functions ###
+
+"""
+    construct_policies(n_states::Vector{T} where T <: Real; n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing, 
+                       policy_length::Int=1, controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing)
+
+Construct policies based on the number of states, controls, policy length, and indices of controllable state factors.
+
+# Arguments
+- `n_states::Vector{T} where T <: Real`: A vector containing the number of  states for each factor.
+- `n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing`: A vector specifying the number of allowable actions for each state factor. 
+- `policy_length::Int=1`: The length of policies. (planning horizon)
+- `controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing`: A vector of indices identifying which state factors are controllable.
+
+"""
+function construct_policies(
+    n_states::Vector{T} where T <: Real; 
+    n_controls::Union{Vector{T}, Nothing} where T <: Real=nothing, 
+    policy_length::Int=1, 
+    controllable_factors_indices::Union{Vector{Int}, Nothing}=nothing
+    )
+
+    # Determine the number of state factors
+    n_factors = length(n_states)
+
+    # If indices of controllable factors are not given 
+    if isnothing(controllable_factors_indices)
+        if !isnothing(n_controls)
+            # Determine controllable factors based on which factors have more than one control
+            controllable_factors_indices = findall(x -> x > 1, n_controls)
+        else
+            # If no controls are given, assume all factors are controllable
+            controllable_factors_indices = 1:n_factors
+        end
+    end
+
+    # if number of controls is not given, determine it based n_states and controllable_factors_indices
+    if isnothing(n_controls)
+        n_controls = [in(factor_index, controllable_factors_indices) ? n_states[factor_index] : 1 for factor_index in 1:n_factors]
+    end
+
+    # Create a vector of possible actions for each time step
+    x = repeat(n_controls, policy_length)
+
+    # Generate all combinations of actions across all time steps
+    policies = collect(Iterators.product([1:i for i in x]...))
+
+    # Initialize an empty vector to store transformed policies
+    transformed_policies = Vector{Matrix{Int64}}()
+
+    for policy_tuple in policies
+        # Convert tuple into a vector
+        policy_vector = collect(policy_tuple)
+        
+        # Reshape the policy vector into a matrix and transpose it
+        policy_matrix = reshape(policy_vector, (length(policy_vector) ÷ policy_length, policy_length))'
+        
+        # Push the reshaped matrix to the vector of transformed policies
+        push!(transformed_policies, policy_matrix)
+    end
+
+    return transformed_policies
+end
+
 """ Update the agents's beliefs over states """
 function infer_states!(aif::AIF, obs::Vector{Int64})
     if !isempty(aif.action)
@@ -406,7 +486,7 @@ function update_A!(aif::AIF, obs::Vector{Int64})
     qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
     
     aif.pA = qA
-    aif.A = norm_dist_array(qA)
+    aif.A = normalize_arrays(qA)
 
     return qA
 end
@@ -417,7 +497,7 @@ function update_B!(aif::AIF, qs_prev)
     qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
 
     aif.pB = qB
-    aif.B = norm_dist_array(qB)
+    aif.B = normalize_arrays(qB)
 
     return qB
 end
@@ -428,7 +508,7 @@ function update_D!(aif::AIF, qs_t1)
     qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
 
     aif.pD = qD
-    aif.D = norm_dist_array(qD)
+    aif.D = normalize_arrays(qD)
 
     return qD
 end

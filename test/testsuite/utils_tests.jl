@@ -12,12 +12,13 @@ using Test
     states = [25]
     observations = [25]
     controls = [2]
+    policy_length = 1
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+    A, B = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # Initialize agent with default settings/parameters
-    aif = init_aif(A_matrix, B_matrix);
+    aif = init_aif(A, B);
 
     # Set Parameters as dictionary
     params=Dict("lr_pA" => 1.0,
@@ -65,12 +66,13 @@ end
     states = [25]
     observations = [25]
     controls = [2]
+    policy_length = 1
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+    A, B = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # Initialize agent with default settings/parameters
-    aif = init_aif(A_matrix, B_matrix);
+    aif = init_aif(A, B);
 
 
     observation = [rand(1:observations[i]) for i in axes(observations, 1)]
@@ -89,12 +91,13 @@ end
     states = [25,2]
     observations = [25,2]
     controls = [5,1]
+    policy_length = 1
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+    A, B = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # Initialize agent with default settings/parameters
-    aif = init_aif(A_matrix, B_matrix);
+    aif = init_aif(A, B);
 
     observation = [rand(1:observations[i]) for i in axes(observations, 1)]
 

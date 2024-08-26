@@ -1,11 +1,5 @@
-using ActiveInference
-using LinearAlgebra
-using Random
-using Distributions
-
 mutable struct TMazeEnv
     reward_prob::Float64
-
     reward_idx::Int64
     loss_idx::Int64
     location_factor_id::Int64
@@ -13,7 +7,6 @@ mutable struct TMazeEnv
     location_modality_id::Int64
     reward_modality_id::Int64
     cue_modality_id::Int64
-
     num_states::Vector{Int64}
     num_locations::Int64
     num_controls::Vector{Int64}
@@ -22,12 +15,9 @@ mutable struct TMazeEnv
     num_obs::Vector{Int64}
     num_factors::Int64
     num_modalities::Int64
-
     reward_probs::Vector{Float64}
-
     transition_dist::Array{Any, 1}
     likelihood_dist::Array{Any, 1}
-
     _state::Array{Any, 1}
     _reward_condition_idx::Int64
     reward_condition::Vector{Int64}
@@ -182,7 +172,7 @@ end
 function get_observation(env::TMazeEnv)
 
     # Calculate the probability of observations based on the current state and the likelihood distribution
-    prob_obs = [spm_dot(A_m, env._state) for A_m in env.likelihood_dist]
+    prob_obs = [dot_product(A_m, env._state) for A_m in env.likelihood_dist]
 
     # Sample from the probability distributions to get actual observations
     obs = [sample_dist(po_i) for po_i in prob_obs]

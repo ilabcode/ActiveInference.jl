@@ -1,12 +1,16 @@
 module ActiveInference
 
 using ActionModels
+using LinearAlgebra
+using IterTools
+using Random
+using Distributions
 
-include("maths.jl")
-include("agent.jl")
-include("learning.jl")
-include("utils.jl")
-include("inference.jl")
+include("utils/maths.jl")
+include("pomdp/struct.jl")
+include("pomdp/learning.jl")
+include("utils/utils.jl")
+include("pomdp/inference.jl")
 include("ActionModelsExtensions/get_states.jl")
 include("ActionModelsExtensions/get_parameters.jl")
 include("ActionModelsExtensions/get_history.jl")
@@ -14,40 +18,26 @@ include("ActionModelsExtensions/set_parameters.jl")
 include("ActionModelsExtensions/reset.jl")
 include("ActionModelsExtensions/give_inputs.jl")
 include("ActionModelsExtensions/set_save_history.jl")
-include("POMDP.jl")
+include("pomdp/POMDP.jl")
+include("utils/helper_functions.jl")
+include("utils/create_matrix_templates.jl")
 
-export # maths.jl
-       norm_dist,
-       sample_category,
-       softmax,
-       spm_log_single,
-       entropy_A,
-       kl_divergence,
-       get_joint_likelihood,
-       dot_likelihood,
-       spm_log_array_any,
+export # utils/create_matrix_templates.jl
+        create_matrix_templates,
+       
+       # utils/maths.jl
+       normalize_distribution,
        softmax_array,
-       spm_cross,
-       spm_dot,
-       spm_MDP_G,
-       norm_dist_array,
+       normalize_arrays,
 
-
-       # utils.jl
+       # utils/utils.jl
        array_of_any, 
        array_of_any_zeros, 
        array_of_any_uniform, 
        onehot,
-       construct_policies_full,
-       plot_gridworld,
-       process_observation,
        get_model_dimensions,
-       to_array_of_any,
-       select_highest,
-       action_select,  
-       generate_random_GM,     
 
-       # agent.jl
+       # struct.jl
        init_aif,
        infer_states!,
        infer_policies!,
@@ -55,18 +45,6 @@ export # maths.jl
        update_A!,
        update_B!,
        update_D!,
-
-       # inference.jl
-       get_expected_states,
-       update_posterior_states,
-       fixed_point_iteration,
-       compute_accuracy,
-       calc_free_energy,
-       update_posterior_policies,
-       get_expected_obs,
-       calc_expected_utility,
-       calc_states_info_gain,
-       sample_action,
 
        # POMDP.jl
        action_pomdp!,
@@ -81,15 +59,18 @@ export # maths.jl
        give_inputs!,
        set_save_history!
 
-
-    # From Environments\\EpistChainEnv.jl
     module Environments
 
+    using LinearAlgebra
+    using ActiveInference
+    using Distributions
+    
     include("Environments/EpistChainEnv.jl")
     
     export EpistChainEnv, step!, reset_env!
 
     include("Environments/TMazeEnv.jl")
+    include("utils/maths.jl")
 
     export TMazeEnv, step_TMaze!, reset_TMaze!, initialize_gp
        

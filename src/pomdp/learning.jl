@@ -14,10 +14,10 @@ function update_obs_likelihood_dirichlet(pA, A, obs, qs; lr = 1.0, fr = 1.0, mod
     qA = deepcopy(pA)
 
     # Important! Takes first the cross product of the qs itself, so that it matches dimensions with the A and pA matrices
-    qs_cross = spm_cross(qs)
+    qs_cross = outer_product(qs)
 
     for modality in modalities
-        dfda = spm_cross(obs[modality], qs_cross)
+        dfda = outer_product(obs[modality], qs_cross)
         dfda = dfda .* (A[modality] .> 0)
         qA[modality] = (fr * qA[modality]) + (lr * dfda)
     end
@@ -38,7 +38,7 @@ function update_state_likelihood_dirichlet(pB, B, actions, qs, qs_prev; lr = 1.0
     end
 
     for factor in factors
-        dfdb = spm_cross(qs[factor], qs_prev[factor])
+        dfdb = outer_product(qs[factor], qs_prev[factor])
         dfdb .*= (B[factor][:,:,Int(actions[factor])] .> 0)
         qB[factor][:,:,Int(actions[factor])] = qB[factor][:,:,Int(actions[factor])]*fr .+ (lr .* dfdb)
     end

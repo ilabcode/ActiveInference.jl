@@ -11,12 +11,13 @@ using Test
     states = [25]
     observations = [25]
     controls = [2]
+    policy_length = 1
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+    A, B = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # Initialize agent with default settings/parameters
-    aif = init_aif(A_matrix, B_matrix);
+    aif = init_aif(A, B);
 
     # Give observation to agent and run state inference
     observation = [rand(1:observations[i]) for i in axes(observations, 1)]
@@ -36,12 +37,13 @@ end
     states = [64,2]
     observations = [64,2]
     controls = [5,1]
+    policy_length = 1
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
+    A, B = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # Initialize agent with default settings/parameters
-    aif = init_aif(A_matrix, B_matrix);
+    aif = init_aif(A, B);
 
     # Give observation to agent and run state inference
     observation = [rand(1:observations[i]) for i in axes(observations, 1)]
@@ -61,18 +63,10 @@ end
     states = [64,2]
     observations = [64,2]
     controls = [5,2]
+    policy_length = 3
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
-
-    # Preferences
-    C = array_of_any_zeros(observations)
-    C[2][1] = 1.0
-    C[2][2] = -1.0
-    
-    # D vectors
-    D = array_of_any_uniform(states)
-    D[1] = onehot(1, states[1])
+    A, B, C, D = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     settings = Dict(
     "policy_len"           => 3,
@@ -81,7 +75,7 @@ end
     "use_utility"          => true)
 
     # Initialize agent with custom settings
-    aif = init_aif(A_matrix, B_matrix; C=C, D=D, settings = settings);
+    aif = init_aif(A, B; C=C, D=D, settings = settings);
 
     # Give observation to agent and run state inference
     observation = [rand(1:observations[i]) for i in axes(observations, 1)]
@@ -105,21 +99,19 @@ end
     states = [64,2]
     observations = [64,2]
     controls = [5,1]
+    policy_length = 2
 
     # Generate random Generative Model 
-    A_matrix, B_matrix = generate_random_GM(states, observations, controls)
-
-    # Uniform D vectors
-    D = array_of_any_uniform(states)
+    A, B, C, D = create_matrix_templates(states, observations, controls, policy_length, "random");
 
     # pA concentration parameter
-    pA = deepcopy(A_matrix)
+    pA = deepcopy(A)
     for i in eachindex(pA)
         pA[i] .= 1.0
     end
 
     # pB concentration parameter
-    pB = deepcopy(B_matrix)
+    pB = deepcopy(B)
     for i in eachindex(pB)
         pB[i] .= 1.0
     end
@@ -148,8 +140,8 @@ end
         "fr_pD" => 1.0,
         )
     # initialize ageent
-    aif = init_aif(A_matrix,
-                   B_matrix; 
+    aif = init_aif(A,
+                   B; 
                    D = D,
                    pA = pA,
                    pB = pB,

@@ -1,8 +1,5 @@
 """ -------- Inference Functions -------- """
 
-using LinearAlgebra
-using IterTools
-
 #### State Inference #### 
 
 """ Get Expected States """
@@ -24,8 +21,64 @@ function get_expected_states(qs, B, policy)
     return qs_pi[2:end]
 end
 
+"""
+    process_observation(observation::Int, n_modalities::Int, n_observations::Vector{Int})
+
+Process a single modality observation. Returns a one-hot encoded vector. 
+
+# Arguments
+- `observation::Int`: The index of the observed state with a single observation modality.
+- `n_modalities::Int`: The number of observation modalities in the observation. 
+- `n_observations::Vector{Int}`: A vector containing the number of observations for each modality.
+
+# Returns
+- `Vector{Vector{Real}}`: A vector containing a single one-hot encoded observation.
+"""
+function process_observation(observation::Int, n_modalities::Int, n_observations::Vector{Int})
+
+    # Check if there is only one modality
+    if n_modalities == 1
+        # Create a one-hot encoded vector for the observation
+        processed_observation = onehot(observation, n_observations[1]) 
+    end
+
+    # Return the processed observation wrapped in a vector
+    return [processed_observation]
+end
+
+"""
+    process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}}, n_modalities::Int, n_observations::Vector{Int})
+
+Process observation with multiple modalities and return them in a one-hot encoded format 
+
+# Arguments
+- `observation::Union{Array{Int}, Tuple{Vararg{Int}}}`: A collection of indices of the observed states for each modality.
+- `n_modalities::Int`: The number of observation modalities in the observation. 
+- `n_observations::Vector{Int}`: A vector containing the number of observations for each modality.
+
+# Returns
+- `Vector{Vector{Real}}`: A vector containing one-hot encoded vectors for each modality.
+"""
+function process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}}, n_modalities::Int, n_observations::Vector{Int})
+
+    # Initialize the processed_observation vector
+    processed_observation = Vector{Vector{Real}}(undef, n_modalities)
+
+    # Check if the length of observation matches the number of modalities
+    if length(observation) == n_modalities
+        for (modality, modality_observation) in enumerate(observation)
+            # Create a one-hot encoded vector for the current modality observation
+            one_hot = onehot(modality_observation, n_observations[modality])
+            # Add the one-hot vector to the processed_observation vector
+            processed_observation[modality] = one_hot
+        end
+    end
+
+    return processed_observation
+end
+
 """ Update Posterior States """
-function update_posterior_states(A::Vector{Any}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
+function update_posterior_states(A::Vector{Array{<:Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
@@ -34,33 +87,33 @@ end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A::Vector{Any}, obs::Vector{Any}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
+function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
     # Get joint likelihood
     likelihood = get_joint_likelihood(A, obs, num_states)
-    likelihood = spm_log_single(likelihood)
+    likelihood = capped_log(likelihood)
 
     # Initialize posterior and prior
-    qs = Array{Any}(undef, n_factors)
+    qs = Vector{Vector{Real}}(undef, n_factors)
     for factor in 1:n_factors
         qs[factor] = ones(Real,num_states[factor]) / num_states[factor]
     end
 
     if prior === nothing
-        prior = array_of_any_uniform(num_states)
+        prior = create_matrix_templates(num_states)
     end
     
-    prior = spm_log_array_any(prior) 
+    prior = capped_log_array(prior) 
 
     # Initialize free energy
     prev_vfe = calc_free_energy(qs, prior, n_factors)
 
     # Single factor condition
     if n_factors == 1
-        qL = spm_dot(likelihood, qs[1])  
-        return to_array_of_any(softmax(qL .+ prior[1]))
+        qL = dot_product(likelihood, qs[1])  
+        return [softmax(qL .+ prior[1])]
     else
         # Run Iteration 
         curr_iter = 0
@@ -138,10 +191,10 @@ end
 """ Update Posterior over Policies """
 function update_posterior_policies(
     qs::Vector{Any},
-    A::Vector{Any},
-    B::Vector{Any},
-    C::Vector{Any},
-    policies::Vector{Any},
+    A::Vector{Array{<:Real}},
+    B::Vector{Array{<:Real}},
+    C::Vector{Array{<:Real}},
+    policies::Vector{Matrix{Int64}},
     use_utility::Bool=true,
     use_states_info_gain::Bool=true,
     use_param_info_gain::Bool=false,
@@ -157,9 +210,9 @@ function update_posterior_policies(
     qo_pi = Vector{Real}[]
   
     if isnothing(E)
-        lnE = spm_log_single(ones(Real, n_policies) / n_policies)
+        lnE = capped_log(ones(Real, n_policies) / n_policies)
     else
-        lnE = spm_log_single(E)
+        lnE = capped_log(E)
     end
 
     for (idx, policy) in enumerate(policies)
@@ -190,7 +243,7 @@ function update_posterior_policies(
 end
 
 """ Get Expected Observations """
-function get_expected_obs(qs_pi, A::Vector{Any})
+function get_expected_obs(qs_pi, A::Vector{Array{<:Real}})
     n_steps = length(qs_pi)
     qo_pi = []
 
@@ -201,7 +254,7 @@ function get_expected_obs(qs_pi, A::Vector{Any})
 
     for t in 1:n_steps
         for (modality, A_m) in enumerate(A)
-            qo_pi[t][modality] = spm_dot(A_m, qs_pi[t])
+            qo_pi[t][modality] = dot_product(A_m, qs_pi[t])
         end
     end
 
@@ -226,7 +279,7 @@ function calc_expected_utility(qo_pi, C)
     lnC =[]
     for t in 1:n_steps
         for modality in 1:num_modalities
-            lnC = spm_log_single(C_prob[modality][:, t])
+            lnC = capped_log(C_prob[modality][:, t])
             expected_utility += dot(qo_pi[t][modality], lnC) 
         end
     end
@@ -240,7 +293,7 @@ function calc_states_info_gain(A, qs_pi)
     states_surprise = 0.0
 
     for t in 1:n_steps
-        states_surprise += spm_MDP_G(A, qs_pi[t])
+        states_surprise += calculate_bayesian_surprise(A, qs_pi[t])
     end
 
     return states_surprise
@@ -260,10 +313,10 @@ function calc_pA_info_gain(pA, qo_pi, qs_pi)
     pA_info_gain = 0
 
     for modality in 1:num_modalities
-        wA_modality = wA[modality] .* pA[modality]
+        wA_modality = wA[modality] .* (pA[modality] .> 0)
 
         for t in 1:n_steps
-            pA_info_gain -= dot(qo_pi[t][modality], spm_dot(wA_modality, qs_pi[t]))
+            pA_info_gain -= dot(qo_pi[t][modality], dot_product(wA_modality, qs_pi[t]))
         end
     end
     return pA_info_gain
@@ -291,7 +344,7 @@ function calc_pB_info_gain(pB, qs_pi, qs_prev, policy)
         policy_t = policy[t, :]
 
         for (factor, a_i) in enumerate(policy_t)
-            wB_factor_t = wB[factor][:,:,Int(a_i)] .* pB[factor][:,:,Int(a_i)]
+            wB_factor_t = wB[factor][:,:,Int(a_i)] .* (pB[factor][:,:,Int(a_i)] .> 0)
             pB_info_gain -= dot(qs_pi[t][factor], wB_factor_t * previous_qs[factor])
         end
     end
@@ -302,7 +355,7 @@ end
 """ Sample Action [Stochastic or Deterministic] """
 function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
-    action_marginals = array_of_any_zeros(num_controls)
+    action_marginals = create_matrix_templates(num_controls, "zeros")
     selected_policy = zeros(Real,num_factors)
     
     for (pol_idx, policy) in enumerate(policies)
@@ -311,13 +364,13 @@ function sample_action(q_pi, policies, num_controls; action_selection="stochasti
         end
     end
 
-    action_marginals = norm_dist_array(action_marginals)
+    action_marginals = normalize_arrays(action_marginals)
 
     for factor_i in 1:num_factors
         if action_selection == "deterministic"
             selected_policy[factor_i] = select_highest(action_marginals[factor_i])
         elseif action_selection == "stochastic"
-            log_marginal_f = spm_log_single(action_marginals[factor_i])
+            log_marginal_f = capped_log(action_marginals[factor_i])
             p_actions = softmax(log_marginal_f * alpha)
             selected_policy[factor_i] = action_select(p_actions)
         end
