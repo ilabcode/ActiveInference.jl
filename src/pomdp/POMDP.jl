@@ -45,7 +45,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
 
     ### Pass action marginals through softmax function to get action probabilities
     for factor in 1:n_factors
-        action_p[factor] = softmax(log_action_marginals[factor] * alpha)
+        action_p[factor] = softmax(log_action_marginals[factor] * alpha, dims=1)
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
     end
     
@@ -75,7 +75,7 @@ function action_pomdp!(aif::AIF, obs::Vector{Int64})
     
     ### Pass action marginals through softmax function to get action probabilities
     for factor in 1:n_factors
-        action_p[factor] = softmax(log_action_marginals[factor] * alpha)
+        action_p[factor] = softmax(log_action_marginals[factor] * alpha, dims=1)
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
     end
 

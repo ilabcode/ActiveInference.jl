@@ -127,17 +127,17 @@ function check_probability_distribution(Array::Vector{<:Array{T, N}}) where {T<:
 end
 
 """
-Check if the array of real number arrays is a proper probability distribution.
+Check if the vector of vectors is a proper probability distribution.
 
 # Arguments
 
-- (Array::Vector{Array{T}}) where T<:Real
+- (Array::Vector{Vector{T}}) where T<:Real
 
 Throws an error if the array is not a valid probability distribution:
 - The values must be non-negative.
 - The sum of the values must be approximately 1.
 """
-function check_probability_distribution(Array::Vector{Array{T}}) where T<:Real
+function check_probability_distribution(Array::Vector{Vector{T}}) where T<:Real
     for vector in Array
         # Check for non-negativity
         if any(vector .< 0)
@@ -145,7 +145,7 @@ function check_probability_distribution(Array::Vector{Array{T}}) where T<:Real
         end
 
         # Check for normalization
-        if !all(isapprox.(sum(vector), 1.0, rtol=1e-5, atol=1e-8))
+        if !all(isapprox.(sum(vector, dims=1), 1.0, rtol=1e-5, atol=1e-8))
             throw(ArgumentError("The array is not normalized."))
         end
     end

@@ -4,25 +4,6 @@ function normalize_distribution(distribution)
 end
 
 
-"""Sampling Function"""
-function sample_category(probabilities)
-    rand_num = rand()
-    cum_probabilities = cumsum(probabilities)
-    category = findfirst(x -> x > rand_num, cum_probabilities)
-    return category
-end
-
-"""Softmax Function"""
-function softmax(dist)
-
-    output = dist .- maximum(dist, dims = 1)
-    output = exp.(output)
-    output = output ./ sum(output, dims = 1)
-
-    return output
-end
-
-
 """
     capped_log(x::Real)
 
@@ -103,7 +84,8 @@ function softmax_array(arr)
     
     # Iterate through each index in arr and apply softmax
     for idx in eachindex(arr)
-        output[idx] = softmax(arr[idx])
+        output[idx] = softmax(arr[idx], dims=1)
+        
     end
     
     return output

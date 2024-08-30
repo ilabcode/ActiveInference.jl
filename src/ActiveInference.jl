@@ -5,6 +5,7 @@ using LinearAlgebra
 using IterTools
 using Random
 using Distributions
+using LogExpFunctions
 
 include("utils/maths.jl")
 include("pomdp/struct.jl")
