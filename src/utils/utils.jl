@@ -100,17 +100,17 @@ function get_log_action_marginals(aif)
 end
 
 """
-Check if the array of arrays is a proper probability distribution.
+Check if the vector of arrays is a proper probability distribution.
 
 # Arguments
 
-- (Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+- (Array::Vector{<:Array{T}}) where T<:Real
 
 Throws an error if the array is not a valid probability distribution:
 - The values must be non-negative.
 - The sum of the values must be approximately 1.
 """
-function check_probability_distribution(Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+function check_probability_distribution(Array::Vector{<:Array{T}}) where T<:Real
     for tensor in Array
         # Check for non-negativity
         if any(tensor .< 0)
