@@ -281,8 +281,12 @@ function init_aif(A, B; C=nothing, D=nothing, E=nothing, pA=nothing, pB=nothing,
     end
 
     # Check if parameters are provided or use defaults
-    if verbose == true && isnothing(parameters)
-        @warn "No parameters provided, default parameters will be used."
+    if isnothing(parameters)
+
+        if verbose == true
+            @warn "No parameters provided, default parameters will be used."
+        end
+        
         parameters = Dict("gamma" => 16.0,
                           "alpha" => 16.0,
                           "lr_pA" => 1.0,
