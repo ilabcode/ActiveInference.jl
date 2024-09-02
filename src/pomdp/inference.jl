@@ -113,7 +113,7 @@ function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real
     # Single factor condition
     if n_factors == 1
         qL = dot_product(likelihood, qs[1])  
-        return [softmax(qL .+ prior[1])]
+        return [softmax(qL .+ prior[1], dims=1)]
     else
         # Run Iteration 
         curr_iter = 0
@@ -129,7 +129,7 @@ function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real
                 for i in 1:size(qs[factor], 1)
                     qL[i] = sum([LL_tensor[indices...] / qs[factor][i] for indices in Iterators.product([1:size(LL_tensor, dim) for dim in 1:n_factors]...) if indices[factor] == i])
                 end
-                qs[factor] = softmax(qL + prior[factor])
+                qs[factor] = softmax(qL + prior[factor], dims=1)
             end
 
             # Recompute free energy
@@ -238,7 +238,7 @@ function update_posterior_policies(
 
     end
 
-    q_pi = softmax(G * gamma + lnE)
+    q_pi = softmax(G * gamma + lnE, dims=1)
     return q_pi, G
 end
 
@@ -371,7 +371,7 @@ function sample_action(q_pi, policies, num_controls; action_selection="stochasti
             selected_policy[factor_i] = select_highest(action_marginals[factor_i])
         elseif action_selection == "stochastic"
             log_marginal_f = capped_log(action_marginals[factor_i])
-            p_actions = softmax(log_marginal_f * alpha)
+            p_actions = softmax(log_marginal_f * alpha, dims=1)
             selected_policy[factor_i] = action_select(p_actions)
         end
     end
