@@ -263,8 +263,12 @@ function init_aif(A, B; C=nothing, D=nothing, E=nothing, pA=nothing, pB=nothing,
     end           
     
     # Check if settings are provided or use defaults
-    if verbose == true && isnothing(settings)
-        @warn "No settings provided, default settings will be used."
+    if isnothing(settings)
+
+        if verbose == true
+            @warn "No settings provided, default settings will be used."
+        end
+
         settings = Dict(
             "policy_len" => 1, 
             "num_controls" => nothing, 
