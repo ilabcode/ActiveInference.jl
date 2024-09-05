@@ -85,7 +85,7 @@ function reset_TMaze!(env::TMazeEnv; state=nothing)
         env.reward_condition = onehot(env._reward_condition_idx, env.num_reward_conditions)
 
         # Initialize the full state array
-        full_state = array_of_any(env.num_factors)
+        full_state = Vector{Any}(undef, env.num_factors)
         full_state[env.location_factor_id] = loc_state
         full_state[env.trial_factor_id] = env.reward_condition
 
@@ -182,7 +182,7 @@ end
 
 function construct_state(env::TMazeEnv, state_tuple)
     # Create an array of any
-    state = array_of_any(env.num_factors)
+    state = Vector{Any}(undef, env.num_factors)
 
     # Populate the state array with one-hot encoded vectors
     for (f, ns) in enumerate(env.num_states)

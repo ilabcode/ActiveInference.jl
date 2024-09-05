@@ -14,7 +14,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     n_factors = length(aif.settings["num_controls"])
 
     # Initialize empty arrays for action distribution per factor
-    action_p = array_of_any(n_factors)
+    action_p = Vector{Any}(undef, n_factors)
     action_distribution = Vector(undef, n_factors)
 
     #If there was a previous action
@@ -59,7 +59,7 @@ function action_pomdp!(aif::AIF, obs::Vector{Int64})
     n_factors = length(aif.settings["num_controls"])
 
     # Initialize an empty arrays for action distribution per factor
-    action_p = array_of_any(n_factors)
+    action_p = Vector{Any}(undef, n_factors)
     action_distribution = Vector(undef, n_factors)
 
     ### Infer states & policies

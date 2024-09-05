@@ -1,10 +1,5 @@
 """ -------- Utility Functions -------- """
 
-""" Creates an array of "Any" with the desired number of sub-arrays"""
-function array_of_any(num_arr::Int) 
-    return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.
-end
-
 """ Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
 function array_of_any_zeros(shape_list)
     arr = Array{Any}(undef, length(shape_list))
@@ -79,7 +74,7 @@ end
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
     action_marginals = create_matrix_templates(aif.num_controls, "zeros")
-    log_action_marginals = array_of_any(num_factors)
+    log_action_marginals = Vector{Any}(undef, num_factors)
     q_pi = get_states(aif, "posterior_policies")
     policies = get_states(aif, "policies")
     

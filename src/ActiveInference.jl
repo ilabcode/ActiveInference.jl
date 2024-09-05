@@ -32,7 +32,6 @@ export # utils/create_matrix_templates.jl
        normalize_arrays,
 
        # utils/utils.jl
-       array_of_any, 
        array_of_any_zeros, 
        array_of_any_uniform, 
        onehot,

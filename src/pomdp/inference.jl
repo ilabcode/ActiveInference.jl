@@ -248,7 +248,7 @@ function get_expected_obs(qs_pi, A::Vector{Array{<:Real}})
     qo_pi = []
 
     for t in 1:n_steps
-        qo_pi_t = array_of_any(length(A))
+        qo_pi_t = Vector{Any}(undef, length(A))
         qo_pi = push!(qo_pi, qo_pi_t)
     end
 
@@ -305,7 +305,7 @@ function calc_pA_info_gain(pA, qo_pi, qs_pi)
     n_steps = length(qo_pi)
     num_modalities = length(pA)
 
-    wA = array_of_any(num_modalities)
+    wA = Vector{Any}(undef, num_modalities)
     for (modality, pA_m) in enumerate(pA)
         wA[modality] = spm_wnorm(pA[modality])
     end
@@ -327,7 +327,7 @@ function calc_pB_info_gain(pB, qs_pi, qs_prev, policy)
     n_steps = length(qs_pi)
     num_factors = length(pB)
 
-    wB = array_of_any(num_factors)
+    wB = Vector{Any}(undef, num_factors)
     for (factor, pB_f) in enumerate(pB)
         wB[factor] = spm_wnorm(pB_f)
     end
