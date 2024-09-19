@@ -25,10 +25,10 @@ end
 Return the natural logarithm of x, capped at the machine epsilon value of x.
 """
 function capped_log(array::AbstractArray{T}) where T <: Real
-    # convert Reals to Floats
-    x_float = float.(array) 
-    # return the capped log of each element in x
-    return log.(max.(x_float, eps(one(eltype(x_float)))))
+    epsilon = oftype(array[1], 1e-16)
+    
+    # Return the log of the array values capped at epsilon
+    return log.(max.(array, epsilon))
 end
 
 ### This method will be deprecated once all types in the package have been made more strict.
@@ -41,10 +41,10 @@ end
 Return the natural logarithm of x, capped at the machine epsilon value of x.
 """
 function capped_log(array::Array{Any})
-    # convert Reals to Floats
-    x_float = float.(array) 
-    # return the capped log of each element in x
-    return log.(max.(x_float, eps(one(eltype(x_float)))))
+    epsilon = oftype(array[1], 1e-16)
+    
+    # Return the log of the array values capped at epsilon
+    return log.(max.(array, epsilon))
 end
 
 """ Apply capped_log to array of arrays """

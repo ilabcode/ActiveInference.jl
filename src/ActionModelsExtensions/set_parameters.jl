@@ -12,7 +12,7 @@ Set multiple parameters in the AIF agent
 using ActionModels
 
 # Setting a single parameter
-function ActionModels.set_parameters!(aif::AIF, target_param::String, param_value::Any)
+function ActionModels.set_parameters!(aif::AIF, target_param::String, param_value::Real)
     # Update the parameters dictionary
     aif.parameters[target_param] = param_value
 
