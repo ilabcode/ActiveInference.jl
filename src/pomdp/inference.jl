@@ -397,9 +397,13 @@ end
 """ Sample Action [Stochastic or Deterministic] """
 function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
-    action_marginals = create_matrix_templates(num_controls, "zeros")
     selected_policy = zeros(Real,num_factors)
     
+    eltype_q_pi = eltype(q_pi)
+
+    # Initialize action_marginals with the correct element type
+    action_marginals = create_matrix_templates(num_controls, "zeros", eltype_q_pi)
+
     for (pol_idx, policy) in enumerate(policies)
         for (factor_i, action_i) in enumerate(policy[1,:])
             action_marginals[factor_i][action_i] += q_pi[pol_idx]

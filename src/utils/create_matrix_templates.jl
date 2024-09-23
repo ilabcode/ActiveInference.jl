@@ -119,19 +119,19 @@ Creates templates based on the specified shapes vector and template type. Templa
 
 
 """
-function create_matrix_templates(shapes::Vector{Int64}, template_type::String)
+function create_matrix_templates(shapes::Vector{Int64}, template_type::String, eltype::Type=Float64)
 
     if template_type == "uniform"
         # Create arrays filled with ones and then normalize
-        return [normalize_distribution(ones(n)) for n in shapes]
+        return [normalize_distribution(ones(eltype, n)) for n in shapes]
 
     elseif template_type == "random"
         # Create arrays filled with random values
-        return [normalize_distribution(rand(n)) for n in shapes]
+        return [normalize_distribution(rand(eltype, n)) for n in shapes]
 
     elseif template_type == "zeros"
         # Create arrays filled with zeros
-        return [zeros(n) for n in shapes]
+        return [zeros(eltype, n) for n in shapes]
 
     else
         # Throw error for invalid template type
