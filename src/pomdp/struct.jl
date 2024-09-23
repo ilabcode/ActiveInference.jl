@@ -113,7 +113,9 @@ function create_aif(A, B;
         "prior" => Vector{Any}[],
         "posterior_policies" => Vector{Any}[],
         "expected_free_energies" => Vector{Any}[],
-        "policies" => policies
+        "policies" => policies,
+        "bayesian_model_averages" => Vector{Vector{<:Real}}[],
+        "SAPE" => Vector{<:Real}[]
     )
 
     # initialize parameters dictionary

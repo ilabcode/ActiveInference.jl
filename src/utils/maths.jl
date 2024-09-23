@@ -249,3 +249,17 @@ function bayesian_model_average(qs_pi_all, q_pi)
 
     return qs_bma
 end
+
+function kl_div(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
+    eps_val=1e-16
+    dkl = 0.0
+    for j in 1:length(P)
+        for i in 1:length(P[j])
+            dkl += dot(P[j][i], log.(P[j][i] .+ eps_val) .- log.(Q[j][i] .+ eps_val))
+        end
+    end
+    return dkl
+end
+
+
+

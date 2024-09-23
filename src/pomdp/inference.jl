@@ -436,3 +436,17 @@ function compute_accuracy_new(log_likelihood, qs)
 
     return results
 end
+
+""" Calculate SAPE """
+function calc_SAPE(aif::AIF)
+
+    qs_pi_all = get_expected_states(aif.qs_current, aif.B, aif.policies)
+    qs_bma = bayesian_model_average(qs_pi_all, aif.states["posterior_policies"][1])
+
+    if length(aif.states["bayesian_model_averages"]) != 0
+        sape = kl_div(qs_bma, aif.states["bayesian_model_averages"][end])
+        push!(aif.states["SAPE"], sape)
+    end
+
+    push!(aif.states["bayesian_model_averages"], qs_bma)
+end
