@@ -445,7 +445,7 @@ end
 function calc_SAPE(aif::AIF)
 
     qs_pi_all = get_expected_states(aif.qs_current, aif.B, aif.policies)
-    qs_bma = bayesian_model_average(qs_pi_all, aif.states["posterior_policies"][1])
+    qs_bma = bayesian_model_average(qs_pi_all, aif.Q_pi)
 
     if length(aif.states["bayesian_model_averages"]) != 0
         sape = kl_div(qs_bma, aif.states["bayesian_model_averages"][end])
