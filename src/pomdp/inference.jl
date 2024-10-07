@@ -242,7 +242,7 @@ function update_posterior_policies(
     use_param_info_gain::Bool=false,
     pA = nothing,
     pB = nothing,
-    E = nothing,
+    E::Union{Vector{Real}, Nothing} = nothing,
     gamma::Real=16.0
 )
     n_policies = length(policies)

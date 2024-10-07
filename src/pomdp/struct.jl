@@ -5,10 +5,10 @@ mutable struct AIF
     B::Vector{Array{Real}} # B-matrix
     C::Vector{Array{Real}} # C-vectors
     D::Vector{Array{Real}} # D-vectors
-    E::Union{Vector{<:Real}, Nothing}  # E-vector (Habits)
-    pA::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for A-matrix
-    pB::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for B-matrix
-    pD::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for D-vector
+    E::Union{Vector{Real}, Nothing}  # E-vector (Habits)
+    pA::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for A-matrix
+    pB::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for B-matrix
+    pD::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter
     fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
     lr_pB::Real # pB learning Parameter
