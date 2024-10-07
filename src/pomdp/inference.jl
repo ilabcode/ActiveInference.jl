@@ -78,7 +78,7 @@ function process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}},
 end
 
 """ Update Posterior States """
-function update_posterior_states(A::Vector{Array{<:Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
+function update_posterior_states(A::Vector{Array{Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
@@ -87,7 +87,7 @@ end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A::Vector{Array{<:Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
+function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -191,9 +191,9 @@ end
 """ Update Posterior over Policies """
 function update_posterior_policies(
     qs::Vector{Any},
-    A::Vector{Array{<:Real}},
-    B::Vector{Array{<:Real}},
-    C::Vector{Array{<:Real}},
+    A::Vector{Array{Real}},
+    B::Vector{Array{Real}},
+    C::Vector{Array{Real}},
     policies::Vector{Matrix{Int64}},
     use_utility::Bool=true,
     use_states_info_gain::Bool=true,
@@ -243,7 +243,7 @@ function update_posterior_policies(
 end
 
 """ Get Expected Observations """
-function get_expected_obs(qs_pi, A::Vector{Array{<:Real}})
+function get_expected_obs(qs_pi, A::Vector{Array{Real}})
     n_steps = length(qs_pi)
     qo_pi = []
 

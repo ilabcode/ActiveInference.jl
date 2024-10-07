@@ -1,10 +1,10 @@
 """ -------- AIF Mutable Struct -------- """
 
 mutable struct AIF
-    A::Vector{Array{<:Real}} # A-matrix
-    B::Vector{Array{<:Real}} # B-matrix
-    C::Vector{Array{<:Real}} # C-vectors
-    D::Vector{Array{<:Real}} # D-vectors
+    A::Vector{Array{Real}} # A-matrix
+    B::Vector{Array{Real}} # B-matrix
+    C::Vector{Array{Real}} # C-vectors
+    D::Vector{Array{Real}} # D-vectors
     E::Union{Vector{<:Real}, Nothing}  # E-vector (Habits)
     pA::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for A-matrix
     pB::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for B-matrix
