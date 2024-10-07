@@ -207,3 +207,59 @@ function spm_wnorm(A)
 
     return wA
 end
+
+"""
+    Calculate Bayesian Model Average (BMA)
+
+Calculates the Bayesian Model Average (BMA) which is used for the State Action Prediction Error (SAPE).
+It is a weighted average of the expected states for all policies weighted by the posterior over policies.
+The `qs_pi_all` should be the collection of expected states given all policies. Can be retrieved with the
+`get_expected_states` function.
+
+`qs_pi_all`: Vector{Any} \n
+`q_pi`: Vector{Float64}
+
+"""
+function bayesian_model_average(qs_pi_all, q_pi)
+
+    # Extracting the number of factors, states, and timesteps (policy length) from the first policy
+    n_factors = length(qs_pi_all[1][1])
+    n_states = [size(qs_f, 1) for qs_f in qs_pi_all[1][1]]
+    n_steps = length(qs_pi_all[1])
+
+    # Preparing vessel for the expected states for all policies. Has number of undefined entries equal to the number of 
+    # n_steps with each entry having the entries equal to the number of factors
+    qs_bma = [Vector{Vector{Real}}(undef, n_factors) for _ in 1:n_steps]
+
+    # Populating the entries with zeros for each state in each factor for each timestep in policy
+    for i in 1:n_steps
+        for f in 1:n_factors
+            qs_bma[i][f] = zeros(Real, n_states[f])
+        end
+    end
+
+    # Populating the entries with the expected states for all policies weighted by the posterior over policies
+    for i in 1:n_steps
+        for (pol_idx, policy_weight) in enumerate(q_pi)
+            for f in 1:n_factors
+                qs_bma[i][f] .+= policy_weight .* qs_pi_all[pol_idx][i][f]
+            end
+        end
+    end
+
+    return qs_bma
+end
+
+function kl_div(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
+    eps_val=1e-16
+    dkl = 0.0
+    for j in 1:length(P)
+        for i in 1:length(P[j])
+            dkl += dot(P[j][i], log.(P[j][i] .+ eps_val) .- log.(Q[j][i] .+ eps_val))
+        end
+    end
+    return dkl
+end
+
+
+

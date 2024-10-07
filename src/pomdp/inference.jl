@@ -3,7 +3,7 @@
 #### State Inference #### 
 
 """ Get Expected States """
-function get_expected_states(qs, B, policy)
+function get_expected_states(qs, B, policy::Matrix{Int64})
     n_steps, n_factors = size(policy)
 
     # initializing posterior predictive density as a list of beliefs over time
@@ -19,6 +19,48 @@ function get_expected_states(qs, B, policy)
     end
 
     return qs_pi[2:end]
+end
+
+""" 
+    Multiple dispatch for all expected states given all policies
+
+Multiple dispatch for getting expected states for all policies based on the agents currently
+inferred states and the transition matrices for each factor and action in the policy.
+
+qs: Vector{Any} \n
+B: Vector{Array{<:Real}} \n
+policy: Vector{Matrix{Int64}}
+
+"""
+function get_expected_states(qs, B, policy::Vector{Matrix{Int64}})
+    
+    # Extracting the number of steps (policy_length) and factors from the first policy
+    n_steps, n_factors = size(policy[1])
+
+    # Number of policies
+    n_policies = length(policy)
+    
+    # Preparing vessel for the expected states for all policies. Has number of undefined entries equal to the
+    # number of policies
+    qs_pi_all = Vector{Any}(undef, n_policies)
+
+    # Looping through all policies
+    for (policy_idx, policy_x) in enumerate(policy)
+
+        # initializing posterior predictive density as a list of beliefs over time
+        qs_pi = [deepcopy(qs) for _ in 1:n_steps+1]
+
+        # expected states over time
+        for t in 1:n_steps
+            for control_factor in 1:n_factors
+                action = policy_x[t, control_factor]
+                
+                qs_pi[t+1][control_factor] = B[control_factor][:, :, action] * qs_pi[t][control_factor]
+            end
+        end
+        qs_pi_all[policy_idx] = qs_pi[2:end]
+    end
+    return qs_pi_all
 end
 
 """
@@ -397,4 +439,18 @@ function compute_accuracy_new(log_likelihood, qs)
     end
 
     return results
+end
+
+""" Calculate SAPE """
+function calc_SAPE(aif::AIF)
+
+    qs_pi_all = get_expected_states(aif.qs_current, aif.B, aif.policies)
+    qs_bma = bayesian_model_average(qs_pi_all, aif.Q_pi)
+
+    if length(aif.states["bayesian_model_averages"]) != 0
+        sape = kl_div(qs_bma, aif.states["bayesian_model_averages"][end])
+        push!(aif.states["SAPE"], sape)
+    end
+
+    push!(aif.states["bayesian_model_averages"], qs_bma)
 end
