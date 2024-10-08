@@ -120,7 +120,7 @@ function process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}},
 end
 
 """ Update Posterior States """
-function update_posterior_states(A::Vector{Array{Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
+function update_posterior_states(A::Vector{Array{Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Vector{Real}}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
@@ -129,7 +129,7 @@ end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Any}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
+function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Vector{Real}}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -147,6 +147,8 @@ function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}
         prior = create_matrix_templates(num_states)
     end
     
+    # Create a copy of the prior to avoid modifying the original
+    prior = deepcopy(prior)
     prior = capped_log_array(prior) 
 
     # Initialize free energy
@@ -207,7 +209,7 @@ end
 
 
 """ Calculate Free Energy """
-function calc_free_energy(qs::Vector{Vector{Real}}, prior, n_factors, likelihood=nothing)
+function calc_free_energy(qs::Vector{Vector{Real}}, prior::Vector{Vector{Real}}, n_factors, likelihood=nothing)
     # Initialize free energy
     free_energy = 0.0
     
