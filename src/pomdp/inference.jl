@@ -3,7 +3,7 @@
 #### State Inference #### 
 
 """ Get Expected States """
-function get_expected_states(qs, B, policy::Matrix{Int64})
+function get_expected_states(qs::Vector{Vector{Real}}, B, policy::Matrix{Int64})
     n_steps, n_factors = size(policy)
 
     # initializing posterior predictive density as a list of beliefs over time
@@ -27,12 +27,12 @@ end
 Multiple dispatch for getting expected states for all policies based on the agents currently
 inferred states and the transition matrices for each factor and action in the policy.
 
-qs: Vector{Any} \n
+qs::Vector{Vector{Real}} \n
 B: Vector{Array{<:Real}} \n
 policy: Vector{Matrix{Int64}}
 
 """
-function get_expected_states(qs, B, policy::Vector{Matrix{Int64}})
+function get_expected_states(qs::Vector{Vector{Real}}, B, policy::Vector{Matrix{Int64}})
     
     # Extracting the number of steps (policy_length) and factors from the first policy
     n_steps, n_factors = size(policy[1])
@@ -191,7 +191,7 @@ end
 
 
 """ Calculate Accuracy Term """
-function compute_accuracy(log_likelihood, qs)
+function compute_accuracy(log_likelihood, qs::Vector{Vector{Real}})
     n_factors = length(qs)
     ndims_ll = ndims(log_likelihood)
     dims = (ndims_ll - n_factors + 1) : ndims_ll
@@ -207,7 +207,7 @@ end
 
 
 """ Calculate Free Energy """
-function calc_free_energy(qs, prior, n_factors, likelihood=nothing)
+function calc_free_energy(qs::Vector{Vector{Real}}, prior, n_factors, likelihood=nothing)
     # Initialize free energy
     free_energy = 0.0
     
@@ -232,7 +232,7 @@ end
 #### Policy Inference #### 
 """ Update Posterior over Policies """
 function update_posterior_policies(
-    qs::Vector{Any},
+    qs::Vector{Vector{Real}},
     A::Vector{Array{Real}},
     B::Vector{Array{Real}},
     C::Vector{Array{Real}},
@@ -247,10 +247,10 @@ function update_posterior_policies(
 )
     n_policies = length(policies)
     G = zeros(Real,n_policies)
-    q_pi = zeros(Real,n_policies, 1)
+    q_pi = Vector{Real}(undef, n_policies)
     qs_pi = Vector{Real}[]
     qo_pi = Vector{Real}[]
-  
+
     if isnothing(E)
         lnE = capped_log(ones(Real, n_policies) / n_policies)
     else
@@ -280,7 +280,9 @@ function update_posterior_policies(
 
     end
 
-    q_pi = softmax(G * gamma + lnE, dims=1)
+    
+    q_pi .= softmax(G * gamma + lnE, dims=1)
+
     return q_pi, G
 end
 
@@ -425,7 +427,7 @@ function sample_action(q_pi, policies, num_controls; action_selection="stochasti
 end
 
 """ Edited Compute Accuracy [Still needs to be nested within Fixed-Point Iteration] """
-function compute_accuracy_new(log_likelihood, qs)
+function compute_accuracy_new(log_likelihood, qs::Vector{Vector{Real}})
     n_factors = length(qs)
     ndims_ll = ndims(log_likelihood)
     dims = (ndims_ll - n_factors + 1) : ndims_ll

@@ -23,9 +23,9 @@ mutable struct AIF
     num_controls::Array{Int,1} # Number of actions per factor
     control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
-    qs_current::Array{Any,1} # Current beliefs about states
+    qs_current::Vector{Vector{Real}} # Current beliefs about states
     prior::Array{Any,1} # Prior beliefs about states
-    Q_pi::Array{Real,1} # Posterior beliefs over policies
+    Q_pi::Vector{Real} # Posterior beliefs over policies
     G::Array{Real,1} # Expected free energy of policy
     action::Vector{Any} # Last action
     use_utility::Bool # Utility Boolean Flag
@@ -457,9 +457,10 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
     aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior, num_iter=aif.FPI_num_iter, dF_tol=aif.FPI_dF_tol)
 
     # Push changes to agent's history
-    push!(aif.states["prior"], copy(aif.prior))
-    push!(aif.states["posterior_states"], copy(aif.qs_current))
+    push!(aif.states["prior"], aif.prior)
+    push!(aif.states["posterior_states"], aif.qs_current)
 
+    return aif.qs_current
 end
 
 """ Update the agents's beliefs over policies """
@@ -474,7 +475,7 @@ function infer_policies!(aif::AIF)
     push!(aif.states["posterior_policies"], copy(aif.Q_pi))
     push!(aif.states["expected_free_energies"], copy(aif.G))
 
-    return q_pi, G
+    return q_pi
 end
 
 """ Sample action from the beliefs over policies """

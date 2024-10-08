@@ -26,9 +26,18 @@ Return the natural logarithm of x, capped at the machine epsilon value of x.
 """
 function capped_log(array::AbstractArray{T}) where T <: Real
     epsilon = oftype(array[1], 1e-16)
-    
+
     # Return the log of the array values capped at epsilon
     return log.(max.(array, epsilon))
+end
+
+function capped_log(array::Vector{Real}) 
+
+    epsilon = 1e-16
+    # Return the log of the array values capped at epsilon
+    array .= log.(max.(array, epsilon))
+
+    return  array
 end
 
 ### This method will be deprecated once all types in the package have been made more strict.
