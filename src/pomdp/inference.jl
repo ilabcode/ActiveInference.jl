@@ -399,7 +399,7 @@ end
 
 ### Action Sampling ###
 """ Sample Action [Stochastic or Deterministic] """
-function sample_action(q_pi, policies, num_controls; action_selection="stochastic", alpha=16.0)
+function sample_action(q_pi, policies::Vector{Matrix{Int64}}, num_controls; action_selection="stochastic", alpha=16.0)
     num_factors = length(num_controls)
     selected_policy = zeros(Real,num_factors)
     

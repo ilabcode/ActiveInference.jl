@@ -45,7 +45,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
         end
         # If the agent has not taken any actions yet
         if isempty(aif.action)
-            push!(aif.action, sampled_actions)
+            aif.action = sampled_actions
         else
         # Put the action in the last element of the action vector
             aif.action[end] = sampled_actions

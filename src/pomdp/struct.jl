@@ -19,15 +19,15 @@ mutable struct AIF
     factors_to_learn::Union{String, Vector{Int64}} # Modalities can be either "all" or "# factor"
     gamma::Real # Gamma parameter
     alpha::Real # Alpha parameter
-    policies::Array # Inferred from the B matrix
+    policies::Vector{Matrix{Int64}} # Inferred from the B matrix
     num_controls::Array{Int,1} # Number of actions per factor
     control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
     qs_current::Vector{Vector{Real}} # Current beliefs about states
     prior::Vector{Vector{Real}} # Prior beliefs about states
     Q_pi::Vector{Real} # Posterior beliefs over policies
-    G::Array{Real,1} # Expected free energy of policy
-    action::Vector{Any} # Last action
+    G::Vector{Real} # Expected free energy of policy
+    action::Vector{Real} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
@@ -460,7 +460,7 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
     push!(aif.states["prior"], aif.prior)
     push!(aif.states["posterior_states"], aif.qs_current)
 
-    return nothing
+    return aif.qs_current
 end
 
 """ Update the agents's beliefs over policies """

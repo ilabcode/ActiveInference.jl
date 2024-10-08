@@ -1,10 +1,10 @@
 """
 This module extends the "set_parameters!" functionality of the ActionModels package to work with instances of the AIF type.
 
-    set_parameters!(aif::AIF, target_param::String, param_value::Any)
+    set_parameters!(aif::AIF, target_param::String, param_value::Real)
 Set a single parameter in the AIF agent
 
-    set_parameters!(aif::AIF, parameters::Dict{String, Any})
+    set_parameters!(aif::AIF, parameters::Dict{String, Real})
 Set multiple parameters in the AIF agent
 
 """
