@@ -1,6 +1,7 @@
 """Normalizes a Categorical probability distribution"""
 function normalize_distribution(distribution)
-    return distribution ./ sum(distribution, dims=1)
+    distribution .= distribution ./ sum(distribution, dims=1)
+    return distribution
 end
 
 
@@ -95,6 +96,9 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         end
     end
 
+    # To ensure the types of x and y match the input types.
+    T = promote_type(eltype(x), eltype(y))
+
     # If y is provided, perform the cross multiplication.
     if y !== nothing
         reshape_dims_x = tuple(size(x)..., ones(Real, ndims(y))...)
@@ -104,6 +108,9 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         B = reshape(y, reshape_dims_y)
 
         z = A .* B
+
+        # Type convert to the original type
+        z = convert(Array{T}, z)  
     else
         z = x
     end
@@ -113,7 +120,7 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         z = outer_product(z, arg; remove_singleton_dims=remove_singleton_dims)
     end
 
-    # remove singleton dimension if true--
+    # Remove singleton dimensions if true
     if remove_singleton_dims
         z = dropdims(z, dims = tuple(findall(size(z) .== 1)...))
     end
@@ -156,7 +163,8 @@ end
 function calculate_bayesian_surprise(A, x)
     qx = outer_product(x)
     G = 0.0
-    qo = Real[]
+    qo = Vector{Real}()
+    T = typeof(qo)
     idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
     index_vector = []
 
@@ -171,12 +179,12 @@ function calculate_bayesian_surprise(A, x)
         end
         po = vec(po) 
         if isempty(qo)
-            resize!(qo, length(po))
-            fill!(qo, 0.0)
+            qo = zeros(Real, length(po))
         end
         qo += qx[i...] * po
         G += qx[i...] * dot(po, log.(po .+ exp(-16)))
     end
+    qo = convert(T, qo)
     G = G - dot(qo, capped_log(qo))
     return G
 end

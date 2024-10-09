@@ -244,7 +244,7 @@ function update_posterior_policies(
     use_param_info_gain::Bool=false,
     pA = nothing,
     pB = nothing,
-    E::Union{Vector{Real}, Nothing} = nothing,
+    E::Vector{Real} = nothing,
     gamma::Real=16.0
 )
     n_policies = length(policies)
@@ -252,12 +252,7 @@ function update_posterior_policies(
     q_pi = Vector{Real}(undef, n_policies)
     qs_pi = Vector{Real}[]
     qo_pi = Vector{Real}[]
-
-    if isnothing(E)
-        lnE = capped_log(ones(Real, n_policies) / n_policies)
-    else
-        lnE = capped_log(E)
-    end
+    lnE = capped_log(E)
 
     for (idx, policy) in enumerate(policies)
         qs_pi = get_expected_states(qs, B, policy)

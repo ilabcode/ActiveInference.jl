@@ -5,7 +5,7 @@ mutable struct AIF
     B::Vector{Array{Real}} # B-matrix
     C::Vector{Array{Real}} # C-vectors
     D::Vector{Array{Real}} # D-vectors
-    E::Union{Vector{Real}, Nothing}  # E-vector (Habits)
+    E::Vector{Real}        # E-vector (Habits)
     pA::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for A-matrix
     pB::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for B-matrix
     pD::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for D-vector
@@ -95,8 +95,13 @@ function create_aif(A, B;
 
     policies = construct_policies(num_states, n_controls=num_controls, policy_length=policy_len, controllable_factors_indices=control_fac_idx)
 
+    # if E-vector is not provided
+    if isnothing(E)
+        E = ones(Real, length(policies)) / length(policies)
+    end
+
     # Throw error if the E-vector does not match the length of policies
-    if !isnothing(E) && length(E) != length(policies)
+    if length(E) != length(policies)
         error("Length of E-vector must match the number of policies.")
     end
 
