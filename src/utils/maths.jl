@@ -24,11 +24,13 @@ end
 
 Return the natural logarithm of x, capped at the machine epsilon value of x.
 """
-function capped_log(array::AbstractArray{T}) where T <: Real
-    epsilon = oftype(array[1], 1e-16)
+function capped_log(array::Array{Real}) 
 
+    epsilon = 1e-16
     # Return the log of the array values capped at epsilon
-    return log.(max.(array, epsilon))
+    array .= log.(max.(array, epsilon))
+
+    return array
 end
 
 function capped_log(array::Vector{Real}) 
@@ -37,23 +39,7 @@ function capped_log(array::Vector{Real})
     # Return the log of the array values capped at epsilon
     array .= log.(max.(array, epsilon))
 
-    return  array
-end
-
-### This method will be deprecated once all types in the package have been made more strict.
-"""
-    capped_log(array::Array{Any})
-
-# Arguments
-- `array::Array{Any}`: An array of real numbers.
-
-Return the natural logarithm of x, capped at the machine epsilon value of x.
-"""
-function capped_log(array::Array{Any})
-    epsilon = oftype(array[1], 1e-16)
-    
-    # Return the log of the array values capped at epsilon
-    return log.(max.(array, epsilon))
+    return array
 end
 
 """ Apply capped_log to array of arrays """
@@ -88,16 +74,11 @@ function dot_likelihood(A, obs)
 end
 
 """ Softmax Function for array of arrays """
-function softmax_array(arr)
-    output = Array{Any}(undef, length(arr))
+function softmax_array(array)
+    # Use map to apply softmax to each element of arr
+    array .= map(x -> softmax(x, dims=1), array)
     
-    # Iterate through each index in arr and apply softmax
-    for idx in eachindex(arr)
-        output[idx] = softmax(arr[idx], dims=1)
-        
-    end
-    
-    return output
+    return array
 end
 
 
