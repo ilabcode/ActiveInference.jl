@@ -209,7 +209,7 @@ end
 
 
 """ Calculate Free Energy """
-function calc_free_energy(qs::Vector{Vector{Real}}, prior::Vector{Vector{Real}}, n_factors, likelihood=nothing)
+function calc_free_energy(qs::Vector{Vector{Real}}, prior, n_factors, likelihood=nothing)
     # Initialize free energy
     free_energy = 0.0
     

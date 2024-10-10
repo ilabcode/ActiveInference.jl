@@ -81,7 +81,7 @@ function get_log_action_marginals(aif)
 
     # Initialize action_marginals with the correct element type
     action_marginals = create_matrix_templates(aif.num_controls, "zeros", eltype_q_pi)
-    log_action_marginals = Vector{Any}(undef, num_factors)
+    log_action_marginals = Vector{Vector{Float64}}(undef, num_factors)
     
     for (pol_idx, policy) in enumerate(policies)
         for (factor_i, action_i) in enumerate(policy[1,:])

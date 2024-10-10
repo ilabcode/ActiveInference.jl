@@ -12,7 +12,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     n_factors = length(agent.substruct.settings["num_controls"])
 
     # Initialize empty arrays for action distribution per factor
-    action_p = Vector{Vector{Real}}(undef, n_factors)
+    action_p = Vector{Vector{Float64}}(undef, n_factors)
     action_distribution = Vector{Distributions.Categorical}(undef, n_factors)
 
     #If there was a previous action
@@ -44,8 +44,9 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     for factor in 1:n_factors
         action_p[factor] = softmax(log_action_marginals[factor] * alpha, dims=1)
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
+        @show action_distribution[factor]
     end
-    
+
     return n_factors == 1 ? action_distribution[1] : action_distribution
 end
 
