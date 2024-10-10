@@ -25,21 +25,31 @@ end
 
 Return the natural logarithm of x, capped at the machine epsilon value of x.
 """
-function capped_log(array::Array{Real}) 
 
-    epsilon = 1e-16
+function capped_log(array::Array{Float64}) 
+
+    epsilon = oftype(array[1], 1e-16)
     # Return the log of the array values capped at epsilon
-    array .= log.(max.(array, epsilon))
+    array = log.(max.(array, epsilon))
 
     return array
 end
 
-function capped_log(array::Vector{Real}) 
+function capped_log(array::Array{Real}) 
 
-    epsilon = 1e-16
+    epsilon = oftype(array[1], 1e-16)
     # Return the log of the array values capped at epsilon
-    array .= log.(max.(array, epsilon))
+    array = log.(max.(array, epsilon))
 
+    return array
+end
+
+function capped_log(array::Vector{Real})
+    epsilon = oftype(array[1], 1e-16)
+
+    array = log.(max.(array, epsilon))
+    # Return the log of the array values capped at epsilon
+    #@show typeof(array)
     return array
 end
 
@@ -191,6 +201,11 @@ end
 
 """ Normalizes multiple arrays """
 function normalize_arrays(array::Vector{<:Array{<:Real}})
+    return map(normalize_distribution, array)
+end
+
+""" Normalizes multiple arrays """
+function normalize_arrays(array::Vector{Any})
     return map(normalize_distribution, array)
 end
 

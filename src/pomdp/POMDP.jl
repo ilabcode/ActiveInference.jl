@@ -7,15 +7,13 @@ This module contains models of Partially Observable Markov Decision Processes un
 
 function action_pomdp!(agent::Agent, obs::Vector{Int64})
 
-    aif = agent.substruct
-
     ### Get parameters 
     alpha = agent.substruct.parameters["alpha"]
-    n_factors = length(aif.settings["num_controls"])
+    n_factors = length(agent.substruct.settings["num_controls"])
 
     # Initialize empty arrays for action distribution per factor
-    action_p = Vector{Any}(undef, n_factors)
-    action_distribution = Vector(undef, n_factors)
+    action_p = Vector{Vector{Real}}(undef, n_factors)
+    action_distribution = Vector{Distributions.Categorical}(undef, n_factors)
 
     #If there was a previous action
     if !ismissing(agent.states["action"])
@@ -35,14 +33,13 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     ### Infer states & policies
 
     # Run state inference 
-    infer_states!(aif, obs)
+    infer_states!(agent.substruct, obs)
 
     # Run policy inference 
-    infer_policies!(aif)
+    infer_policies!(agent.substruct)
 
     ### Retrieve log marginal probabilities of actions
-    log_action_marginals = get_log_action_marginals(aif)
-
+    log_action_marginals = get_log_action_marginals(agent.substruct)
     ### Pass action marginals through softmax function to get action probabilities
     for factor in 1:n_factors
         action_p[factor] = softmax(log_action_marginals[factor] * alpha, dims=1)
