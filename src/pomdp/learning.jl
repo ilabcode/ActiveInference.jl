@@ -26,12 +26,15 @@ function update_obs_likelihood_dirichlet(pA, A, obs, qs; lr = 1.0, fr = 1.0, mod
 end
 
 """ Update state likelihood matrix """
-function update_state_likelihood_dirichlet(pB, B, actions, qs::Vector{Vector{Real}}, qs_prev; lr = 1.0, fr = 1.0, factors = "all")
+function update_state_likelihood_dirichlet(pB, B, actions, qs::Vector{Vector{T}} where T <: Real, qs_prev; lr = 1.0, fr = 1.0, factors = "all")
+
+    if ReverseDiff.istracked(lr)
+        lr = ReverseDiff.value(lr)
+    end
 
     num_factors = length(pB)
 
     qB = deepcopy(pB)
-
 
     if factors === "all"
         factors = collect(1:num_factors)

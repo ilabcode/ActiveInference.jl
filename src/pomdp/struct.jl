@@ -1,13 +1,13 @@
 """ -------- AIF Mutable Struct -------- """
 
 mutable struct AIF
-    A::Vector{Array{Real}} # A-matrix
-    B::Vector{Array{Real}} # B-matrix
+    A::Vector{Array{T, N}} where {T <: Real, N} # A-matrix
+    B::Vector{Array{T, N}} where {T <: Real, N} # B-matrix
     C::Vector{Array{Real}} # C-vectors
-    D::Vector{Array{Real}} # D-vectors
-    E::Vector{Real}        # E-vector (Habits)
+    D::Vector{Vector{Real}} # D-vectors
+    E::Vector{T} where T <: Real       # E-vector (Habits)
     pA::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for A-matrix
-    pB::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for B-matrix
+    pB::Union{Vector{Array{T, N}}, Nothing} where {T <: Real, N} # Dirichlet priors for B-matrix
     pD::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter
     fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
@@ -23,11 +23,11 @@ mutable struct AIF
     num_controls::Array{Int,1} # Number of actions per factor
     control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
-    qs_current::Vector{Vector{Real}} # Current beliefs about states
-    prior::Vector{Vector{Real}} # Prior beliefs about states
-    Q_pi::Vector{Real} # Posterior beliefs over policies
-    G::Vector{Real} # Expected free energy of policy
-    action::Vector{Real} # Last action
+    qs_current::Vector{Vector{T}} where T <: Real # Current beliefs about states
+    prior::Vector{Vector{T}} where T <: Real # Prior beliefs about states
+    Q_pi::Vector{T} where T <:Real # Posterior beliefs over policies
+    G::Vector{T} where T <:Real # Expected free energy of policy
+    action::Vector{Int} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
@@ -107,9 +107,9 @@ function create_aif(A, B;
 
     qs_current = create_matrix_templates(num_states)
     prior = D
-    Q_pi = ones(Real,length(policies)) / length(policies)  
-    G = zeros(Real,length(policies))
-    action = []
+    Q_pi = ones(length(policies)) / length(policies)  
+    G = zeros(length(policies))
+    action = Int[]
 
     # initialize states dictionary
     states = Dict(

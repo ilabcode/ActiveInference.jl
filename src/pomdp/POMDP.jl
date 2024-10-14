@@ -12,7 +12,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     n_factors = length(agent.substruct.settings["num_controls"])
 
     # Initialize empty arrays for action distribution per factor
-    action_p = Vector{Vector{Float64}}(undef, n_factors)
+    action_p = Vector{Any}(undef, n_factors)
     action_distribution = Vector{Distributions.Categorical}(undef, n_factors)
 
     #If there was a previous action
@@ -35,16 +35,23 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     # Run state inference 
     infer_states!(agent.substruct, obs)
 
+    if !ismissing(agent.states["action"])
+
+        #Get the posterior over states from the previous time step
+        states_posterior = get_history(agent.substruct)["posterior_states"][end-1]
+
+        # Update Transition Matrix
+        update_B!(agent.substruct, states_posterior)
+    end
+    
     # Run policy inference 
     infer_policies!(agent.substruct)
-
     ### Retrieve log marginal probabilities of actions
     log_action_marginals = get_log_action_marginals(agent.substruct)
     ### Pass action marginals through softmax function to get action probabilities
     for factor in 1:n_factors
         action_p[factor] = softmax(log_action_marginals[factor] * alpha, dims=1)
         action_distribution[factor] = Distributions.Categorical(action_p[factor])
-        @show action_distribution[factor]
     end
 
     return n_factors == 1 ? action_distribution[1] : action_distribution

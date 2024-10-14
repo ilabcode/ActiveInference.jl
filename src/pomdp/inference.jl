@@ -3,7 +3,7 @@
 #### State Inference #### 
 
 """ Get Expected States """
-function get_expected_states(qs::Vector{Vector{Real}}, B, policy::Matrix{Int64})
+function get_expected_states(qs::Vector{Vector{T}} where T <: Real, B, policy::Matrix{Int64})
     n_steps, n_factors = size(policy)
 
     # initializing posterior predictive density as a list of beliefs over time
@@ -120,7 +120,11 @@ function process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}},
 end
 
 """ Update Posterior States """
-function update_posterior_states(A::Vector{Array{Real}}, obs::Vector{Int64}; prior::Union{Nothing, Vector{Vector{Real}}}=nothing, num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
+function update_posterior_states(
+    A::Vector{Array{T,N}} where {T <: Real, N}, 
+    obs::Vector{Int64}; 
+    prior::Union{Nothing, Vector{Vector{T}}} where T <: Real = nothing, 
+    num_iter::Int=num_iter, dF_tol::Float64=dF_tol, kwargs...)
     num_obs, num_states, num_modalities, num_factors = get_model_dimensions(A)
 
     obs_processed = process_observation(obs, num_modalities, num_obs)
@@ -129,7 +133,11 @@ end
 
 
 """ Run State Inference via Fixed-Point Iteration """
-function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64}; prior::Union{Nothing, Vector{Vector{Real}}}=nothing, num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol)
+function fixed_point_iteration(
+    A::Vector{Array{T,N}} where {T <: Real, N}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64};
+    prior::Union{Nothing, Vector{Vector{T}}} where T <: Real = nothing, 
+    num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol
+)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -138,9 +146,9 @@ function fixed_point_iteration(A::Vector{Array{Real}}, obs::Vector{Vector{Real}}
     likelihood = capped_log(likelihood)
 
     # Initialize posterior and prior
-    qs = Vector{Vector{Real}}(undef, n_factors)
+    qs = Vector{Vector{Float64}}(undef, n_factors)
     for factor in 1:n_factors
-        qs[factor] = ones(Real,num_states[factor]) / num_states[factor]
+        qs[factor] = ones(num_states[factor]) / num_states[factor]
     end
 
     if prior === nothing
@@ -209,7 +217,7 @@ end
 
 
 """ Calculate Free Energy """
-function calc_free_energy(qs::Vector{Vector{Real}}, prior, n_factors, likelihood=nothing)
+function calc_free_energy(qs::Vector{Vector{T}} where T <: Real, prior, n_factors, likelihood=nothing)
     # Initialize free energy
     free_energy = 0.0
     
@@ -234,24 +242,24 @@ end
 #### Policy Inference #### 
 """ Update Posterior over Policies """
 function update_posterior_policies(
-    qs::Vector{Vector{Real}},
-    A::Vector{Array{Real}},
-    B::Vector{Array{Real}},
-    C::Vector{Array{Real}},
+    qs::Vector{Vector{T}} where T <: Real,
+    A::Vector{Array{T, N}} where {T <: Real, N},
+    B::Vector{Array{T, N}} where {T <: Real, N},
+    C::Vector{Array{T}} where T <: Real,
     policies::Vector{Matrix{Int64}},
     use_utility::Bool=true,
     use_states_info_gain::Bool=true,
     use_param_info_gain::Bool=false,
     pA = nothing,
     pB = nothing,
-    E::Vector{Real} = nothing,
+    E::Vector{T} where T <: Real = nothing,
     gamma::Real=16.0
 )
     n_policies = length(policies)
-    G = zeros(Real,n_policies)
-    q_pi = Vector{Real}(undef, n_policies)
-    qs_pi = Vector{Real}[]
-    qo_pi = Vector{Real}[]
+    G = zeros(n_policies)
+    q_pi = Vector{Float64}(undef, n_policies)
+    qs_pi = Vector{Float64}[]
+    qo_pi = Vector{Float64}[]
     lnE = capped_log(E)
 
     for (idx, policy) in enumerate(policies)
@@ -278,13 +286,13 @@ function update_posterior_policies(
     end
 
     
-    q_pi .= softmax(G * gamma + lnE, dims=1)
+    q_pi = softmax(G * gamma + lnE, dims=1)
 
     return q_pi, G
 end
 
 """ Get Expected Observations """
-function get_expected_obs(qs_pi, A::Vector{Array{Real}})
+function get_expected_obs(qs_pi, A::Vector{Array{T,N}} where {T <: Real, N})
     n_steps = length(qs_pi)
     qo_pi = []
 

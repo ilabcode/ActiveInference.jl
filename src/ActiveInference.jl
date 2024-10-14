@@ -6,6 +6,7 @@ using IterTools
 using Random
 using Distributions
 using LogExpFunctions
+using ReverseDiff
 
 include("utils/maths.jl")
 include("pomdp/struct.jl")

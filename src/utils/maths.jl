@@ -35,7 +35,7 @@ function capped_log(array::Array{Float64})
     return array
 end
 
-function capped_log(array::Array{Real}) 
+function capped_log(array::Array{T}) where T <: Real 
 
     epsilon = oftype(array[1], 1e-16)
     # Return the log of the array values capped at epsilon
