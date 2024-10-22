@@ -104,7 +104,7 @@ Process observation with multiple modalities and return them in a one-hot encode
 function process_observation(observation::Union{Array{Int}, Tuple{Vararg{Int}}}, n_modalities::Int, n_observations::Vector{Int})
 
     # Initialize the processed_observation vector
-    processed_observation = Vector{Vector{Real}}(undef, n_modalities)
+    processed_observation = Vector{Vector{Float64}}(undef, n_modalities)
 
     # Check if the length of observation matches the number of modalities
     if length(observation) == n_modalities
@@ -134,7 +134,7 @@ end
 
 """ Run State Inference via Fixed-Point Iteration """
 function fixed_point_iteration(
-    A::Vector{Array{T,N}} where {T <: Real, N}, obs::Vector{Vector{Real}}, num_obs::Vector{Int64}, num_states::Vector{Int64};
+    A::Vector{Array{T,N}} where {T <: Real, N}, obs::Vector{Vector{Float64}}, num_obs::Vector{Int64}, num_states::Vector{Int64};
     prior::Union{Nothing, Vector{Vector{T}}} where T <: Real = nothing, 
     num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol
 )
@@ -167,9 +167,8 @@ function fixed_point_iteration(
         qL = dot_product(likelihood, qs[1])  
         return [softmax(qL .+ prior[1], dims=1)]
     else
-        # Run Iteration 
-        curr_iter = 0
-        while curr_iter < num_iter && dF >= dF_tol
+        # Run for a given number of iterations
+        for iteration in 1:num_iter
             qs_all = qs[1]
             for factor in 2:n_factors
                 qs_all = qs_all .* reshape(qs[factor], tuple(ones(Real, factor - 1)..., :, 1))
@@ -181,7 +180,14 @@ function fixed_point_iteration(
                 for i in 1:size(qs[factor], 1)
                     qL[i] = sum([LL_tensor[indices...] / qs[factor][i] for indices in Iterators.product([1:size(LL_tensor, dim) for dim in 1:n_factors]...) if indices[factor] == i])
                 end
-                qs[factor] = softmax(qL + prior[factor], dims=1)
+                # If qs is tracked by ReverseDiff, get the value
+                if ReverseDiff.istracked(softmax(qL .+ prior[factor], dims=1))
+                    qs[factor] = ReverseDiff.value(softmax(qL .+ prior[factor], dims=1))
+
+                # Otherwise, proceed as normal
+                else
+                    qs[factor] = softmax(qL .+ prior[factor], dims=1)
+                end
             end
 
             # Recompute free energy
@@ -190,8 +196,6 @@ function fixed_point_iteration(
             # Update stopping condition
             dF = abs(prev_vfe - vfe)
             prev_vfe = vfe
-
-            curr_iter += 1
         end
 
         return qs
@@ -201,7 +205,7 @@ end
 
 
 """ Calculate Accuracy Term """
-function compute_accuracy(log_likelihood, qs::Vector{Vector{Real}})
+function compute_accuracy(log_likelihood, qs::Vector{Vector{T}} where T <: Real)
     n_factors = length(qs)
     ndims_ll = ndims(log_likelihood)
     dims = (ndims_ll - n_factors + 1) : ndims_ll
@@ -266,18 +270,43 @@ function update_posterior_policies(
         qs_pi = get_expected_states(qs, B, policy)
         qo_pi = get_expected_obs(qs_pi, A)
 
+        # Calculate expected utility
         if use_utility
-            G[idx] += calc_expected_utility(qo_pi, C)
+            # If ReverseDiff is tracking the expected utility, get the value
+            if ReverseDiff.istracked(calc_expected_utility(qo_pi, C))
+                G[idx] += ReverseDiff.value(calc_expected_utility(qo_pi, C))
+
+            # Otherwise calculate the expected utility and add it to the G vector
+            else
+                G[idx] += calc_expected_utility(qo_pi, C)
+            end
         end
 
+        # Calculate expected information gain of states
         if use_states_info_gain
-            G[idx] += calc_states_info_gain(A, qs_pi)
+            # If ReverseDiff is tracking the information gain, get the value
+            if ReverseDiff.istracked(calc_states_info_gain(A, qs_pi))
+                G[idx] += ReverseDiff.value(calc_states_info_gain(A, qs_pi))
+
+            # Otherwise calculate it and add it to the G vector
+            else
+                G[idx] += calc_states_info_gain(A, qs_pi)
+            end
         end
 
+        # Calculate expected information gain of parameters (learning)
         if use_param_info_gain
             if pA !== nothing
-                G[idx] += calc_pA_info_gain(pA, qo_pi, qs_pi)
+
+                # if ReverseDiff is tracking pA information gain, get the value
+                if ReverseDiff.istracked(calc_pA_info_gain(pA, qo_pi, qs_pi))
+                    G[idx] += ReverseDiff.value(calc_pA_info_gain(pA, qo_pi, qs_pi))
+                # Otherwise calculate it and add it to the G vector
+                else
+                    G[idx] += calc_pA_info_gain(pA, qo_pi, qs_pi)
+                end
             end
+
             if pB !== nothing
                 G[idx] += calc_pB_info_gain(pB, qs_pi, qs, policy)
             end

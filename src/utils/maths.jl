@@ -106,9 +106,6 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         end
     end
 
-    # To ensure the types of x and y match the input types.
-    T = promote_type(eltype(x), eltype(y))
-
     # If y is provided, perform the cross multiplication.
     if y !== nothing
         reshape_dims_x = tuple(size(x)..., ones(Real, ndims(y))...)
@@ -119,8 +116,6 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
 
         z = A .* B
 
-        # Type convert to the original type
-        z = convert(Array{T}, z)  
     else
         z = x
     end
@@ -173,8 +168,7 @@ end
 function calculate_bayesian_surprise(A, x)
     qx = outer_product(x)
     G = 0.0
-    qo = Vector{Real}()
-    T = typeof(qo)
+    qo = Vector{Float64}()
     idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
     index_vector = []
 
@@ -189,12 +183,11 @@ function calculate_bayesian_surprise(A, x)
         end
         po = vec(po) 
         if isempty(qo)
-            qo = zeros(Real, length(po))
+            qo = zeros(length(po))
         end
         qo += qx[i...] * po
         G += qx[i...] * dot(po, log.(po .+ exp(-16)))
     end
-    qo = convert(T, qo)
     G = G - dot(qo, capped_log(qo))
     return G
 end

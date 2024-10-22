@@ -6,7 +6,7 @@ mutable struct AIF
     C::Vector{Array{Real}} # C-vectors
     D::Vector{Vector{Real}} # D-vectors
     E::Vector{T} where T <: Real       # E-vector (Habits)
-    pA::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for A-matrix
+    pA::Union{Vector{Array{T, N}}, Nothing} where {T <: Real, N} # Dirichlet priors for A-matrix
     pB::Union{Vector{Array{T, N}}, Nothing} where {T <: Real, N} # Dirichlet priors for B-matrix
     pD::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter

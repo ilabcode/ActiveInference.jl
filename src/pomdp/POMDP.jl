@@ -35,6 +35,10 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     # Run state inference 
     infer_states!(agent.substruct, obs)
 
+    update_A!(agent.substruct, obs)
+
+
+    #=
     if !ismissing(agent.states["action"])
 
         #Get the posterior over states from the previous time step
@@ -43,7 +47,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
         # Update Transition Matrix
         update_B!(agent.substruct, states_posterior)
     end
-    
+    =#
     # Run policy inference 
     infer_policies!(agent.substruct)
     ### Retrieve log marginal probabilities of actions
@@ -80,9 +84,9 @@ function action_pomdp!(agent::Agent, obs::Tuple{Vararg{Int}})
         #Extract it
         previous_action = agent.states["action"]
 
-        #If it is not a vector, make it one
+        # If it is not a vector, make it one
         if !(previous_action isa Vector)
-            previous_action = [previous_action]
+            previous_action = collect(previous_action)
         end
 
         #Store the action in the AIF substruct
