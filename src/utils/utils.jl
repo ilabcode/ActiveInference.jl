@@ -21,7 +21,7 @@ end
 
 """ Creates a onehot encoded vector """
 function onehot(index::Int, vector_length::Int)
-    vector = zeros(Real, vector_length)
+    vector = zeros(vector_length)
     vector[index] = 1.0
     return vector
 end

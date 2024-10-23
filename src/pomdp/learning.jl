@@ -62,7 +62,7 @@ function update_state_likelihood_dirichlet(pB, B, actions, qs::Vector{Vector{T}}
 end
 
 """ Update prior D matrix """
-function update_state_prior_dirichlet(pD, qs::Vector{Vector{Real}}; lr = 1.0, fr = 1.0, factors = "all")
+function update_state_prior_dirichlet(pD, qs::Vector{Vector{T}} where T <: Real; lr = 1.0, fr = 1.0, factors = "all")
 
     num_factors = length(pD)
 
