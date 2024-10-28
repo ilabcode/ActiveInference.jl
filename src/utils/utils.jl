@@ -1,10 +1,5 @@
 """ -------- Utility Functions -------- """
 
-""" Creates an array of "Any" with the desired number of sub-arrays"""
-function array_of_any(num_arr::Int) 
-    return Array{Any}(undef, num_arr) #saves it as {Any} e.g. can be any kind of data type.
-end
-
 """ Creates an array of "Any" with the desired number of sub-arrays filled with zeros"""
 function array_of_any_zeros(shape_list)
     arr = Array{Any}(undef, length(shape_list))
@@ -14,19 +9,9 @@ function array_of_any_zeros(shape_list)
     return arr
 end
 
-""" Creates an array of "Any" as a uniform categorical distribution"""
-function array_of_any_uniform(shape_list)
-    arr = Array{Any}(undef, length(shape_list))  
-    for i in eachindex(shape_list)
-        shape = shape_list[i]
-        arr[i] = normalize_distribution(ones(Real, shape))  
-    end
-    return arr
-end
-
 """ Creates a onehot encoded vector """
 function onehot(index::Int, vector_length::Int)
-    vector = zeros(Real, vector_length)
+    vector = zeros(vector_length)
     vector[index] = 1.0
     return vector
 end
@@ -56,7 +41,7 @@ end
 
 
 """ Selects the highest value from Array -- used for deterministic action sampling """
-function select_highest(options_array::Array{Float64})
+function select_highest(options_array::Vector{T}) where T <: Real
     options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]
     max_value = maximum(value for (idx, value) in options_with_idx)
     same_prob = [idx for (idx, value) in options_with_idx if abs(value - max_value) <= 1e-8]
@@ -78,10 +63,15 @@ end
 """ Function to get log marginal probabilities of actions """
 function get_log_action_marginals(aif)
     num_factors = length(aif.num_controls)
-    action_marginals = create_matrix_templates(aif.num_controls, "zeros")
-    log_action_marginals = array_of_any(num_factors)
     q_pi = get_states(aif, "posterior_policies")
     policies = get_states(aif, "policies")
+    
+    # Determine the element type from q_pi
+    eltype_q_pi = eltype(q_pi)
+
+    # Initialize action_marginals with the correct element type
+    action_marginals = create_matrix_templates(aif.num_controls, "zeros", eltype_q_pi)
+    log_action_marginals = Vector{Any}(undef, num_factors)
     
     for (pol_idx, policy) in enumerate(policies)
         for (factor_i, action_i) in enumerate(policy[1,:])
@@ -100,17 +90,17 @@ function get_log_action_marginals(aif)
 end
 
 """
-Check if the array of arrays is a proper probability distribution.
+Check if the vector of arrays is a proper probability distribution.
 
 # Arguments
 
-- (Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+- (Array::Vector{<:Array{T}}) where T<:Real
 
 Throws an error if the array is not a valid probability distribution:
 - The values must be non-negative.
 - The sum of the values must be approximately 1.
 """
-function check_probability_distribution(Array::Vector{<:Array{T, N}}) where {T<:Real, N}
+function check_probability_distribution(Array::Vector{<:Array{T}}) where T<:Real
     for tensor in Array
         # Check for non-negativity
         if any(tensor .< 0)
@@ -127,17 +117,17 @@ function check_probability_distribution(Array::Vector{<:Array{T, N}}) where {T<:
 end
 
 """
-Check if the array of real number arrays is a proper probability distribution.
+Check if the vector of vectors is a proper probability distribution.
 
 # Arguments
 
-- (Array::Vector{Array{T}}) where T<:Real
+- (Array::Vector{Vector{T}}) where T<:Real
 
 Throws an error if the array is not a valid probability distribution:
 - The values must be non-negative.
 - The sum of the values must be approximately 1.
 """
-function check_probability_distribution(Array::Vector{Array{T}}) where T<:Real
+function check_probability_distribution(Array::Vector{Vector{T}}) where T<:Real
     for vector in Array
         # Check for non-negativity
         if any(vector .< 0)
@@ -145,7 +135,7 @@ function check_probability_distribution(Array::Vector{Array{T}}) where T<:Real
         end
 
         # Check for normalization
-        if !all(isapprox.(sum(vector), 1.0, rtol=1e-5, atol=1e-8))
+        if !all(isapprox.(sum(vector, dims=1), 1.0, rtol=1e-5, atol=1e-8))
             throw(ArgumentError("The array is not normalized."))
         end
     end

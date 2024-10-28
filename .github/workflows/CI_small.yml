@@ -3,10 +3,12 @@ on:
   push:
     branches:
       - dev
+      - fitting
     tags: ['*']
   pull_request:
     branches:
       - dev
+      - fitting
   workflow_dispatch:
 concurrency:
   # Skip intermediate builds: always.
