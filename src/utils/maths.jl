@@ -18,12 +18,12 @@ function capped_log(x::Real)
 end
 
 """
-    capped_log(x::AbstractArray{T}) where T <: Real
-
-# Arguments
-- `array::AbstractArray{T}`: An array of real numbers.
+    capped_log(array::Array{Float64}) 
+    capped_log(array::Array{T}) where T <: Real 
+    capped_log(array::Vector{Real})
 
 Return the natural logarithm of x, capped at the machine epsilon value of x.
+
 """
 
 function capped_log(array::Array{Float64}) 
@@ -49,7 +49,6 @@ function capped_log(array::Vector{Real})
 
     array = log.(max.(array, epsilon))
     # Return the log of the array values capped at epsilon
-    #@show typeof(array)
     return array
 end
 
@@ -256,15 +255,27 @@ function bayesian_model_average(qs_pi_all, q_pi)
     return qs_bma
 end
 
-function kl_div(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
-    eps_val=1e-16
-    dkl = 0.0
+"""
+    kl_divergence(P::Vector{Vector{Vector{Float64}}}, Q::Vector{Vector{Vector{Float64}}})
+
+# Arguments
+- `P::Vector{Vector{Vector{Real}}}`
+- `Q::Vector{Vector{Vector{Real}}}`
+
+Return the Kullback-Leibler (KL) divergence between two probability distributions.
+"""
+function kl_divergence(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
+    eps_val = 1e-16  # eps constant to avoid log(0)
+    dkl = 0.0  # Initialize KL divergence to zero
+
     for j in 1:length(P)
         for i in 1:length(P[j])
+            # Compute the dot product of P[j][i] and the difference of logs of P[j][i] and Q[j][i]
             dkl += dot(P[j][i], log.(P[j][i] .+ eps_val) .- log.(Q[j][i] .+ eps_val))
         end
     end
-    return dkl
+
+    return dkl  # Return KL divergence
 end
 
 

@@ -22,7 +22,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
     # if there is only one factor
     if num_factors == 1
         # Sample action from the action distribution
-        action = rand(action_distributions[1])
+        action = rand(action_distributions)
 
         # If the agent has not taken any actions yet
         if isempty(aif.action)

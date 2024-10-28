@@ -26,7 +26,7 @@ mutable struct AIF
     qs_current::Vector{Vector{T}} where T <: Real # Current beliefs about states
     prior::Vector{Vector{T}} where T <: Real # Prior beliefs about states
     Q_pi::Vector{T} where T <:Real # Posterior beliefs over policies
-    G::Vector{T} where T <:Real # Expected free energy of policy
+    G::Vector{T} where T <:Real # Expected free energy of policies
     action::Vector{Int} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
@@ -56,8 +56,8 @@ function create_aif(A, B;
                     fr_pD = 1.0, 
                     modalities_to_learn = "all", 
                     factors_to_learn = "all", 
-                    gamma=16.0, 
-                    alpha=16.0, 
+                    gamma=1.0, 
+                    alpha=1.0, 
                     policy_len=1, 
                     num_controls=nothing, 
                     control_fac_idx=nothing, 

@@ -138,6 +138,7 @@ function fixed_point_iteration(
     prior::Union{Nothing, Vector{Vector{T}}} where T <: Real = nothing, 
     num_iter::Int=num_iter, dF::Float64=1.0, dF_tol::Float64=dF_tol
 )
+    # Get model dimensions (NOTE Sam: We need to save model dimensions in the AIF struct in the future)
     n_modalities = length(num_obs)
     n_factors = length(num_states)
 
@@ -151,6 +152,7 @@ function fixed_point_iteration(
         qs[factor] = ones(num_states[factor]) / num_states[factor]
     end
 
+    # If no prior is provided, create a default prior with uniform distribution
     if prior === nothing
         prior = create_matrix_templates(num_states)
     end
@@ -166,26 +168,38 @@ function fixed_point_iteration(
     if n_factors == 1
         qL = dot_product(likelihood, qs[1])  
         return [softmax(qL .+ prior[1], dims=1)]
+
+    # If there are more factors
     else
-        # Run for a given number of iterations
-        for iteration in 1:num_iter
+        ### Fixed-Point Iteration ###
+        curr_iter = 0
+        ### Sam NOTE: We need check if ReverseDiff might potantially have issues with this while loop ###
+        while curr_iter < num_iter && dF >= dF_tol
             qs_all = qs[1]
+            # Loop over each factor starting from the second one
             for factor in 2:n_factors
+                # Reshape and multiply qs_all with the current factor's qs
                 qs_all = qs_all .* reshape(qs[factor], tuple(ones(Real, factor - 1)..., :, 1))
             end
+
+            # Compute the log-likelihood
             LL_tensor = likelihood .* qs_all
 
+            # Update each factor's qs
             for factor in 1:n_factors
-                qL = zeros(Real,size(qs[factor]))
+                # Initialize qL for the current factor
+                qL = zeros(Real, size(qs[factor]))
+
+                # Compute qL for each state in the current factor
                 for i in 1:size(qs[factor], 1)
                     qL[i] = sum([LL_tensor[indices...] / qs[factor][i] for indices in Iterators.product([1:size(LL_tensor, dim) for dim in 1:n_factors]...) if indices[factor] == i])
                 end
+
                 # If qs is tracked by ReverseDiff, get the value
                 if ReverseDiff.istracked(softmax(qL .+ prior[factor], dims=1))
                     qs[factor] = ReverseDiff.value(softmax(qL .+ prior[factor], dims=1))
-
-                # Otherwise, proceed as normal
                 else
+                    # Otherwise, proceed as normal
                     qs[factor] = softmax(qL .+ prior[factor], dims=1)
                 end
             end
@@ -196,6 +210,9 @@ function fixed_point_iteration(
             # Update stopping condition
             dF = abs(prev_vfe - vfe)
             prev_vfe = vfe
+
+            # Increment iteration
+            curr_iter += 1
         end
 
         return qs
@@ -477,14 +494,14 @@ function compute_accuracy_new(log_likelihood, qs::Vector{Vector{Real}})
     return results
 end
 
-""" Calculate SAPE """
-function calc_SAPE(aif::AIF)
+""" Calculate State-Action Prediction Error """
+function calculate_SAPE(aif::AIF)
 
     qs_pi_all = get_expected_states(aif.qs_current, aif.B, aif.policies)
     qs_bma = bayesian_model_average(qs_pi_all, aif.Q_pi)
 
     if length(aif.states["bayesian_model_averages"]) != 0
-        sape = kl_div(qs_bma, aif.states["bayesian_model_averages"][end])
+        sape = kl_divergence(qs_bma, aif.states["bayesian_model_averages"][end])
         push!(aif.states["SAPE"], sape)
     end
 
