@@ -1,6 +1,6 @@
 """
 
-This is an experimental module to extend the give_inputs! functionality of ActionsModels.jl to work with instances of the AIF type.
+This is extends the give_inputs! function of ActionsModels.jl to work with instances of the AIF type.
 
     single_input!(aif::AIF, obs)
 Give a single observation to an AIF agent. 

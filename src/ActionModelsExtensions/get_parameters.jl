@@ -1,6 +1,5 @@
 """
-This module extends the "get_parameters" functionality of the ActionModels package to work specifically with instances of the AIF type.
-
+This extends the "get_parameters" function of the ActionModels package to work specifically with instances of the AIF type.
 
     get_parameters(aif::AIF, target_parameters::Vector{String})
 Retrieves multiple target parameters from an AIF agent. 

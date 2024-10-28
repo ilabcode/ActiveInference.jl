@@ -9,16 +9,6 @@ function array_of_any_zeros(shape_list)
     return arr
 end
 
-""" Creates an array of "Any" as a uniform categorical distribution"""
-function array_of_any_uniform(shape_list)
-    arr = Array{Any}(undef, length(shape_list))  
-    for i in eachindex(shape_list)
-        shape = shape_list[i]
-        arr[i] = normalize_distribution(ones(Real, shape))  
-    end
-    return arr
-end
-
 """ Creates a onehot encoded vector """
 function onehot(index::Int, vector_length::Int)
     vector = zeros(vector_length)

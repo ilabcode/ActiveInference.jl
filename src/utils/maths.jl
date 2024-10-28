@@ -18,14 +18,8 @@ function capped_log(x::Real)
 end
 
 """
-    capped_log(array::Array{Float64}) 
-    capped_log(array::Array{T}) where T <: Real 
-    capped_log(array::Vector{Real})
-
-Return the natural logarithm of x, capped at the machine epsilon value of x.
-
+    capped_log(array::Array{Float64})
 """
-
 function capped_log(array::Array{Float64}) 
 
     epsilon = oftype(array[1], 1e-16)
@@ -35,6 +29,9 @@ function capped_log(array::Array{Float64})
     return array
 end
 
+"""
+    capped_log(array::Array{T}) where T <: Real 
+"""
 function capped_log(array::Array{T}) where T <: Real 
 
     epsilon = oftype(array[1], 1e-16)
@@ -44,6 +41,9 @@ function capped_log(array::Array{T}) where T <: Real
     return array
 end
 
+"""
+    capped_log(array::Vector{Real})
+"""
 function capped_log(array::Vector{Real})
     epsilon = oftype(array[1], 1e-16)
 

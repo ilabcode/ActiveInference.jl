@@ -1,5 +1,5 @@
 """
-This module extends the "get_history" functionality of the ActionModels package to work specifically with instances of the AIF type.
+This extends the "get_history" function of the ActionModels package to work specifically with instances of the AIF type.
 
     get_history(aif::AIF, target_states::Vector{String})
 Retrieves a history for multiple states of an AIF agent. 
