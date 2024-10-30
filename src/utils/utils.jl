@@ -9,19 +9,9 @@ function array_of_any_zeros(shape_list)
     return arr
 end
 
-""" Creates an array of "Any" as a uniform categorical distribution"""
-function array_of_any_uniform(shape_list)
-    arr = Array{Any}(undef, length(shape_list))  
-    for i in eachindex(shape_list)
-        shape = shape_list[i]
-        arr[i] = normalize_distribution(ones(Real, shape))  
-    end
-    return arr
-end
-
 """ Creates a onehot encoded vector """
 function onehot(index::Int, vector_length::Int)
-    vector = zeros(Real, vector_length)
+    vector = zeros(vector_length)
     vector[index] = 1.0
     return vector
 end
@@ -51,7 +41,7 @@ end
 
 
 """ Selects the highest value from Array -- used for deterministic action sampling """
-function select_highest(options_array::Array{Float64})
+function select_highest(options_array::Vector{T}) where T <: Real
     options_with_idx = [(i, option) for (i, option) in enumerate(options_array)]
     max_value = maximum(value for (idx, value) in options_with_idx)
     same_prob = [idx for (idx, value) in options_with_idx if abs(value - max_value) <= 1e-8]

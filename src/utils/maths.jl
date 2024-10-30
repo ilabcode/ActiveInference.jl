@@ -1,6 +1,7 @@
 """Normalizes a Categorical probability distribution"""
 function normalize_distribution(distribution)
-    return distribution ./ sum(distribution, dims=1)
+    distribution .= distribution ./ sum(distribution, dims=1)
+    return distribution
 end
 
 
@@ -17,34 +18,38 @@ function capped_log(x::Real)
 end
 
 """
-    capped_log(x::AbstractArray{T}) where T <: Real
-
-# Arguments
-- `array::AbstractArray{T}`: An array of real numbers.
-
-Return the natural logarithm of x, capped at the machine epsilon value of x.
+    capped_log(array::Array{Float64})
 """
-function capped_log(array::AbstractArray{T}) where T <: Real
+function capped_log(array::Array{Float64}) 
+
     epsilon = oftype(array[1], 1e-16)
-    
     # Return the log of the array values capped at epsilon
-    return log.(max.(array, epsilon))
+    array = log.(max.(array, epsilon))
+
+    return array
 end
 
-### This method will be deprecated once all types in the package have been made more strict.
 """
-    capped_log(array::Array{Any})
-
-# Arguments
-- `array::Array{Any}`: An array of real numbers.
-
-Return the natural logarithm of x, capped at the machine epsilon value of x.
+    capped_log(array::Array{T}) where T <: Real 
 """
-function capped_log(array::Array{Any})
+function capped_log(array::Array{T}) where T <: Real 
+
     epsilon = oftype(array[1], 1e-16)
-    
     # Return the log of the array values capped at epsilon
-    return log.(max.(array, epsilon))
+    array = log.(max.(array, epsilon))
+
+    return array
+end
+
+"""
+    capped_log(array::Vector{Real})
+"""
+function capped_log(array::Vector{Real})
+    epsilon = oftype(array[1], 1e-16)
+
+    array = log.(max.(array, epsilon))
+    # Return the log of the array values capped at epsilon
+    return array
 end
 
 """ Apply capped_log to array of arrays """
@@ -79,16 +84,11 @@ function dot_likelihood(A, obs)
 end
 
 """ Softmax Function for array of arrays """
-function softmax_array(arr)
-    output = Array{Any}(undef, length(arr))
+function softmax_array(array)
+    # Use map to apply softmax to each element of arr
+    array .= map(x -> softmax(x, dims=1), array)
     
-    # Iterate through each index in arr and apply softmax
-    for idx in eachindex(arr)
-        output[idx] = softmax(arr[idx], dims=1)
-        
-    end
-    
-    return output
+    return array
 end
 
 
@@ -114,6 +114,7 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         B = reshape(y, reshape_dims_y)
 
         z = A .* B
+
     else
         z = x
     end
@@ -123,7 +124,7 @@ function outer_product(x, y=nothing; remove_singleton_dims=true, args...)
         z = outer_product(z, arg; remove_singleton_dims=remove_singleton_dims)
     end
 
-    # remove singleton dimension if true--
+    # Remove singleton dimensions if true
     if remove_singleton_dims
         z = dropdims(z, dims = tuple(findall(size(z) .== 1)...))
     end
@@ -166,7 +167,7 @@ end
 function calculate_bayesian_surprise(A, x)
     qx = outer_product(x)
     G = 0.0
-    qo = Real[]
+    qo = Vector{Float64}()
     idx = [collect(Tuple(indices)) for indices in findall(qx .> exp(-16))]
     index_vector = []
 
@@ -181,8 +182,7 @@ function calculate_bayesian_surprise(A, x)
         end
         po = vec(po) 
         if isempty(qo)
-            resize!(qo, length(po))
-            fill!(qo, 0.0)
+            qo = zeros(length(po))
         end
         qo += qx[i...] * po
         G += qx[i...] * dot(po, log.(po .+ exp(-16)))
@@ -193,6 +193,11 @@ end
 
 """ Normalizes multiple arrays """
 function normalize_arrays(array::Vector{<:Array{<:Real}})
+    return map(normalize_distribution, array)
+end
+
+""" Normalizes multiple arrays """
+function normalize_arrays(array::Vector{Any})
     return map(normalize_distribution, array)
 end
 
@@ -250,15 +255,27 @@ function bayesian_model_average(qs_pi_all, q_pi)
     return qs_bma
 end
 
-function kl_div(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
-    eps_val=1e-16
-    dkl = 0.0
+"""
+    kl_divergence(P::Vector{Vector{Vector{Float64}}}, Q::Vector{Vector{Vector{Float64}}})
+
+# Arguments
+- `P::Vector{Vector{Vector{Real}}}`
+- `Q::Vector{Vector{Vector{Real}}}`
+
+Return the Kullback-Leibler (KL) divergence between two probability distributions.
+"""
+function kl_divergence(P::Vector{Vector{Vector{Real}}}, Q::Vector{Vector{Vector{Real}}})
+    eps_val = 1e-16  # eps constant to avoid log(0)
+    dkl = 0.0  # Initialize KL divergence to zero
+
     for j in 1:length(P)
         for i in 1:length(P[j])
+            # Compute the dot product of P[j][i] and the difference of logs of P[j][i] and Q[j][i]
             dkl += dot(P[j][i], log.(P[j][i] .+ eps_val) .- log.(Q[j][i] .+ eps_val))
         end
     end
-    return dkl
+
+    return dkl  # Return KL divergence
 end
 
 

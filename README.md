@@ -7,13 +7,20 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-## Julia Package for Active Inference.
 ActiveInference.jl is a new Julia package for the computational modeling of active inference. We provide the necessary infrastructure for defining active inference models, currently implemented as partially observable Markov decision processes. After defining the generative model, you can simulate actions using agent-based simulations. We also provide the functionality to fit experimental data to active inference models for parameter recovery. 
 
 ![Maze Animation](.github/animation_maze.gif)
 * Example visualization of an agent navigating a maze, inspired by the one described in [Bruineberg et al., 2018](https://www.sciencedirect.com/science/article/pii/S0022519318303151?via%3Dihub).
 Left: A synthetic agent wants to reach the end of the maze environment while avoiding dark-colored locations.
 Right: The agent's noisy prior expectations about the state of the environment parameterized by Dirichlet distributions are updated dynamically as it moves through the maze.
+
+## News
+#### Version 0.1.0 - October 2024
+- All parameters are now recoverable using ReverseDiff
+- Now fully compatible with ActionModels.jl v0.6.6
+
+#### Coming Soon
+- **Documentation**: Full [documentation](https://samuelnehrer02.github.io/ActiveInference.jl/dev/) will be available within the next few weeks, including examples and tutorials.
 
 ## Installation
 Install ActiveInference.jl using the Julia package manager:
