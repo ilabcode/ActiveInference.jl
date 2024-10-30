@@ -20,7 +20,7 @@ Right: The agent's noisy prior expectations about the state of the environment p
 - Now fully compatible with ActionModels.jl v0.6.6
 
 #### Coming Soon
-- **Documentation**: Full documentation will be available within the next few weeks, including examples and tutorials. 
+- **Documentation**: Full [documentation](https://samuelnehrer02.github.io/ActiveInference.jl/dev/) will be available within the next few weeks, including examples and tutorials.
 
 ## Installation
 Install ActiveInference.jl using the Julia package manager:
