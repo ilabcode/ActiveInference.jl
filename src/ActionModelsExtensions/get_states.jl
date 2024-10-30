@@ -1,5 +1,5 @@
 """
-This module extends the "get_states" functionality of the ActionModels package to work specifically with instances of the AIF type.
+This extends the "get_states" function of the ActionModels package to work specifically with instances of the AIF type.
 
     get_states(aif::AIF, target_states::Vector{String})
 Retrieves multiple states from an AIF agent. 

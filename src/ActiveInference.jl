@@ -6,6 +6,7 @@ using IterTools
 using Random
 using Distributions
 using LogExpFunctions
+using ReverseDiff
 
 include("utils/maths.jl")
 include("pomdp/struct.jl")
@@ -33,7 +34,6 @@ export # utils/create_matrix_templates.jl
 
        # utils/utils.jl
        array_of_any_zeros, 
-       array_of_any_uniform, 
        onehot,
        get_model_dimensions,
 

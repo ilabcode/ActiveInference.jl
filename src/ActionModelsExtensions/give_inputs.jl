@@ -1,6 +1,6 @@
 """
 
-This is an experimental module to extend the give_inputs! functionality of ActionsModels.jl to work with instances of the AIF type.
+This is extends the give_inputs! function of ActionsModels.jl to work with instances of the AIF type.
 
     single_input!(aif::AIF, obs)
 Give a single observation to an AIF agent. 
@@ -22,7 +22,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
     # if there is only one factor
     if num_factors == 1
         # Sample action from the action distribution
-        action = rand(action_distributions[1])
+        action = rand(action_distributions)
 
         # If the agent has not taken any actions yet
         if isempty(aif.action)
@@ -45,7 +45,7 @@ function ActionModels.single_input!(aif::AIF, obs::Vector)
         end
         # If the agent has not taken any actions yet
         if isempty(aif.action)
-            push!(aif.action, sampled_actions)
+            aif.action = sampled_actions
         else
         # Put the action in the last element of the action vector
             aif.action[end] = sampled_actions

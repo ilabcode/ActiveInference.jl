@@ -1,6 +1,15 @@
 """ Update obs likelihood matrix """
 function update_obs_likelihood_dirichlet(pA, A, obs, qs; lr = 1.0, fr = 1.0, modalities = "all")
 
+    # If reverse diff is tracking the learning rate, get the value
+    if ReverseDiff.istracked(lr)
+        lr = ReverseDiff.value(lr)
+    end
+    # If reverse diff is tracking the forgetting rate, get the value
+    if ReverseDiff.istracked(fr)
+        fr = ReverseDiff.value(fr)
+    end
+
     # Extracting the number of modalities and observations from the dirichlet: pA
     num_modalities = length(pA)
     num_observations = [size(pA[modality + 1], 1) for modality in 0:(num_modalities - 1)]
@@ -26,12 +35,18 @@ function update_obs_likelihood_dirichlet(pA, A, obs, qs; lr = 1.0, fr = 1.0, mod
 end
 
 """ Update state likelihood matrix """
-function update_state_likelihood_dirichlet(pB, B, actions, qs, qs_prev; lr = 1.0, fr = 1.0, factors = "all")
+function update_state_likelihood_dirichlet(pB, B, actions, qs::Vector{Vector{T}} where T <: Real, qs_prev; lr = 1.0, fr = 1.0, factors = "all")
+
+    if ReverseDiff.istracked(lr)
+        lr = ReverseDiff.value(lr)
+    end
+    if ReverseDiff.istracked(fr)
+        fr = ReverseDiff.value(fr)
+    end
 
     num_factors = length(pB)
 
     qB = deepcopy(pB)
-
 
     if factors === "all"
         factors = collect(1:num_factors)
@@ -47,7 +62,7 @@ function update_state_likelihood_dirichlet(pB, B, actions, qs, qs_prev; lr = 1.0
 end
 
 """ Update prior D matrix """
-function update_state_prior_dirichlet(pD, qs; lr = 1.0, fr = 1.0, factors = "all")
+function update_state_prior_dirichlet(pD, qs::Vector{Vector{T}} where T <: Real; lr = 1.0, fr = 1.0, factors = "all")
 
     num_factors = length(pD)
 

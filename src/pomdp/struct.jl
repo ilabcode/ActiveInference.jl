@@ -1,14 +1,14 @@
 """ -------- AIF Mutable Struct -------- """
 
 mutable struct AIF
-    A::Vector{Array{<:Real}} # A-matrix
-    B::Vector{Array{<:Real}} # B-matrix
-    C::Vector{Array{<:Real}} # C-vectors
-    D::Vector{Array{<:Real}} # D-vectors
-    E::Union{Vector{<:Real}, Nothing}  # E-vector (Habits)
-    pA::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for A-matrix
-    pB::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for B-matrix
-    pD::Union{Vector{Array{<:Real}}, Nothing} # Dirichlet priors for D-vector
+    A::Vector{Array{T, N}} where {T <: Real, N} # A-matrix
+    B::Vector{Array{T, N}} where {T <: Real, N} # B-matrix
+    C::Vector{Array{Real}} # C-vectors
+    D::Vector{Vector{Real}} # D-vectors
+    E::Vector{T} where T <: Real       # E-vector (Habits)
+    pA::Union{Vector{Array{T, N}}, Nothing} where {T <: Real, N} # Dirichlet priors for A-matrix
+    pB::Union{Vector{Array{T, N}}, Nothing} where {T <: Real, N} # Dirichlet priors for B-matrix
+    pD::Union{Vector{Array{Real}}, Nothing} # Dirichlet priors for D-vector
     lr_pA::Real # pA Learning Parameter
     fr_pA::Real # pA Forgetting Parameter,  1.0 for no forgetting
     lr_pB::Real # pB learning Parameter
@@ -19,15 +19,15 @@ mutable struct AIF
     factors_to_learn::Union{String, Vector{Int64}} # Modalities can be either "all" or "# factor"
     gamma::Real # Gamma parameter
     alpha::Real # Alpha parameter
-    policies::Array # Inferred from the B matrix
+    policies::Vector{Matrix{Int64}} # Inferred from the B matrix
     num_controls::Array{Int,1} # Number of actions per factor
     control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
-    qs_current::Array{Any,1} # Current beliefs about states
-    prior::Array{Any,1} # Prior beliefs about states
-    Q_pi::Array{Real,1} # Posterior beliefs over policies
-    G::Array{Real,1} # Expected free energy of policy
-    action::Vector{Any} # Last action
+    qs_current::Vector{Vector{T}} where T <: Real # Current beliefs about states
+    prior::Vector{Vector{T}} where T <: Real # Prior beliefs about states
+    Q_pi::Vector{T} where T <:Real # Posterior beliefs over policies
+    G::Vector{T} where T <:Real # Expected free energy of policies
+    action::Vector{Int} # Last action
     use_utility::Bool # Utility Boolean Flag
     use_states_info_gain::Bool # States Information Gain Boolean Flag
     use_param_info_gain::Bool # Include the novelty value in the learning parameters
@@ -56,8 +56,8 @@ function create_aif(A, B;
                     fr_pD = 1.0, 
                     modalities_to_learn = "all", 
                     factors_to_learn = "all", 
-                    gamma=16.0, 
-                    alpha=16.0, 
+                    gamma=1.0, 
+                    alpha=1.0, 
                     policy_len=1, 
                     num_controls=nothing, 
                     control_fac_idx=nothing, 
@@ -95,16 +95,21 @@ function create_aif(A, B;
 
     policies = construct_policies(num_states, n_controls=num_controls, policy_length=policy_len, controllable_factors_indices=control_fac_idx)
 
+    # if E-vector is not provided
+    if isnothing(E)
+        E = ones(Real, length(policies)) / length(policies)
+    end
+
     # Throw error if the E-vector does not match the length of policies
-    if !isnothing(E) && length(E) != length(policies)
+    if length(E) != length(policies)
         error("Length of E-vector must match the number of policies.")
     end
 
     qs_current = create_matrix_templates(num_states)
     prior = D
-    Q_pi = ones(Real,length(policies)) / length(policies)  
-    G = zeros(Real,length(policies))
-    action = []
+    Q_pi = ones(length(policies)) / length(policies)  
+    G = zeros(length(policies))
+    action = Int[]
 
     # initialize states dictionary
     states = Dict(
@@ -457,9 +462,10 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
     aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior, num_iter=aif.FPI_num_iter, dF_tol=aif.FPI_dF_tol)
 
     # Push changes to agent's history
-    push!(aif.states["prior"], copy(aif.prior))
-    push!(aif.states["posterior_states"], copy(aif.qs_current))
+    push!(aif.states["prior"], aif.prior)
+    push!(aif.states["posterior_states"], aif.qs_current)
 
+    return aif.qs_current
 end
 
 """ Update the agents's beliefs over policies """
@@ -474,7 +480,7 @@ function infer_policies!(aif::AIF)
     push!(aif.states["posterior_policies"], copy(aif.Q_pi))
     push!(aif.states["expected_free_energies"], copy(aif.G))
 
-    return q_pi, G
+    return q_pi
 end
 
 """ Sample action from the beliefs over policies """
