@@ -21,5 +21,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/ilabcode/ActiveInference.jl",
-    devbranch="master",
+    devbranch="dev",
 )
