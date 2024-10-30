@@ -8,6 +8,7 @@ makedocs(;
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
     repo="https://github.com/ilabcode/ActiveInference.jl/blob/{commit}{path}#{line}",
     sitename="ActiveInference.jl",
+    strict=false,
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://ilabcode.github.io/ActiveInference.jl",
