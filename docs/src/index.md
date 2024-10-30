@@ -11,5 +11,4 @@ Documentation for [ActiveInference](https://github.com/ilabcode/ActiveInference.
 
 ```@autodocs
 Modules = [ActiveInference, ActiveInference.Environments]
-Filter = x -> Documenter.Documents.hasdoc(x)
 ```
