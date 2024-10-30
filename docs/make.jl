@@ -4,7 +4,7 @@ using Documenter
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
 makedocs(;
-    modules=[ActiveInference],
+    modules=[ActiveInference, ActiveInference.Environments],
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
     repo="https://github.com/ilabcode/ActiveInference.jl/blob/{commit}{path}#{line}",
     sitename="ActiveInference.jl",
