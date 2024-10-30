@@ -4,7 +4,7 @@ CurrentModule = ActiveInference
 
 # ActiveInference
 
-Documentation for [ActiveInference](https://github.com/samuelnehrer02/ActiveInference.jl).
+Documentation for [ActiveInference](https://github.com/ilabcode/ActiveInference.jl).
 
 ```@index
 ```

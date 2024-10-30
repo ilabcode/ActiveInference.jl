@@ -6,11 +6,11 @@ DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); re
 makedocs(;
     modules=[ActiveInference],
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
-    repo="https://github.com/samuelnehrer02/ActiveInference.jl/blob/{commit}{path}#{line}",
+    repo="https://github.com/ilabcode/ActiveInference.jl/blob/{commit}{path}#{line}",
     sitename="ActiveInference.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://samuelnehrer02.github.io/ActiveInference.jl",
+        canonical="https://ilabcode.github.io/ActiveInference.jl",
         edit_link="master",
         assets=String[],
     ),
@@ -20,6 +20,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/samuelnehrer02/ActiveInference.jl",
+    repo="github.com/ilabcode/ActiveInference.jl",
     devbranch="master",
 )
