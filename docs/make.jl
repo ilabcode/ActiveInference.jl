@@ -26,22 +26,22 @@ makedocs(;
 
         ],
 
-        # "Usage Examples" => [
+        "Usage Examples" => [
 
-        #     "T-Maze Simulation" => "",
-        #     "T-Maze Model Fitting" => "",
+            "T-Maze Simulation" => [],
+            "T-Maze Model Fitting" => [],
 
-        # ],
+        ],
 
-        # "Active Inference Theory" => [
+        "Active Inference Theory" => [
 
-        #     "Perception" => "",
-        #     "Action" => "",
-        #     "Learning" => "",
+            "Perception" => [],
+            "Action" => [],
+            "Learning" => [],
 
-        # ],
+        ],
 
-        # "Why Active Inference?" => [],
+        "Why Active Inference?" => [],
     ],
 )
 ### NOTE Sam: change devbranch to master
