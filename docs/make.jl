@@ -15,8 +15,13 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        "Home Alt" => "index.md",
-        "General Introduction" => [],
+        "General Introduction" => [
+
+            "Introduction" => "index.md",
+            
+        ],
+        "Usage Examples" => [],
+        "Active Inference Theory" => [],
     ],
 )
 ### NOTE Sam: change devbranch to master
