@@ -17,16 +17,14 @@ makedocs(;
     pages=[
         "Home" => "index.md",
 
-        "General Introduction" => [],
+        "General Introduction" => [
 
-        # "General Introduction" => [
+            "Introduction" => [],
+            "Creation of the Generative Model" => [],
+            "Simulation" => [],
+            "Model Fitting" => [],
 
-        #     "Introduction" => "",
-        #     "Creation of the Generative Model" => "",
-        #     "Simulation" => "",
-        #     "Model Fitting" => "",
-
-        # ],
+        ],
 
         # "Usage Examples" => [
 
