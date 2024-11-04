@@ -17,6 +17,8 @@ makedocs(;
     pages=[
         "Home" => "index.md",
 
+        "General Introduction" => "",
+
         # "General Introduction" => [
 
         #     "Introduction" => "",
