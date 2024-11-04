@@ -15,9 +15,11 @@ makedocs(;
         assets=String[],
     ),
     pages=[
+        "Home" => "index.md",
+
         "General Introduction" => [
 
-            "Introduction" => "index.md",
+            "Introduction" => "",
             "Creation of the Generative Model" => "",
             "Simulation" => "",
             "Model Fitting" => "",
