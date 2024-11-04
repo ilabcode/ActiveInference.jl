@@ -18,10 +18,24 @@ makedocs(;
         "General Introduction" => [
 
             "Introduction" => "index.md",
-            
+            "Creation of the Generative Model" => "",
+            "Simulation" => "",
+            "Model Fitting" => "",
+
         ],
-        "Usage Examples" => [],
-        "Active Inference Theory" => [],
+
+        "Usage Examples" => [
+            "T-Maze Simulation" => "",
+            "T-Maze Model Fitting" => "",
+        ],
+
+        "Active Inference Theory" => [
+            "Perception" => "",
+            "Action" => "",
+            "Learning" => "",
+        ],
+
+        "Why Active Inference?" => [],
     ],
 )
 ### NOTE Sam: change devbranch to master
