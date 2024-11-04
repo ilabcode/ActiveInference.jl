@@ -16,7 +16,7 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
-        # "General Introduction" => [],
+        "General Introduction" => [],
     ],
 )
 ### NOTE Sam: change devbranch to master
