@@ -17,27 +17,31 @@ makedocs(;
     pages=[
         "Home" => "index.md",
 
-        "General Introduction" => [
+        # "General Introduction" => [
 
-            "Introduction" => "",
-            "Creation of the Generative Model" => "",
-            "Simulation" => "",
-            "Model Fitting" => "",
+        #     "Introduction" => "",
+        #     "Creation of the Generative Model" => "",
+        #     "Simulation" => "",
+        #     "Model Fitting" => "",
 
-        ],
+        # ],
 
-        "Usage Examples" => [
-            "T-Maze Simulation" => "",
-            "T-Maze Model Fitting" => "",
-        ],
+        # "Usage Examples" => [
 
-        "Active Inference Theory" => [
-            "Perception" => "",
-            "Action" => "",
-            "Learning" => "",
-        ],
+        #     "T-Maze Simulation" => "",
+        #     "T-Maze Model Fitting" => "",
 
-        "Why Active Inference?" => [],
+        # ],
+
+        # "Active Inference Theory" => [
+
+        #     "Perception" => "",
+        #     "Action" => "",
+        #     "Learning" => "",
+
+        # ],
+
+        # "Why Active Inference?" => [],
     ],
 )
 ### NOTE Sam: change devbranch to master
