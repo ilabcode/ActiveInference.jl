@@ -21,11 +21,11 @@ makedocs(;
     ),
     pages=[
         
-        "Home" => "index.md",
+        "Home" => joinpath(@__DIR__, "index.md"),
 
         "General Introduction" => [
 
-            "Introduction" => "Introduction.md",
+            "Introduction" => joinpath(@__DIR__, "Introduction.md"),
             "Creation of the Generative Model" => [],
             "Simulation" => [],
             "Model Fitting" => [],

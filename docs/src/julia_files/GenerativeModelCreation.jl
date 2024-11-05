@@ -27,4 +27,7 @@
 # $$
 
 # In this case, the agent is quite certain about which states produces which observations. This matrix could be made more uncertain to the point of complete uniformity and it could be made certain in the sense of each column being a one-hot vector.
-# In the case of a certain A, the generative model stops being a "partially observable" Markov decision process, and becomes a fully observable one, making it a Markov decision process (MDP). For a more technical and mathematical definition of 
+# In the case of a certain A, the generative model stops being a "partially observable" Markov decision process, and becomes a fully observable one, making it a Markov decision process (MDP). For a more technical and mathematical definition of the observation likelihood model.
+
+# ## B
+# 
