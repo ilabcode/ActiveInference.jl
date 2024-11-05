@@ -17,18 +17,12 @@
 # Let us for example imagine a simple case, where the agent is in a four location state environment, could be a 2x2 gridworld. In this case, there would be one obseration linked to each hidden state, and A then maps the agent's belief of how likely each hidden location state is to generate each observation.
 # The agent can then use this belief to infer what state it is in based on the observation it receives. Let's look at an example A, which in this case would be a 4x4 matrix:
 
+# $$
+# \begin{bmatrix}
+#     0.85 & 0.05 & 0.05 & 0.05\\
+#     0.05 & 0.85 & 0.05 & 0.05\\
+#     0.05 & 0.05 & 0.85 & 0.05\\
+#     0.05 & 0.05 & 0.05 & 0.85
+# \end{bmatrix}
+# $$
 
-# $$
-# \begin{array}{c c|c c c c}
-#     & & O_1 & O_2 & O_3 & O_4 \\
-#     \cline{3-6}
-#     \multirow{4}{*}{\left\{\begin{array}{c}
-#     \text{Hidden} \\
-#     \text{States}
-#     \end{array}\right.}
-#     & H_1 & 0.85 & 0.05 & 0.05 & 0.05 \\
-#     & H_2 & 0.05 & 0.85 & 0.05 & 0.05 \\
-#     & H_3 & 0.05 & 0.05 & 0.85 & 0.05 \\
-#     & H_4 & 0.05 & 0.05 & 0.05 & 0.85
-# \end{array}
-# $$
