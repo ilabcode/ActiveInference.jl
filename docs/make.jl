@@ -1,7 +1,12 @@
 using ActiveInference
 using Documenter
+using Literate
 
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
+
+# Trying to make the output appear in the markdown_files folder without luck
+markdown_path = raw"src\markdown_files"
+Literate.markdown(raw"docs\src\julia_files\Introduction.jl", outputdir=joinpath(@__DIR__, markdown_path), documenter=true)
 
 makedocs(;
     modules=[ActiveInference, ActiveInference.Environments],
@@ -20,7 +25,7 @@ makedocs(;
 
         "General Introduction" => [
 
-            "Introduction" => raw"julia_files\Introduction.jl",
+            "Introduction" => raw"docs\src\markdown_files\Introduction.md",
             "Creation of the Generative Model" => [],
             "Simulation" => [],
             "Model Fitting" => [],
