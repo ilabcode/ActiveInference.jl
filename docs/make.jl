@@ -20,7 +20,7 @@ makedocs(;
 
         "General Introduction" => [
 
-            "Introduction" => "docs\src\julia_files\Introduction.jl",
+            "Introduction" => raw"julia_files\Introduction.jl",
             "Creation of the Generative Model" => [],
             "Simulation" => [],
             "Model Fitting" => [],
