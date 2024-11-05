@@ -21,7 +21,7 @@ makedocs(;
     ),
     pages=[
         
-        "Home" => "index.md",
+        "Home" => "src/markdown_files/index.md",
 
         "General Introduction" => [
 
