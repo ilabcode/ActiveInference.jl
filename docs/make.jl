@@ -8,6 +8,9 @@ DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); re
 # markdown_path = raw"src\markdown_files"
 # Literate.markdown(raw"docs\src\julia_files\Introduction.jl", outputdir=joinpath(@__DIR__, markdown_path), documenter=true)
 
+isfile(joinpath(@__DIR__, "index.md"))
+isfile(joinpath(@__DIR__, "Introduction.md"))
+
 makedocs(;
     modules=[ActiveInference, ActiveInference.Environments],
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
