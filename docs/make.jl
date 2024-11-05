@@ -21,11 +21,11 @@ makedocs(;
     ),
     pages=[
         
-        "Home" => "src/markdown_files/index.md",
+        "Home" => "docs/src/markdown_files/index.md",
 
         "General Introduction" => [
 
-            "Introduction" => "src/markdown_files/Introduction.md",
+            "Introduction" => "docs/src/markdown_files/Introduction.md",
             "Creation of the Generative Model" => [],
             "Simulation" => [],
             "Model Fitting" => [],
