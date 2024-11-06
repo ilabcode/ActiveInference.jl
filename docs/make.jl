@@ -5,11 +5,7 @@ using Literate
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
 # Trying to make the output appear in the markdown_files folder without luck
-# markdown_path = raw"src\markdown_files"
-# Literate.markdown(raw"docs\src\julia_files\Introduction.jl", outputdir=joinpath(@__DIR__, markdown_path), documenter=true)
-
-isfile(joinpath(@__DIR__, "index.md"))
-isfile(joinpath(@__DIR__, "Introduction.md"))
+# Literate.markdown(raw"julia_files\Introduction.jl", outputdir="./src", documenter=true)
 
 makedocs(;
     modules=[ActiveInference, ActiveInference.Environments],
@@ -24,11 +20,11 @@ makedocs(;
     ),
     pages=[
         
-        "Home" => joinpath(@__DIR__, "index.md"),
+        "Home" => "index.md",
 
         "General Introduction" => [
 
-            "Introduction" => joinpath(@__DIR__, "Introduction.md"),
+            "Introduction" => "Introduction.md",
             "Creation of the Generative Model" => [],
             "Simulation" => [],
             "Model Fitting" => [],
