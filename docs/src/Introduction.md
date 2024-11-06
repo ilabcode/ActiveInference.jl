@@ -1,5 +1,5 @@
 ```@meta
-EditURL = "docs/src/julia_files/Introduction.jl"
+CurrentModule = ActiveInference
 ```
 
 # Introduction to the ActiveInference.jl package
