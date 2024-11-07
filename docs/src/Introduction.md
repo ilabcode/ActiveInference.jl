@@ -1,7 +1,3 @@
-```@meta
-CurrentModule = ActiveInference
-```
-
 # Introduction to the ActiveInference.jl package
 
 This package is a Julia implementation of the Active Inference framework, with a specific focus on cognitive modelling.
@@ -11,14 +7,14 @@ In this documentation we will go through the basic concepts of how to use the pa
 ## Installing Package
 Installing the package is done by adding the package from the julia official package registry in the following way:
 
-````@example Introduction
+````julia
 using Pkg
 Pkg.add("ActiveInference")
 ````
 
 Now, having added the package, we simply import the package to start using it:
 
-````@example Introduction
+````julia
 using ActiveInference
 ````
 
