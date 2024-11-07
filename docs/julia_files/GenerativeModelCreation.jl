@@ -9,7 +9,7 @@
 
 # There are five main buidling blocks of the generative model which are; **A**, **B**, **C**, **D**, and **E**.
 # Each of these contain parameters that describe the agent's beliefs about the environment.
-# We will now go through each of these conecptually one at a time.
+# We will now go through these conecptually one at a time.
 
 # ### A
 # **A** is the observation likelihood model, and describes the agent's beliefs about how the hidden states of the environment generates observations.
@@ -20,7 +20,7 @@
 
 # ```math
 # A =
-# \overset{\text{\normalsize Observations}\vphantom{\begin{array}{c} 0 \\ 0 \end{array}}}{
+# \overset{\text{\normalsize States}\vphantom{\begin{array}{c} 0 \\ 0 \end{array}}}{
 #     \begin{array}{cccc}
 #         1 & 0 & 0 & 0 \\
 #         0 & 1 & 0 & 0 \\
@@ -29,7 +29,7 @@
 #     \end{array}
 # }
 # \quad
-# \text{\normalsize States}
+# \text{\normalsize Observations}
 # ```
 
 # In this case, the agent is quite certain about which states produces which observations. This matrix could be made more uncertain to the point of complete uniformity and it could be made certain in the sense of each column being a one-hot vector.
