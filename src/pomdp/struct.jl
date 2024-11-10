@@ -501,8 +501,8 @@ function update_A!(aif::AIF, obs::Vector{Int64})
 
     qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
     
-    aif.pA = qA
-    aif.A = normalize_arrays(qA)
+    aif.pA = deepcopy(qA)
+    aif.A = deepcopy(normalize_arrays(qA))
 
     return qA
 end
@@ -512,8 +512,8 @@ function update_B!(aif::AIF, qs_prev)
 
     qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
 
-    aif.pB = qB
-    aif.B = normalize_arrays(qB)
+    aif.pB = deepcopy(qB)
+    aif.B = deepcopy(normalize_arrays(qB))
 
     return qB
 end
@@ -523,8 +523,8 @@ function update_D!(aif::AIF, qs_t1)
 
     qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
 
-    aif.pD = qD
-    aif.D = normalize_arrays(qD)
+    aif.pD = deepcopy(qD)
+    aif.D = deepcopy(normalize_arrays(qD))
 
     return qD
 end
