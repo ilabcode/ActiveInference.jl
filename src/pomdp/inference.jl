@@ -32,7 +32,7 @@ B: Vector{Array{<:Real}} \n
 policy: Vector{Matrix{Int64}}
 
 """
-function get_expected_states(qs::Vector{Vector{Real}}, B, policy::Vector{Matrix{Int64}})
+function get_expected_states(qs::Vector{Vector{Float64}}, B, policy::Vector{Matrix{Int64}})
     
     # Extracting the number of steps (policy_length) and factors from the first policy
     n_steps, n_factors = size(policy[1])
