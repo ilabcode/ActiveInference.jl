@@ -2,7 +2,7 @@ using ActiveInference
 using Documenter
 using Literate
 
-cd(raw"C:\Users\Jonathan Laursen\Desktop\University\Bachelor\ActiveInference.jl\docs\src")
+cd("docs/src")
 
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
@@ -62,7 +62,7 @@ makedocs(;
         ],
 
         "Why Active Inference?" => [],
-        
+
         "Index" => "index.md",
     ],
     doctest=true,
