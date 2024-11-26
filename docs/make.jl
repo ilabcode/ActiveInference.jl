@@ -2,9 +2,15 @@ using ActiveInference
 using Documenter
 using Literate
 
-package_path = dirname(pathof(ActiveInference))
-docdir = joinpath(package_path, "docs", "src")
-cd(docdir)
+# cd(raw"C:\Users\Jonathan Laursen\Desktop\University\Bachelor\ActiveInference.jl\docs\src")
+
+if haskey(ENV, "GITHUB_WORKSPACE")
+    project_dir = ENV["GITHUB_WORKSPACE"]
+else
+    project_dir = pwd()
+end
+
+cd(joinpath(project_dir, "docs", "src"))
 
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
