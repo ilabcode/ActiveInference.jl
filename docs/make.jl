@@ -2,7 +2,9 @@ using ActiveInference
 using Documenter
 using Literate
 
-cd("docs/src")
+package_path = dirname(pathof(ActiveInference))
+docdir = joinpath(package_path, "docs", "src")
+cd(docdir)
 
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
