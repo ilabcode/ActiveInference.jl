@@ -57,7 +57,13 @@
 
 # If we were to use the arguments from the examples above, the function call would look like this:
 using ActiveInference #hide
-A, B, C, D, E = create_matrix_templates([4,2], [4,3,2], [4,1], 2, "zeros");
+n_states = [4,2]
+n_observations = [4,3,2]
+n_controls = [4,1]
+policy_length = 2
+template_type = "zeros"
+
+A, B, C, D, E = create_matrix_templates(n_states, n_observations, n_controls, policy_length, template_type);
 
 # When these parameter collections have been made, each factor/modality can be accessed by indexing the collection with the factor/modality index like:
 

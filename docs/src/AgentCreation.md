@@ -1,13 +1,13 @@
 ```@meta
-EditURL = "../julia_files/InitialisingTheAgent.jl"
+EditURL = "../julia_files/AgentCreation.jl"
 ```
 
-# Initialising the Agent
+# Creating the Agent
 
 Having created the generative model parameters in the precious section, we're not ready to intialise an active inference agent.
 Firstly, we'll have to specify some settings and hyperparameters that go into the agent struct. We'll begin with the setting:
 
-## Settings
+### Settings
 The settings are a dictionary that contains the following keys:
 
 ```julia
@@ -39,7 +39,7 @@ Here, we'll briefly describe the keys in the settings dictionary:
 
 For more information on the specifics of the impact of these settings, look under the `Active Inference Theory` section in the documentation.
 
-## Parameters
+### Parameters
 The parameters are a dictionary that contains the following keys:
 
 ```julia
@@ -66,8 +66,9 @@ Here, we'll briefly describe the keys in the parameters dictionary containing th
 - **`lr_pD`** - Is the learning rate of **D**, and usually takes a value between 0 and 1.
 - **`fr_pD`** - Is the forgetting rate of **D**, and usually takes a value between 0 and 1. If forgetting rate is 1 it means no forgetting.
 
-## Initialising the Agent
 Having now specified the setting and parameters, we can now initialise the active inference agent. This is done by calling the `init_aif` function, which takes the following arguments:
+
+## Initilising the Agent
 
 ```julia
 aif_agent = init_aif(
@@ -113,6 +114,17 @@ Dict{String, Any} with 11 entries:
 ````
 
 Having now initialised the agent, we are ready to implement it either in a simulation with a perception-action loop, or for use in model fitting with observed data.
+
+## Initialising the Agent with Learning
+If you want to include learning in the agent, you can do so by specifying the prior parameters `init_aif` function. Here is an example of how to initialise the agent with learning:
+
+```julia
+aif_agent = init_aif(
+    A, B, C = C, D = D, E = E, pA = pA, pB = pB, pD = pD, settings = settings, parameters = parameters, verbose = false
+);
+```
+
+Here, only the prior of the parameters that are to be learned should be specified.
 
 ---
 
