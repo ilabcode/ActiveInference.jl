@@ -48,7 +48,7 @@ makedocs(;
             "Creation of the Generative Model" => "GenerativeModelCreation.md",
             "Creating the Agent" => "AgentCreation.md",
             "Simulation" => "Simulation.md",
-            "Model Fitting" => [],
+            "Model Fitting" => "ModelFitting.md",
 
         ],
 
