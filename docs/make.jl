@@ -2,9 +2,6 @@ using ActiveInference
 using Documenter
 using Literate
 
-# cd(raw"C:\Users\Jonathan Laursen\Desktop\University\Bachelor\ActiveInference.jl\docs\src")
-# input_folder = raw"..\julia_files"
-
 # Set project directory
 if haskey(ENV, "GITHUB_WORKSPACE")
     project_dir = ENV["GITHUB_WORKSPACE"]
@@ -19,8 +16,6 @@ cd(joinpath(project_dir, "docs", "src"))
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
 # Automating the creating of the markdown files
-
-
 julia_files = filter(file -> endswith(file, ".jl"), readdir(input_folder))
 
 for file in julia_files
@@ -48,7 +43,7 @@ makedocs(;
             "Creation of the Generative Model" => "GenerativeModelCreation.md",
             "Creating the Agent" => "AgentCreation.md",
             "Simulation" => "Simulation.md",
-            "Model Fitting" => "ModelFitting.md",
+            "Model Fitting" => "Fitting.md",
 
         ],
 
