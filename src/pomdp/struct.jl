@@ -24,6 +24,7 @@ mutable struct AIF
     control_fac_idx::Array{Int,1} # Indices of controllable factors
     policy_len::Int  # Policy length
     qs_current::Vector{Vector{T}} where T <: Real # Current beliefs about states
+    obs_current::Vector{T} where T <: Real # Current observation
     prior::Vector{Vector{T}} where T <: Real # Prior beliefs about states
     Q_pi::Vector{T} where T <:Real # Posterior beliefs over policies
     G::Vector{T} where T <:Real # Expected free energy of policies
@@ -106,6 +107,7 @@ function create_aif(A, B;
     end
 
     qs_current = create_matrix_templates(num_states)
+    obs_current = zeros(Int, length(num_obs))
     prior = D
     Q_pi = ones(length(policies)) / length(policies)  
     G = zeros(length(policies))
@@ -173,6 +175,7 @@ function create_aif(A, B;
                 control_fac_idx, 
                 policy_len, 
                 qs_current, 
+                obs_current,
                 prior, 
                 Q_pi, 
                 G, 
@@ -461,6 +464,9 @@ function infer_states!(aif::AIF, obs::Vector{Int64})
     # Update posterior over states
     aif.qs_current = update_posterior_states(aif.A, obs, prior=aif.prior, num_iter=aif.FPI_num_iter, dF_tol=aif.FPI_dF_tol)
 
+    # Adding the obs to the agent struct
+    aif.obs_current = obs
+
     # Push changes to agent's history
     push!(aif.states["prior"], aif.prior)
     push!(aif.states["posterior_states"], aif.qs_current)
@@ -497,9 +503,9 @@ function sample_action!(aif::AIF)
 end
 
 """ Update A-matrix """
-function update_A!(aif::AIF, obs::Vector{Int64})
+function update_A!(aif::AIF)
 
-    qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, obs, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
+    qA = update_obs_likelihood_dirichlet(aif.pA, aif.A, aif.obs_current, aif.qs_current, lr = aif.lr_pA, fr = aif.fr_pA, modalities = aif.modalities_to_learn)
     
     aif.pA = deepcopy(qA)
     aif.A = deepcopy(normalize_arrays(qA))
@@ -508,23 +514,57 @@ function update_A!(aif::AIF, obs::Vector{Int64})
 end
 
 """ Update B-matrix """
-function update_B!(aif::AIF, qs_prev)
+function update_B!(aif::AIF)
 
-    qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
+    if length(get_history(aif, "posterior_states")) > 1
 
-    aif.pB = deepcopy(qB)
-    aif.B = deepcopy(normalize_arrays(qB))
+        qs_prev = get_history(aif, "posterior_states")[end-1]
+
+        qB = update_state_likelihood_dirichlet(aif.pB, aif.B, aif.action, aif.qs_current, qs_prev, lr = aif.lr_pB, fr = aif.fr_pB, factors = aif.factors_to_learn)
+
+        aif.pB = deepcopy(qB)
+        aif.B = deepcopy(normalize_arrays(qB))
+    else
+        qB = nothing
+    end
 
     return qB
 end
 
 """ Update D-matrix """
-function update_D!(aif::AIF, qs_t1)
+function update_D!(aif::AIF)
 
-    qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
+    if length(get_history(aif, "posterior_states")) == 1
 
-    aif.pD = deepcopy(qD)
-    aif.D = deepcopy(normalize_arrays(qD))
+        qs_t1 = get_history(aif, "posterior_states")[end]
+        qD = update_state_prior_dirichlet(aif.pD, qs_t1; lr = aif.lr_pD, fr = aif.fr_pD, factors = aif.factors_to_learn)
 
+        aif.pD = deepcopy(qD)
+        aif.D = deepcopy(normalize_arrays(qD))
+    else
+        qD = nothing
+    end
     return qD
 end
+
+""" General Learning Update Function """
+
+function update_parameters!(aif::AIF)
+
+    if aif.pA != nothing
+        update_A!(aif)
+    end
+
+    if aif.pB != nothing
+        update_B!(aif)
+    end
+
+    if aif.pD != nothing
+        update_D!(aif)
+    end
+    
+end
+
+""" Get the history of the agent """
+
+

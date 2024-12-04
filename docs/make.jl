@@ -2,13 +2,28 @@ using ActiveInference
 using Documenter
 using Literate
 
+# Set project directory
+if haskey(ENV, "GITHUB_WORKSPACE")
+    project_dir = ENV["GITHUB_WORKSPACE"]
+    input_folder = joinpath(project_dir, "docs", "julia_files")
+else
+    project_dir = pwd()
+    input_folder = raw"..\julia_files"
+end
+
+cd(joinpath(project_dir, "docs", "src"))
+
 DocMeta.setdocmeta!(ActiveInference, :DocTestSetup, :(using ActiveInference); recursive=true)
 
-# Trying to make the output appear in the markdown_files folder without luck
-# Literate.markdown(raw"julia_files\Introduction.jl", outputdir="./src", execute=false, documenter = false)
-# Literate.markdown(raw"julia_files\GenerativeModelCreation.jl", outputdir="./src", execute=false, documenter = false)
+# Automating the creating of the markdown files
+julia_files = filter(file -> endswith(file, ".jl"), readdir(input_folder))
 
+for file in julia_files
+    input_path = joinpath(input_folder, file)
+    Literate.markdown(input_path, outputdir="", execute=true, documenter=true, codefence =  "```julia" => "```")
+end
 
+# Creating the documentation
 makedocs(;
     modules=[ActiveInference, ActiveInference.Environments],
     authors="Jonathan Ehrenreich Laursen, Samuel William Nehrer",
@@ -21,15 +36,14 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        
-        "Home" => "index.md",
 
         "General Introduction" => [
 
             "Introduction" => "Introduction.md",
             "Creation of the Generative Model" => "GenerativeModelCreation.md",
-            "Simulation" => [],
-            "Model Fitting" => [],
+            "Creating the Agent" => "AgentCreation.md",
+            "Simulation" => "Simulation.md",
+            "Model Fitting" => "Fitting.md",
 
         ],
 
@@ -40,16 +54,25 @@ makedocs(;
 
         ],
 
-        "Active Inference Theory" => [
+        "Theory" => [
 
-            "Perception" => [],
-            "Action" => [],
-            "Learning" => [],
+            "Active Inference Theory" => [
+                "Perception" => [],
+                "Action" => [],
+                "Learning" => [],
+            ],
+
+            "POMDP Theory" => "GenerativeModelTheory.md",
+
+
 
         ],
 
-        "Why Active Inference?" => [],
+        "Why Active Inference?" => "WhyActiveInference.md",
+
+        "Index" => "index.md",
     ],
+    doctest=true,
 )
 ### NOTE Sam: change devbranch to master
 deploydocs(;

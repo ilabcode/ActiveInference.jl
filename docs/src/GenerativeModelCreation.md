@@ -1,108 +1,162 @@
-# Creating the Generative Model
-
-In this section we will go through the process of creating a generative model and how it should be structured.
-
-## The Generative Model Conceptually
-
-The generative model is the parameters that constitute the agent's beliefs on how the hidden states of the environment generates observations based on states, and how hidden underlying states changes over time.
-In the generative model is also the beliefs of how the agent through actions can influence the states of the environment. Together this holds the buidling blocks that allows for the perception-action loop.
-
-There are five main buidling blocks of the generative model which are; **A**, **B**, **C**, **D**, and **E**.
-Each of these contain parameters that describe the agent's beliefs about the environment.
-We will now go through these conecptually one at a time.
-
-### A
-**A** is the observation likelihood model, and describes the agent's beliefs about how the hidden states of the environment generates observations.
-Practically in this package, and other POMDP implemantations as well, this is described through a series of categorical distributions, meaning that for each observation, there is a categorical probability distribution over how likely each hidden state is to generate that observation.
-Let us for example imagine a simple case, where the agent is in a four location state environment, could be a 2x2 gridworld. In this case, there would be one obseration linked to each hidden state, and **A** then maps the agent's belief of how likely each hidden location state is to generate each observation.
-The agent can then use this belief to infer what state it is in based on the observation it receives. Let's look at an example **A**, which in this case would be a 4x4 matrix:
-
-```math
-A =
-\overset{\text{\normalsize States}\vphantom{\begin{array}{c} 0 \\ 0 \end{array}}}{
-    \begin{array}{cccc}
-        1 & 0 & 0 & 0 \\
-        0 & 1 & 0 & 0 \\
-        0 & 0 & 1 & 0 \\
-        0 & 0 & 0 & 1
-    \end{array}
-}
-\quad
-\text{\normalsize Observations}
+```@meta
+EditURL = "../julia_files/GenerativeModelCreation.jl"
 ```
 
-In this case, the agent is quite certain about which states produces which observations. This matrix could be made more uncertain to the point of complete uniformity and it could be made certain in the sense of each column being a one-hot vector.
-In the case of a certain **A**, the generative model stops being a "partially observable" Markov decision process, and becomes a fully observable one, making it a Markov decision process (MDP). For a more technical and mathematical definition of the observation likelihood model.
+# Creating the POMDP Generative Model
 
-### B
-**B** is the transition likelihood model that encodes the agent's beliefs about how the hidden states of the environment changes over time.
-This is also made up of categorical distributions, though instead of observations to states, it maps states to states.
-If we take the same case again, a 2x2 gridworld, we would have a 4x4 matrix that describes how the agent believes the states evolve over time.
-An extra addition to **B**, is that it can depend on actions, meaning that it can believe that the hidden states of the environment change differently depending on the action taken by the agent.
-Due to this fact, we would the have a matrix for each action, making **B** a 3 dimensional tensor, with 2 dimensions for the "from" state and the "to" state, and then an action dimension.
-Let's look at an example of a slice of **B** for the action "down" in the grid world, which in this case would be a 4x4 matrix:
+In this section we will go through the process of creating a generative model and how it should be structured. In this part, we will show the code necessary for correct typing of the generative model.
+For a theoretical explanation of POMDPs look under the "Theory" section further down in the documentation.
 
-```math
-B("down") =
-\overset{\text{\normalsize Previous State}\vphantom{\begin{array}{c} 0 \\ 0 \end{array}}}{
-    \begin{array}{cccc}
-        0 & 0 & 0 & 0 \\
-        1 & 1 & 0 & 0 \\
-        0 & 0 & 0 & 0 \\
-        0 & 0 & 1 & 1
-    \end{array}
-}
-\quad
-\text{\normalsize Current State}
+## Typing of the POMDP parameters
+
+In ActiveInference.jl, it is important that the parameters describing the generative model is typed correctly.
+The correct typing of the generative model parameters, which often take the shapes of matrices, tensors and vectors.
+The collections of generative model parameters are colloquially referred to as **A**, **B**, **C**, **D**, and **E**. We will denote these parameters by their letter in bold. For a quick refresher this is the vernacular used to describe these parameter collections:
+
+- **A** - Observation Likelihood Model
+- **B** - Transition Likelihood Model
+- **C** - Prior over Observations
+- **D** - Prior over States
+- **E** - Prior over Policies
+
+These should be typed the following way in ActiveInference.jl:
+
+```julia
+A = Vector{Array{Float64, 3}}(undef, n_modalities)
+B = Vector{Array{Float64, 3}}(undef, n_factors)
+C = Vector{Vector{Float64, 3}}(undef, n_modalities)
+D = Vector{Vector{Float64, 3}}(undef, n_factors)
+D = Vector{Float64, 3}(undef, n_policies)
 ```
 
-We could make 3 more similar matrices for the actions "up", "left", and "right", and then we would have the full **B** tensor for the gridworld. But here, the main point is that
-**B** decsribes the agent's belief of how hidden states change over time, and this can be dependent on actions, but might also be independent of actions, and thus the agent believes that the changes are out of its control.
+Each of the parameter collections are vectors, where each index in the vector contains the parameters associated with a specific modality or factor.
+However, creating these from scratch is not necessary, as we have created a helper function that can create a template for these parameters.
 
-### C
-**C** is the prior over observations, also called preferences over observations. This is an integral part of the utility of certain observations, i.e. it encodes how much the agent prefers or dislikes certain observations.
-**C** is a simple vector over observations, where each entry is a value that describes the utility or preference of that specific observation.
-If we continue with the simple 2x2 gridworld example, we would have 4 observations, one for each location state (same amount of observations as in **A**).
-Let's say that we would like for the agent to dislike observing the top left location (indexed as 1), and prefer the bottom right location (indexed as 4). We would then create **C** in the following way:
+## Helper Function for GM Templates
+Luckily, there is a helper function that helps create templates for the generative model parameters. This function is called `create_matrix_templates`.
 
-```math
-C =
-\begin{array}{cccc}
-    -2 & 0 & 0 & 2 \\
-\end{array}
+```julia
+A, B, C, D, E = create_matrix_templates(n_states::Vector{Int64}, n_observations::Vector{Int64}, n_controls::Vector{Int64}, policy_length::Int64, template_type::String)
 ```
 
-The magnitude of the values in **C** is arbitrary, and denotes a ratio and amount of dislike/preference. Here, we have chosen the value of -2 and 2
-to encode that the agent dislikes the top left location just as much as it likes the bottom right location. The zeros in between just means that the agent has not preference or dislike for these locatin observations.
-Note that since **C** is not a categorical distribution, it does not need to sum to 1, and the values can be any real number.
+This function takes the five arguments `n_states`, `n_observations`, `n_controls`, `policy_length`, and `template_type`, which have all the necessary information to create the
+right structure of the generative model parameters. We will go through these arguments one by one:
 
-### D
-**D** is the prior over states, and is the agent's beliefs about the initial state of the environment. This is also a simple vector that is a categorical distribution.
-Note that if **A** is certain, then **D** does not matter a lot for the inference process, as the agent can infer the state from the observation. However, if **A** is uncertain,
-then **D** becomes very important, as it serves as the agent's anchor point of where it is initially in the environment. In the case of out
-2x2 gridworld, we would have a vector with 4 entries, one for each location state. If we assume that the agent correctly infers it's initial location as upper left corner, **D** would look like:
+\
 
-```math
-D =
-\begin{array}{cccc}
-    1 & 0 & 0 & 0 \\
-\end{array}
+- **n_states** - This is the number of states in the environment. The environment can have different kinds of states, which are often referred to as factors. Could be a location factor and a reward condition factor. It takes a vector of integers, where each integer represents a factor, and the value of the integer is the number of states in that factor. E.g. if we had an environment with two factors, one location factor with 4 states and one reward condition factor with 2 states, the argument would look like this: `[4,2]`
+\
+
+- **n_observations** - This is the number of observations the agent can make in the environment. The observations are often referred to as modalities. Could be a location modality, a reward modality and a cue modality. Similarly to the first argument, it takes a vector of integers, where each integer represents a modality, and the value of the integer is the number of observations in that modality. E.g. if we had an environment with three modalities, one location modality with 4 observations, one reward modality with 3 observations and one cue modality with 2 observations, the argument would look like this: `[4,3,2]`
+\
+
+- **n_controls** - This is the number of controls the agent have in the environment. The controls are the actions the agent can take in the different factors. Could be moving left or right, or choosing between two different rewards. It has one control integer for each factor, where the integer represents the number of actions in that factor. If the agent cannot control a factor, the integer should be 1. E.g. if we had an environment with two factors, one location factor with 4 actions and one reward condition factor with 1 action, the argument would look like this: `[4,1]`
+\
+
+- **policy_length** - This is the length of the policies of the agent, and is taken as an integer. The policy is a sequence of actions the agent can take in the environment. The length of the policy describes how many actions into the future the agent is planning. For example, if the agent is planning two steps into the future, the policy length would be 2, and each policy would consist of 2 actions. In that case the argument would look like this: `2`
+\
+
+- **template_type** - This is a string that describes the type of template you want to create, or in other words, the initial filling of the generative model structure. There are three options; `"uniform"`, which is default, `"random"`, and `"zeros"`.
+
+If we were to use the arguments from the examples above, the function call would look like this:
+
+```julia
+n_states = [4,2]
+n_observations = [4,3,2]
+n_controls = [4,1]
+policy_length = 2
+template_type = "zeros"
+
+A, B, C, D, E = create_matrix_templates(n_states, n_observations, n_controls, policy_length, template_type);
 ```
 
-### E
-**E** is the prior over policies, and can be described as the agent's habits. Policies in Active Inference vernacular are sets of actions, with an action for each step in the future, specified by a policy length.
-It is a categorical distribution over policies, with a probability for each policy. This will have an effect on the agent posterior over policies,
-which is the probability of taking a certain action at a time step. This will often be set to a uniform distribution, if we are not interested in giving the agent habits.
-Let us assume that we will give our agent a uniform **E** for a policy length of 2, this mean that we will have a uniform categorical distribution over 16 possible policies ``(4 (actions) ^ {2 (policy length)})``:
+When these parameter collections have been made, each factor/modality can be accessed by indexing the collection with the factor/modality index like:
 
-```math
-E =
-\begin{array}{cccc}
-0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 & 0.0625 \\
-\end{array}
+```julia
+A[1] # Accesses the first modality in the observation likelihood model
+B[2] # Accesses the second factor in the transition likelihood model
+C[3] # Accesses the third modality in the prior over observations
+D[1] # Accesses the first factor in the prior over states
 ```
 
-## Creating the Generative Model using a Helper Function
+The E-parameters are not a divided into modalities or factors, as they are the prior over policies.
+
+## Populating the Parameters
+Now that the generative model parameter templates ahave been created, they can now be filled with the desired values, ie. populating the parameters.
+Let's take the example of filling **A** with some valus. To start, let's print out the first modality of the A so we get a sense of the dimensions:
+
+```julia
+A[1]
+```
+
+````
+4×4×2 Array{Float64, 3}:
+[:, :, 1] =
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+
+[:, :, 2] =
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  0.0
+````
+
+For a quick recap on the POMDP generative model parameteres look up the [`POMDP Theory`](@ref "The Generative Model Conceptually") section further down in the documentation.
+
+For now, we'll suffice to say that the first modality of **A** is a 3D tensor, where the first dimension are observations in the first modality, the second dimension the first factor, and the third dimension is the second factor.
+Remember **A** maps the agents beliefs on how states generate observations. In this case, we have two 4x4 matrices, one matrix for each state int the second factor. This could be how location observations (1st dimenstion) map onto location states (2nd dimension) and reward condition (3rd dimension).
+For the sake of simplicity, let's assume that the agent can infer location states with certainty based on location observations. In this case we could populate the first modality of **A** like this:
+
+```julia
+# For reward condition right
+A[1][:,:,1] = [ 1.0  0.0  0.0  0.0
+                0.0  1.0  0.0  0.0
+                0.0  0.0  1.0  0.0
+                0.0  0.0  0.0  1.0 ]
+
+# For reward condition left
+A[1][:,:,2] = [ 1.0  0.0  0.0  0.0
+                0.0  1.0  0.0  0.0
+                0.0  0.0  1.0  0.0
+                0.0  0.0  0.0  1.0 ]
+```
+
+In this case the agent would infer the location state with certainty based on the location observations. One could also make the **A** more noisy in this modality, which could look like:
+
+```julia
+# For reward condition right
+A[1][:,:,1] = [ 0.7  0.1  0.1  0.1
+                0.1  0.7  0.1  0.1
+                0.1  0.1  0.7  0.1
+                0.1  0.1  0.1  0.7 ]
+
+# For reward condition left
+A[1][:,:,2] = [ 0.7  0.1  0.1  0.1
+                0.1  0.7  0.1  0.1
+                0.1  0.1  0.7  0.1
+                0.1  0.1  0.1  0.7 ]
+```
+
+Importantly the columns should always add up to 1, as we are here dealing with categorical probability distributions.
+For the other parameters, the process is similar, but the dimensions of the matrices will differ. For **B** the dimensions are states to states, and for **C** and **D** the dimensions are states to observations and states to factors respectively.
+Look up the `T-Maze Simulation` (insert reference here) example for a full example of how to populate the generative model parameters.
+
+## Creating Dirichlet Priors over Parameters
+When learning is included, we create Dirichlet priors over the parameters **A**, **B**, and **D**. We usually do this by taking the created **A**, **B**, and **D** parameters and multiplying them with a scalar, which is the concentration parameter of the Dirichlet distribution.
+For more information on the specifics of learning and Dirichlet priors, look under the `Active Inference Theory` section in the documentation. Note here, that when we implement learning of a parameter, the parameter is going to be defined by its prior and no longer the initial
+parameter that we specified. This is because the agent will update the parameter based on the prior and the data it receives. An example of how we would create a Dirichlet prior over **A** could look:
+
+```julia
+pA = deepcopy(A)
+scale_concentration_parameter = 2.0
+pA .*= scale_concentration_parameter
+```
+
+This is not relevant if learning is not included. If learning is not included, the parameters are fixed and the agent will not update them. The value of the scaling parameter determines how much each data observation impacts the update of the parameter.
+If the scaling is high, e.g. 50, then adding one data point will have a small impact on the parameter. If the scaling is low, e.g. 0.1, then adding one data point will have a large impact on the parameter. The update function updates the parameters by normalising the concentration parameters of the Dirichlet distribution.
 
 ---
 
