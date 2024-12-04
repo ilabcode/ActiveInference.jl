@@ -44,6 +44,7 @@ makedocs(;
             "Creating the Agent" => "AgentCreation.md",
             "Simulation" => "Simulation.md",
             "Model Fitting" => "Fitting.md",
+            "Simulation with ActionModels.jl" => "SimulationActionModels.md",
 
         ],
 
