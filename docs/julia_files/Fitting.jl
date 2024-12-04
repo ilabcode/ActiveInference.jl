@@ -74,4 +74,5 @@
 # First, let's define some observations and actions as vectors:
 # ```julia
 # # Define observations and actions
-# observations = [[1, 2, 3, 4]]
+# observations = [1, 2, 3, 4]
+# ```
