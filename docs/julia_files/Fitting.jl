@@ -55,7 +55,7 @@
 #     substruct = aif # The active inference object
 # )
 # ```
-# We use an initialized `Agent` primarily for fitting; however, it can also be used with a set of convenience functions to run simulations, which are described in [Simulation with ActionModels](./convenience_functions.md).
+# We use an initialized `Agent` primarily for fitting; however, it can also be used with a set of convenience functions to run simulations, which are described in [Simulation with ActionModels](./SimulationActionModels.md).
 
 # #### Fitting a Single Subject Model
 # We have our `Agent` object defined as above. Next, we need to specify priors for the parameters we want to estimate. 
