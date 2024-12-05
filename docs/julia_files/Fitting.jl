@@ -7,19 +7,18 @@
 # Model fitting in '**ActiveInference**' is mediated through '**ActionModels**', which is our sister package for implementing and fitting various behavioural models to data. The core of '**ActionModels**' is the action model function, which takes a single observation, runs the inference scheme (updating the agent's beliefs), and calculates the probability distribution over actions from which the agent samples its actions.
 # *(Check out the [ActionModels documentation](https://ilabcode.github.io/ActionModels.jl/dev/markdowns/Introduction/) for more details)*
 
-using ActiveInference#hide
-n_states = [4]#hide
-n_observations = [4]#hide
-n_controls = [2]#hide
-policy_length = 1#hide
-A, B = create_matrix_templates(n_states, n_observations, n_controls, policy_length)#hide
-aif = init_aif(A, B, verbose=false);#hide
-using ActionModels#hide
-agent = init_agent(action_pomdp!,substruct = aif);#hide
-using Distributions#hide
-priors = Dict("alpha" => Gamma(1, 1))#hide
-using DataFrames#hide
-
+using ActiveInference #hide #nb
+n_states = [4] #hide #nb
+n_observations = [4] #hide #nb
+n_controls = [2] #hide #nb
+policy_length = 1 #hide #nb
+A, B = create_matrix_templates(n_states, n_observations, n_controls, policy_length); nothing #hide #nb
+aif = init_aif(A, B, verbose=false); nothing #hide #nb
+using ActionModels #hide #nb
+agent = init_agent(action_pomdp!, substruct = aif); nothing #hide #nb
+using Distributions #hide #nb
+priors = Dict("alpha" => Gamma(1, 1)); nothing #hide #nb
+using DataFrames #hide 
 #multi_subject_model = create_model(agent, priors, data, grouping_cols = [:subjectID], input_cols = ["observations"], action_cols = ["actions"])#hide
 #results = fit_model(multi_subject_model);#hide
 
@@ -105,6 +104,7 @@ using DataFrames#hide
 # Often, we have data from multiple subjects that we would like to fit simultaneously. The good news is that this can be done by instantiating our probabilisitc model on an entire dataset containing data from multiple subjects.
 #
 # Let's define some dataset with observations and actions for three subjects:
+
 # ```julia
 # # Import the DataFrames package
 # using DataFrames
@@ -116,6 +116,7 @@ using DataFrames#hide
 #    actions = [2, 1, 2, 2, 2, 1, 2, 2, 1] # Actions
 # )
 # ```
+data = DataFrame(subjectID = [1, 1, 1, 2, 2, 2, 3, 3, 3], observations = [1, 1, 2, 3, 1, 4, 2, 1, 3], actions = [2, 1, 2, 2, 2, 1, 2, 2, 1] )#hide
 # To instantiate the probabilistic model on our dataset, we pass the `data` DataFrame to the `create_model` function along with the names of the columns that contain the subject identifiers, observations, and actions:
 # ```julia
 # # Create the model object
