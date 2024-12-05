@@ -2,6 +2,9 @@ using ActiveInference
 using Documenter
 using Literate
 
+# cd(raw"C:\Users\jonat\Desktop\University\Bachelor\ActiveInferencePackage\ActiveInference.jl\docs\src")
+# input_folder = "../julia_files"
+
 # Set project directory
 if haskey(ENV, "GITHUB_WORKSPACE")
     project_dir = ENV["GITHUB_WORKSPACE"]
@@ -33,7 +36,7 @@ makedocs(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://ilabcode.github.io/ActiveInference.jl",
         edit_link="master",
-        assets=String[],
+        assets=[],
     ),
     pages=[
 
@@ -50,18 +53,18 @@ makedocs(;
 
         "Usage Examples" => [
 
-            "T-Maze Simulation" => [],
-            "T-Maze Model Fitting" => [],
+            "T-Maze Simulation" => "TMazeSimulationExample.md",
+            # "T-Maze Model Fitting" => [],
 
         ],
 
         "Theory" => [
 
-            "Active Inference Theory" => [
-                "Perception" => [],
-                "Action" => [],
-                "Learning" => [],
-            ],
+            # "Active Inference Theory" => [
+            #     "Perception" => [],
+            #     "Action" => [],
+            #     "Learning" => [],
+            # ],
 
             "POMDP Theory" => "GenerativeModelTheory.md",
 
@@ -69,7 +72,7 @@ makedocs(;
 
         ],
 
-        "Why Active Inference?" => "WhyActiveInference.md",
+        # "Why Active Inference?" => "WhyActiveInference.md",
 
         "Index" => "index.md",
     ],

@@ -8,7 +8,7 @@ When simulating with active inference we need a perception-action loop. This loo
 2. The agent will infer the best action based on the minimization of the expected free energy (see `Active Inference Theory Action`).
 3. The agent will perform the action in the environment and receive an observation for use in the next iteration.
 
-*Note: for learning included, look at the section below this one.*
+*Note: for learning included, look at the section below.*
 
 #### The Perception-Action loop:
 ```julia
