@@ -33,9 +33,8 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
 
         # If it is not a vector, make it one
         if !(previous_action isa Vector)
-            previous_action = collect(previous_action)
+            previous_action = previous_action isa Integer ? [previous_action] : collect(previous_action)
         end
-
         #Store the action in the AIF substruct
         agent.substruct.action = previous_action
     end
@@ -48,7 +47,7 @@ function action_pomdp!(agent::Agent, obs::Vector{Int64})
     # If action is empty, update D vectors
     if ismissing(agent.states["action"]) && agent.substruct.pD !== nothing
         qs_t1 = get_history(agent.substruct)["posterior_states"][1]
-        update_D!(aif, qs_t1)
+        update_D!(agent.substruct, qs_t1)
     end
 
     # If learning of the B matrix is enabled and agent has a previous action
@@ -86,8 +85,6 @@ end
 
 function action_pomdp!(agent::Agent, obs::Tuple{Vararg{Int}})
 
-    aif = agent.substruct
-
     # convert observation to vector
     obs = collect(obs)
 
@@ -122,7 +119,7 @@ function action_pomdp!(agent::Agent, obs::Tuple{Vararg{Int}})
     # If action is empty and pD is not nothing, update D vectors
     if ismissing(agent.states["action"]) && agent.substruct.pD !== nothing
         qs_t1 = get_history(agent.substruct)["posterior_states"][1]
-        update_D!(aif, qs_t1)
+        update_D!(agent.substruct, qs_t1)
     end
 
     # If learning of the B matrix is enabled and agent has a previous action
