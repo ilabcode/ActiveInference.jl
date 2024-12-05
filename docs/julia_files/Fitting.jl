@@ -7,6 +7,22 @@
 # Model fitting in '**ActiveInference**' is mediated through '**ActionModels**', which is our sister package for implementing and fitting various behavioural models to data. The core of '**ActionModels**' is the action model function, which takes a single observation, runs the inference scheme (updating the agent's beliefs), and calculates the probability distribution over actions from which the agent samples its actions.
 # *(Check out the [ActionModels documentation](https://ilabcode.github.io/ActionModels.jl/dev/markdowns/Introduction/) for more details)*
 
+using ActiveInference#hide
+n_states = [4]#hide
+n_observations = [4]#hide
+n_controls = [2]#hide
+policy_length = 1#hide
+A, B = create_matrix_templates(n_states, n_observations, n_controls, policy_length)#hide
+aif = init_aif(A, B, verbose=false);#hide
+using ActionModels#hide
+agent = init_agent(action_pomdp!,substruct = aif);#hide
+using Distributions#hide
+priors = Dict("alpha" => Gamma(1, 1))#hide
+using DataFrames#hide
+
+#multi_subject_model = create_model(agent, priors, data, grouping_cols = [:subjectID], input_cols = ["observations"], action_cols = ["actions"])#hide
+#results = fit_model(multi_subject_model);#hide
+
 # To demonstrate this, let's define a very simple generative model with a single state factor and two possible actions, and then initialize our active inference object:
 # ```julia
 # # Define the number of states, observations, and controls
@@ -116,3 +132,22 @@
 # ```julia
 # results = fit_model(multi_subject_model)
 # ```
+#
+# #### Customizing the Fitting Procedure
+# The `fit_model` function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:
+
+# ```julia
+# results = fit_model(
+#     model, # The model object
+#     parallelization = MCMCDistributed(), # Run the chains in parallel
+#     sampler = NUTS(;adtype=AutoReverseDiff(compile=true), # Specify the type of sampler
+#     n_itererations = 1000, # Number of iterations, 
+#     n_chains = 4, # Number of chains
+# )
+# ```
+# Turing allows us to run distributed `MCMCDistributed()` or threaded `MCMCThreads()` parallel sampling. The default is to run chains serially `MCMCSerial()`. For information on the available samplers see the [Turing documentation](https://turing.ml/dev/docs/using-turing/samplers/). 
+# 
+# #### Results
+# 
+# The `fit_model` function is an object that contains the standard Turing chains which we can use to extract the summary statistics of the posterior distribution...
+# 

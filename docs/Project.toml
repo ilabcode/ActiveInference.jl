@@ -1,5 +1,8 @@
 [deps]
+ActionModels = "320cf53b-cc3b-4b34-9a10-0ecb113566a3"
 ActiveInference = "688b0e7a-0122-4325-8669-5ff08899a59e"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
