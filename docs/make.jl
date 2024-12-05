@@ -54,17 +54,17 @@ makedocs(;
         "Usage Examples" => [
 
             "T-Maze Simulation" => "TMazeSimulationExample.md",
-            "T-Maze Model Fitting" => [],
+            # "T-Maze Model Fitting" => [],
 
         ],
 
         "Theory" => [
 
-            "Active Inference Theory" => [
-                "Perception" => [],
-                "Action" => [],
-                "Learning" => [],
-            ],
+            # "Active Inference Theory" => [
+            #     "Perception" => [],
+            #     "Action" => [],
+            #     "Learning" => [],
+            # ],
 
             "POMDP Theory" => "GenerativeModelTheory.md",
 
@@ -72,7 +72,7 @@ makedocs(;
 
         ],
 
-        "Why Active Inference?" => "WhyActiveInference.md",
+        # "Why Active Inference?" => "WhyActiveInference.md",
 
         "Index" => "index.md",
     ],
