@@ -42,7 +42,6 @@ action_distribution = action_pomdp!(aif, observation)
 Another key component of '**ActionModels**' is an `Agent`, which wraps the action model and active inference object in a more abstract structure. The `Agent` is initialized using a `substruct` to include our active inference object, and the action model is our `action_pomdp!` function.
 
 Let's first install '**ActionModels**' from the official Julia registry and import it:
-
 ```julia
 Pkg.add("ActionModels")
 using ActionModels
@@ -161,8 +160,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 5.44 seconds
-Compute duration  = 5.44 seconds
+Wall duration     = 4.94 seconds
+Compute duration  = 4.94 seconds
 parameters        = parameters[1, 1], parameters[1, 2], parameters[1, 3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -170,17 +169,17 @@ Summary Statistics
         parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
             Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  parameters[1, 1]    0.9648    0.9663    0.0338   647.8497   472.4297    1.0010      119.1119
-  parameters[1, 2]    0.9798    0.9629    0.0313   668.6046   488.3596    1.0001      122.9279
-  parameters[1, 3]    0.9892    0.9916    0.0419   234.6966   124.1617    1.0022       43.1507
+  parameters[1, 1]    1.0069    1.0555    0.0386   645.6724   503.0667    1.0014      130.5708
+  parameters[1, 2]    0.9659    0.9180    0.0344   579.7951   461.5439    1.0025      117.2488
+  parameters[1, 3]    0.9747    0.9424    0.0346   339.3010   214.1875    1.0018       68.6150
 
 Quantiles
         parameters      2.5%     25.0%     50.0%     75.0%     97.5%
             Symbol   Float64   Float64   Float64   Float64   Float64
 
-  parameters[1, 1]    0.0297    0.2674    0.6636    1.3138    3.4285
-  parameters[1, 2]    0.0290    0.3105    0.7288    1.2821    3.7957
-  parameters[1, 3]    0.0070    0.2754    0.6787    1.3868    3.8032
+  parameters[1, 1]    0.0312    0.2762    0.7024    1.3342    4.0748
+  parameters[1, 2]    0.0265    0.3047    0.7223    1.2691    3.5563
+  parameters[1, 3]    0.0167    0.2510    0.6941    1.4203    3.3940
 
 ````
 
@@ -196,8 +195,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 5.44 seconds
-Compute duration  = 5.44 seconds
+Wall duration     = 4.94 seconds
+Compute duration  = 4.94 seconds
 parameters        = subjectID:1.alpha, subjectID:2.alpha, subjectID:3.alpha
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -205,17 +204,17 @@ Summary Statistics
          parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
              Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  subjectID:1.alpha    0.9648    0.9663    0.0338   647.8497   472.4297    1.0010      119.1119
-  subjectID:2.alpha    0.9798    0.9629    0.0313   668.6046   488.3596    1.0001      122.9279
-  subjectID:3.alpha    0.9892    0.9916    0.0419   234.6966   124.1617    1.0022       43.1507
+  subjectID:1.alpha    1.0069    1.0555    0.0386   645.6724   503.0667    1.0014      130.5708
+  subjectID:2.alpha    0.9659    0.9180    0.0344   579.7951   461.5439    1.0025      117.2488
+  subjectID:3.alpha    0.9747    0.9424    0.0346   339.3010   214.1875    1.0018       68.6150
 
 Quantiles
          parameters      2.5%     25.0%     50.0%     75.0%     97.5%
              Symbol   Float64   Float64   Float64   Float64   Float64
 
-  subjectID:1.alpha    0.0297    0.2674    0.6636    1.3138    3.4285
-  subjectID:2.alpha    0.0290    0.3105    0.7288    1.2821    3.7957
-  subjectID:3.alpha    0.0070    0.2754    0.6787    1.3868    3.8032
+  subjectID:1.alpha    0.0312    0.2762    0.7024    1.3342    4.0748
+  subjectID:2.alpha    0.0265    0.3047    0.7223    1.2691    3.5563
+  subjectID:3.alpha    0.0167    0.2510    0.6941    1.4203    3.3940
 
 ````
 

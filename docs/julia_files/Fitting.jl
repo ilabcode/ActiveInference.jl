@@ -18,7 +18,7 @@ aif = init_aif(A, B, verbose=false);#hide
 using Distributions#hide
 priors = Dict("alpha" => Gamma(1, 1));#hide
 using DataFrames#hide 
-
+using ActionModels#hide
 # To demonstrate this, let's define a very simple generative model with a single state factor and two possible actions, and then initialize our active inference object:
 # ```julia
 # # Define the number of states, observations, and controls
@@ -49,10 +49,10 @@ using DataFrames#hide
 # Another key component of '**ActionModels**' is an `Agent`, which wraps the action model and active inference object in a more abstract structure. The `Agent` is initialized using a `substruct` to include our active inference object, and the action model is our `action_pomdp!` function.
 
 # Let's first install '**ActionModels**' from the official Julia registry and import it:
-
-Pkg.add("ActionModels")
-using ActionModels
-
+# ```julia
+# Pkg.add("ActionModels")
+# using ActionModels
+# ```
 
 # We can now create an `Agent` with the `action_pomdp!` function and the active inference object:
 
