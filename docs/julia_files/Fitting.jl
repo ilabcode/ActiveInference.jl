@@ -160,7 +160,10 @@ chains = results.chains
 renamed_chains = rename_chains(chains, multi_subject_model)
 #
 # That looks better! We can now use the '**StatsPlots**' package to plot the chain traces and density plots of the posterior distributions for all subjects:
+# ```julia
+# using StatsPlots # Load the StatsPlots package
 #
-using StatsPlots # Load the StatsPlots package
+# plot(renamed_chains)
+# ```
 
-plot(renamed_chains)
+# ![image1](assets/TMazeIllustrationSmaller.png)
