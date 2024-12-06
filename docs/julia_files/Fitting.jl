@@ -18,8 +18,6 @@ aif = init_aif(A, B, verbose=false);#hide
 using Distributions#hide
 priors = Dict("alpha" => Gamma(1, 1));#hide
 using DataFrames#hide 
-#multi_subject_model = create_model(agent, priors, data, grouping_cols = [:subjectID], input_cols = ["observations"], action_cols = ["actions"])#hide
-#results = fit_model(multi_subject_model);#hide
 
 # To demonstrate this, let's define a very simple generative model with a single state factor and two possible actions, and then initialize our active inference object:
 # ```julia
@@ -165,5 +163,19 @@ renamed_chains = rename_chains(chains, multi_subject_model)
 #
 # plot(renamed_chains)
 # ```
+#
+# ![image1](assets/quickstart_chain_traces.png)
+#
+# We can also visualize the posterior distributions against the priors. This can be done by first taking samples from the prior:
+# ```julia
+# # Sample from the prior
+# prior_chains = sample(multi_subject_model, Prior(), 1000)
+# # Rename parameters in the prior chains
+# renamed_prior_chains = rename_chains(prior_chains, multi_subject_model)
+# ```
+# To plot the posterior distributions against the priors, we use the `plot_parameters` function:
+# ```julia
+# plot_parameters(renamed_prior_chains, renamed_chains)
+# ```
 
-# ![image1](assets/TMazeIllustrationSmaller.png)
+# ![image1](assets/quickstart_posteriors.png)
