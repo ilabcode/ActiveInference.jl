@@ -44,7 +44,7 @@ multi_subject_model = create_model(
     input_cols = [&quot;observations&quot;], # Column with observations
     action_cols = [&quot;actions&quot;] # Column with actions
 )</code></pre><p>To fit the model, we use the <code>fit_model</code> function as before:</p><pre><code class="language-julia hljs">results = fit_model(multi_subject_model)</code></pre><pre><code class="nohighlight hljs">┌ Info: Found initial step size
-└   ϵ = 3.2
+└   ϵ = 0.8
 </code></pre><h4 id="Customizing-the-Fitting-Procedure"><a class="docs-heading-anchor" href="#Customizing-the-Fitting-Procedure">Customizing the Fitting Procedure</a><a id="Customizing-the-Fitting-Procedure-1"></a><a class="docs-heading-anchor-permalink" href="#Customizing-the-Fitting-Procedure" title="Permalink"></a></h4><p>The <code>fit_model</code> function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:</p><pre><code class="language-julia hljs">results = fit_model(
     multi_subject_model, # The model object
     parallelization = MCMCDistributed(), # Run chains in parallel
@@ -56,8 +56,8 @@ multi_subject_model = create_model(
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 13.46 seconds
-Compute duration  = 13.46 seconds
+Wall duration     = 10.16 seconds
+Compute duration  = 10.16 seconds
 parameters        = parameters[1, 1], parameters[1, 2], parameters[1, 3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -65,24 +65,24 @@ Summary Statistics
         parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
             Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  parameters[1, 1]    0.9639    0.9690    0.0332   647.5188   449.2492    0.9998       48.0962
-  parameters[1, 2]    1.0181    1.0312    0.0423   508.2160   509.0673    1.0009       37.7491
-  parameters[1, 3]    0.9312    0.9863    0.0425   352.5908   306.6355    1.0049       26.1896
+  parameters[1, 1]    1.0633    1.0746    0.0406   561.3115   454.7115    1.0024       55.2690
+  parameters[1, 2]    0.9951    1.0483    0.0450   409.6538   431.5544    1.0002       40.3361
+  parameters[1, 3]    0.9547    0.9804    0.0409   381.2793   255.7340    0.9995       37.5423
 
 Quantiles
         parameters      2.5%     25.0%     50.0%     75.0%     97.5%
             Symbol   Float64   Float64   Float64   Float64   Float64
 
-  parameters[1, 1]    0.0207    0.2774    0.7076    1.2803    3.4828
-  parameters[1, 2]    0.0230    0.3175    0.7222    1.3742    3.8831
-  parameters[1, 3]    0.0189    0.2821    0.6146    1.2857    3.6830
+  parameters[1, 1]    0.0266    0.3247    0.7297    1.4220    3.9067
+  parameters[1, 2]    0.0165    0.2432    0.6652    1.4002    3.9777
+  parameters[1, 3]    0.0116    0.2412    0.6425    1.3430    3.6762
 </code></pre><p>Note that the parameter names in the chains are somewhat cryptic. We can use the <code>rename_chains</code> function to rename them to something more understandable:</p><pre><code class="language-julia hljs">renamed_chains = rename_chains(chains, multi_subject_model)</code></pre><pre><code class="nohighlight hljs">Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 13.46 seconds
-Compute duration  = 13.46 seconds
+Wall duration     = 10.16 seconds
+Compute duration  = 10.16 seconds
 parameters        = subjectID:1.alpha, subjectID:2.alpha, subjectID:3.alpha
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -90,20 +90,20 @@ Summary Statistics
          parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
              Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  subjectID:1.alpha    0.9639    0.9690    0.0332   647.5188   449.2492    0.9998       48.0962
-  subjectID:2.alpha    1.0181    1.0312    0.0423   508.2160   509.0673    1.0009       37.7491
-  subjectID:3.alpha    0.9312    0.9863    0.0425   352.5908   306.6355    1.0049       26.1896
+  subjectID:1.alpha    1.0633    1.0746    0.0406   561.3115   454.7115    1.0024       55.2690
+  subjectID:2.alpha    0.9951    1.0483    0.0450   409.6538   431.5544    1.0002       40.3361
+  subjectID:3.alpha    0.9547    0.9804    0.0409   381.2793   255.7340    0.9995       37.5423
 
 Quantiles
          parameters      2.5%     25.0%     50.0%     75.0%     97.5%
              Symbol   Float64   Float64   Float64   Float64   Float64
 
-  subjectID:1.alpha    0.0207    0.2774    0.7076    1.2803    3.4828
-  subjectID:2.alpha    0.0230    0.3175    0.7222    1.3742    3.8831
-  subjectID:3.alpha    0.0189    0.2821    0.6146    1.2857    3.6830
+  subjectID:1.alpha    0.0266    0.3247    0.7297    1.4220    3.9067
+  subjectID:2.alpha    0.0165    0.2432    0.6652    1.4002    3.9777
+  subjectID:3.alpha    0.0116    0.2412    0.6425    1.3430    3.6762
 </code></pre><p>That looks better! We can now use the &#39;<strong>StatsPlots</strong>&#39; package to plot the chain traces and density plots of the posterior distributions for all subjects:</p><pre><code class="language-julia hljs">using StatsPlots # Load the StatsPlots package
 
 plot(renamed_chains)</code></pre><p><img src="../assets/chain_traces.png" alt="image2"/></p><p>We can also visualize the posterior distributions against the priors. This can be done by first taking samples from the prior:</p><pre><code class="language-julia hljs"># Sample from the prior
 prior_chains = sample(multi_subject_model, Prior(), 1000)
 # Rename parameters in the prior chains
-renamed_prior_chains = rename_chains(prior_chains, multi_subject_model)</code></pre><p>To plot the posterior distributions against the priors, we use the <code>plot_parameters</code> function:</p><pre><code class="language-julia hljs">plot_parameters(renamed_prior_chains, renamed_chains)</code></pre><p><img src="../assets/posteriors.png" alt="image3"/></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Simulation/">« Simulation</a><a class="docs-footer-nextpage" href="../SimulationActionModels/">Simulation with ActionModels.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Friday 6 December 2024 16:32">Friday 6 December 2024</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+renamed_prior_chains = rename_chains(prior_chains, multi_subject_model)</code></pre><p>To plot the posterior distributions against the priors, we use the <code>plot_parameters</code> function:</p><pre><code class="language-julia hljs">plot_parameters(renamed_prior_chains, renamed_chains)</code></pre><p><img src="../assets/posteriors.png" alt="image3"/></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Simulation/">« Simulation</a><a class="docs-footer-nextpage" href="../SimulationActionModels/">Simulation with ActionModels.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.0 on <span class="colophon-date" title="Friday 6 December 2024 16:57">Friday 6 December 2024</span>. Using Julia version 1.11.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
