@@ -2,9 +2,6 @@ using ActiveInference
 using Documenter
 using Literate
 
-# cd(raw"C:\Users\jonat\Desktop\University\Bachelor\ActiveInferencePackage\ActiveInference.jl\docs\src")
-# input_folder = "../julia_files"
-
 # Set project directory
 if haskey(ENV, "GITHUB_WORKSPACE")
     project_dir = ENV["GITHUB_WORKSPACE"]
