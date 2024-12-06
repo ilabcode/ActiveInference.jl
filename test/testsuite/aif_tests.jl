@@ -155,19 +155,21 @@ end
         observation = [rand(1:observations[i]) for i in axes(observations, 1)]
         QS = infer_states!(aif, observation)
     
-        # If action is empty, update D vectors
-        if ismissing(get_states(aif)["action"])
-            QS_t1 = get_history(aif)["posterior_states"][1]
-            update_D!(aif, QS_t1)
-        end
+        # # If action is empty, update D vectors
+        # if ismissing(get_states(aif)["action"])
+        #     QS_t1 = get_history(aif)["posterior_states"][1]
+        #     update_D!(aif, QS_t1)
+        # end
 
-        # If agent has taken action, update transition matrices
-        if get_states(aif)["action"] !== missing
-            QS_prev = get_history(aif)["posterior_states"][end-1]
-            update_B!(aif, QS_prev)
-        end
-        # Update A matrix
-        update_A!(aif, observation)
+        # # If agent has taken action, update transition matrices
+        # if get_states(aif)["action"] !== missing
+        #     QS_prev = get_history(aif)["posterior_states"][end-1]
+        #     update_B!(aif, QS_prev)
+        # end
+        # # Update A matrix
+        # update_A!(aif, observation)
+
+        update_parameters!(aif)
     
         # Run policy inference
         Q_pi, G = infer_policies!(aif)

@@ -45,6 +45,7 @@ export # utils/create_matrix_templates.jl
        update_A!,
        update_B!,
        update_D!,
+       update_parameters!,
 
        # POMDP.jl
        action_pomdp!,
