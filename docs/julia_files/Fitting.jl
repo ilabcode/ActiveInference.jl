@@ -7,18 +7,17 @@
 # Model fitting in '**ActiveInference**' is mediated through '**ActionModels**', which is our sister package for implementing and fitting various behavioural models to data. The core of '**ActionModels**' is the action model function, which takes a single observation, runs the inference scheme (updating the agent's beliefs), and calculates the probability distribution over actions from which the agent samples its actions.
 # *(Check out the [ActionModels documentation](https://ilabcode.github.io/ActionModels.jl/dev/markdowns/Introduction/) for more details)*
 
-using ActiveInference #hide #nb
-n_states = [4] #hide #nb
-n_observations = [4] #hide #nb
-n_controls = [2] #hide #nb
-policy_length = 1 #hide #nb
-A, B = create_matrix_templates(n_states, n_observations, n_controls, policy_length); nothing #hide #nb
-aif = init_aif(A, B, verbose=false); nothing #hide #nb
-using ActionModels #hide #nb
-agent = init_agent(action_pomdp!, substruct = aif); nothing #hide #nb
-using Distributions #hide #nb
-priors = Dict("alpha" => Gamma(1, 1)); nothing #hide #nb
-using DataFrames #hide 
+using Pkg#hide
+using ActiveInference#hide
+n_states=[4]#hide
+n_observations=[4]#hide
+n_controls=[2]#hide
+policy_length=1#hide
+A,B=create_matrix_templates(n_states, n_observations, n_controls, policy_length);#hide
+aif = init_aif(A, B, verbose=false);#hide
+using Distributions#hide
+priors = Dict("alpha" => Gamma(1, 1));#hide
+using DataFrames#hide 
 #multi_subject_model = create_model(agent, priors, data, grouping_cols = [:subjectID], input_cols = ["observations"], action_cols = ["actions"])#hide
 #results = fit_model(multi_subject_model);#hide
 
@@ -53,11 +52,9 @@ using DataFrames #hide
 
 # Let's first install '**ActionModels**' from the official Julia registry and import it:
 
+Pkg.add("ActionModels")
+using ActionModels
 
-# ```julia
-# Pkg.add("ActionModels")
-# using ActionModels
-# ```
 
 # We can now create an `Agent` with the `action_pomdp!` function and the active inference object:
 
@@ -117,6 +114,7 @@ using DataFrames #hide
 # )
 # ```
 data = DataFrame(subjectID = [1, 1, 1, 2, 2, 2, 3, 3, 3], observations = [1, 1, 2, 3, 1, 4, 2, 1, 3], actions = [2, 1, 2, 2, 2, 1, 2, 2, 1] )#hide
+#
 # To instantiate the probabilistic model on our dataset, we pass the `data` DataFrame to the `create_model` function along with the names of the columns that contain the subject identifiers, observations, and actions:
 # ```julia
 # # Create the model object
@@ -129,18 +127,23 @@ data = DataFrame(subjectID = [1, 1, 1, 2, 2, 2, 3, 3, 3], observations = [1, 1, 
 #     action_cols = ["actions"] # Column with actions
 # )
 # ```
+agent = init_agent(action_pomdp!, substruct = aif);#hide
+multi_subject_model = create_model(agent, priors, data; grouping_cols = [:subjectID], input_cols = ["observations"], action_cols = ["actions"]);#hide
+
 # To fit the model, we use the `fit_model` function as before:
 # ```julia
 # results = fit_model(multi_subject_model)
 # ```
+#
+results = fit_model(multi_subject_model);#hide
 #
 # #### Customizing the Fitting Procedure
 # The `fit_model` function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:
 
 # ```julia
 # results = fit_model(
-#     model, # The model object
-#     parallelization = MCMCDistributed(), # Run the chains in parallel
+#     multi_subject_model, # The model object
+#     parallelization = MCMCDistributed(), # Run chains in parallel
 #     sampler = NUTS(;adtype=AutoReverseDiff(compile=true), # Specify the type of sampler
 #     n_itererations = 1000, # Number of iterations, 
 #     n_chains = 4, # Number of chains
@@ -151,4 +154,4 @@ data = DataFrame(subjectID = [1, 1, 1, 2, 2, 2, 3, 3, 3], observations = [1, 1, 
 # #### Results
 # 
 # The `fit_model` function is an object that contains the standard Turing chains which we can use to extract the summary statistics of the posterior distribution...
-# 
+results.chains
