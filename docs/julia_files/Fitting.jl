@@ -134,9 +134,7 @@ multi_subject_model = create_model(agent, priors, data; grouping_cols = [:subjec
 # ```julia
 # results = fit_model(multi_subject_model)
 # ```
-#
-results = fit_model(multi_subject_model);#hide
-#
+results=fit_model(multi_subject_model, show_progress=false);#hide
 # #### Customizing the Fitting Procedure
 # The `fit_model` function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:
 

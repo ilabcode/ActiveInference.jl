@@ -138,228 +138,6 @@ results = fit_model(multi_subject_model)
 ```
 
 
-````
-Sampling (Chain 1 of 1)   0%|█                          |  ETA: N/A
-┌ Info: Found initial step size
-└   ϵ = 1.6
-Sampling (Chain 1 of 1)   0%|█                          |  ETA: 0:00:08
-Sampling (Chain 1 of 1)   1%|█                          |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   1%|█                          |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   2%|█                          |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   2%|█                          |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   3%|█                          |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   3%|█                          |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   4%|██                         |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   4%|██                         |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   5%|██                         |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   5%|██                         |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   6%|██                         |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   6%|██                         |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   7%|██                         |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   7%|██                         |  ETA: 0:00:05
-Sampling (Chain 1 of 1)   7%|███                        |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   8%|███                        |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   8%|███                        |  ETA: 0:00:06
-Sampling (Chain 1 of 1)   9%|███                        |  ETA: 0:00:08
-Sampling (Chain 1 of 1)   9%|███                        |  ETA: 0:00:08
-Sampling (Chain 1 of 1)  10%|███                        |  ETA: 0:00:08
-Sampling (Chain 1 of 1)  10%|███                        |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  11%|███                        |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  11%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  12%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  12%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  13%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  13%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  14%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  14%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  14%|████                       |  ETA: 0:00:07
-Sampling (Chain 1 of 1)  15%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  15%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  16%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  16%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  17%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  17%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  18%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  18%|█████                      |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  19%|██████                     |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  19%|██████                     |  ETA: 0:00:06
-Sampling (Chain 1 of 1)  20%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  20%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  21%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  21%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  21%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  22%|██████                     |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  22%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  23%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  23%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  24%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  24%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  25%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  25%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  26%|███████                    |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  26%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  27%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  27%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  28%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  28%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  28%|████████                   |  ETA: 0:00:05
-Sampling (Chain 1 of 1)  29%|████████                   |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  29%|████████                   |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  30%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  30%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  31%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  31%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  32%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  32%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  33%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  33%|█████████                  |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  34%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  34%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  35%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  35%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  35%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  36%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  36%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  37%|██████████                 |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  37%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  38%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  38%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  39%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  39%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  40%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  40%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  41%|███████████                |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  41%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  42%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  42%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  42%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  43%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  43%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  44%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  44%|████████████               |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  45%|█████████████              |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  45%|█████████████              |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  46%|█████████████              |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  46%|█████████████              |  ETA: 0:00:04
-Sampling (Chain 1 of 1)  47%|█████████████              |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  47%|█████████████              |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  48%|█████████████              |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  48%|█████████████              |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  49%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  49%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  49%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  50%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  50%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  51%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  51%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  52%|██████████████             |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  52%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  53%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  53%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  54%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  54%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  55%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  55%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  56%|███████████████            |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  56%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  56%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  57%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  57%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  58%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  58%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  59%|████████████████           |  ETA: 0:00:03
-Sampling (Chain 1 of 1)  59%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  60%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  60%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  61%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  61%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  62%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  62%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  63%|█████████████████          |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  63%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  63%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  64%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  64%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  65%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  65%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  66%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  66%|██████████████████         |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  67%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  67%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  68%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  68%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  69%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  69%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  70%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  70%|███████████████████        |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  70%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  71%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  71%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  72%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  72%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  73%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  73%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  74%|████████████████████       |  ETA: 0:00:02
-Sampling (Chain 1 of 1)  74%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  75%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  75%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  76%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  76%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  77%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  77%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  77%|█████████████████████      |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  78%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  78%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  79%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  79%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  80%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  80%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  81%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  81%|██████████████████████     |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  82%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  82%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  83%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  83%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  84%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  84%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  84%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  85%|███████████████████████    |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  85%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  86%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  86%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  87%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  87%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  88%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  88%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  89%|████████████████████████   |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  89%|█████████████████████████  |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  90%|█████████████████████████  |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  90%|█████████████████████████  |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  91%|█████████████████████████  |  ETA: 0:00:01
-Sampling (Chain 1 of 1)  91%|█████████████████████████  |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  91%|█████████████████████████  |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  92%|█████████████████████████  |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  92%|█████████████████████████  |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  93%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  93%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  94%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  94%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  95%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  95%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  96%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  96%|██████████████████████████ |  ETA: 0:00:00
-Sampling (Chain 1 of 1)  97%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  97%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  98%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  98%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  98%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  99%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1)  99%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1) 100%|███████████████████████████|  ETA: 0:00:00
-Sampling (Chain 1 of 1) 100%|███████████████████████████| Time: 0:00:05
-
-````
-
 #### Customizing the Fitting Procedure
 The `fit_model` function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:
 
@@ -388,8 +166,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 5.42 seconds
-Compute duration  = 5.42 seconds
+Wall duration     = 4.58 seconds
+Compute duration  = 4.58 seconds
 parameters        = parameters[1, 1], parameters[1, 2], parameters[1, 3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -397,17 +175,17 @@ Summary Statistics
         parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
             Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  parameters[1, 1]    1.0205    0.9936    0.0391   413.4318   365.1792    0.9997       76.2367
-  parameters[1, 2]    1.0162    1.0309    0.0351   466.5531   469.6972    1.0021       86.0323
-  parameters[1, 3]    0.9617    0.9773    0.0355   498.9564   506.2123    1.0052       92.0075
+  parameters[1, 1]    0.9695    1.0148    0.0344   563.8654   326.5161    1.0002      123.1147
+  parameters[1, 2]    0.9825    1.0423    0.0342   694.3012   532.4635    1.0014      151.5941
+  parameters[1, 3]    0.9369    0.8877    0.0353   447.1312   370.1160    0.9991       97.6269
 
 Quantiles
         parameters      2.5%     25.0%     50.0%     75.0%     97.5%
             Symbol   Float64   Float64   Float64   Float64   Float64
 
-  parameters[1, 1]    0.0285    0.3088    0.7354    1.4211    3.6335
-  parameters[1, 2]    0.0335    0.2927    0.7164    1.3475    3.9876
-  parameters[1, 3]    0.0317    0.2870    0.6629    1.3156    3.4383
+  parameters[1, 1]    0.0178    0.2659    0.6589    1.3198    3.6882
+  parameters[1, 2]    0.0278    0.2701    0.6547    1.3410    3.5030
+  parameters[1, 3]    0.0239    0.2708    0.6809    1.3527    3.2884
 
 ````
 
