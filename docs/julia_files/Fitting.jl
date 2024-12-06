@@ -164,7 +164,7 @@ renamed_chains = rename_chains(chains, multi_subject_model)
 # plot(renamed_chains)
 # ```
 #
-# ![image2](assets/quickstart_chain_traces.png)
+# ![image2](assets/chain_traces.png)
 #
 # We can also visualize the posterior distributions against the priors. This can be done by first taking samples from the prior:
 # ```julia
@@ -178,4 +178,4 @@ renamed_chains = rename_chains(chains, multi_subject_model)
 # plot_parameters(renamed_prior_chains, renamed_chains)
 # ```
 
-# ![image3](assets/quickstart_posteriors.png)
+# ![image3](assets/posteriors.png)
