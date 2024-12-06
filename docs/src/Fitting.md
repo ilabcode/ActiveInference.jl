@@ -48,7 +48,6 @@ Pkg.add("ActionModels")
 using ActionModels
 ```
 
-
 We can now create an `Agent` with the `action_pomdp!` function and the active inference object:
 
 ```julia
@@ -132,7 +131,6 @@ results = fit_model(multi_subject_model)
 ```
 
 
-
 #### Customizing the Fitting Procedure
 The `fit_model` function has several optional arguments that allow us to customize the fitting procedure. For example, you can specify the number of iterations, the number of chains, the sampling algorithm, or to parallelize over chains:
 
@@ -163,8 +161,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 4.56 seconds
-Compute duration  = 4.56 seconds
+Wall duration     = 4.38 seconds
+Compute duration  = 4.38 seconds
 parameters        = parameters[1, 1], parameters[1, 2], parameters[1, 3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -172,17 +170,17 @@ Summary Statistics
         parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
             Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  parameters[1, 1]    1.0388    0.9799    0.0352   687.0615   580.0470    1.0024      150.6053
-  parameters[1, 2]    1.0475    0.9934    0.0345   687.5690   526.9885    1.0024      150.7166
-  parameters[1, 3]    0.9475    0.9732    0.0407   305.2072   275.0622    1.0013       66.9021
+  parameters[1, 1]    0.9621    0.9748    0.0381   325.0462   241.4068    1.0015       74.2963
+  parameters[1, 2]    0.9945    0.9987    0.0457   286.2232   261.3858    1.0028       65.4225
+  parameters[1, 3]    0.9828    0.9465    0.0325   613.1301   455.4539    1.0001      140.1440
 
 Quantiles
         parameters      2.5%     25.0%     50.0%     75.0%     97.5%
             Symbol   Float64   Float64   Float64   Float64   Float64
 
-  parameters[1, 1]    0.0306    0.3057    0.7225    1.4911    3.6012
-  parameters[1, 2]    0.0374    0.3396    0.7498    1.4408    3.5532
-  parameters[1, 3]    0.0116    0.2286    0.6056    1.3462    3.4113
+  parameters[1, 1]    0.0288    0.2654    0.6207    1.3585    3.5885
+  parameters[1, 2]    0.0242    0.2806    0.7042    1.3629    3.8485
+  parameters[1, 3]    0.0157    0.2808    0.7015    1.3962    3.5663
 
 ````
 
@@ -198,8 +196,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 4.56 seconds
-Compute duration  = 4.56 seconds
+Wall duration     = 4.38 seconds
+Compute duration  = 4.38 seconds
 parameters        = subjectID:1.alpha, subjectID:2.alpha, subjectID:3.alpha
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -207,17 +205,17 @@ Summary Statistics
          parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
              Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  subjectID:1.alpha    1.0388    0.9799    0.0352   687.0615   580.0470    1.0024      150.6053
-  subjectID:2.alpha    1.0475    0.9934    0.0345   687.5690   526.9885    1.0024      150.7166
-  subjectID:3.alpha    0.9475    0.9732    0.0407   305.2072   275.0622    1.0013       66.9021
+  subjectID:1.alpha    0.9621    0.9748    0.0381   325.0462   241.4068    1.0015       74.2963
+  subjectID:2.alpha    0.9945    0.9987    0.0457   286.2232   261.3858    1.0028       65.4225
+  subjectID:3.alpha    0.9828    0.9465    0.0325   613.1301   455.4539    1.0001      140.1440
 
 Quantiles
          parameters      2.5%     25.0%     50.0%     75.0%     97.5%
              Symbol   Float64   Float64   Float64   Float64   Float64
 
-  subjectID:1.alpha    0.0306    0.3057    0.7225    1.4911    3.6012
-  subjectID:2.alpha    0.0374    0.3396    0.7498    1.4408    3.5532
-  subjectID:3.alpha    0.0116    0.2286    0.6056    1.3462    3.4113
+  subjectID:1.alpha    0.0288    0.2654    0.6207    1.3585    3.5885
+  subjectID:2.alpha    0.0242    0.2806    0.7042    1.3629    3.8485
+  subjectID:3.alpha    0.0157    0.2808    0.7015    1.3962    3.5663
 
 ````
 
@@ -228,7 +226,7 @@ using StatsPlots # Load the StatsPlots package
 plot(renamed_chains)
 ```
 
-![image1](assets/quickstart_chain_traces.png)
+![image2](assets/quickstart_chain_traces.png)
 
 We can also visualize the posterior distributions against the priors. This can be done by first taking samples from the prior:
 ```julia
@@ -242,7 +240,7 @@ To plot the posterior distributions against the priors, we use the `plot_paramet
 plot_parameters(renamed_prior_chains, renamed_chains)
 ```
 
-![image1](assets/quickstart_posteriors.png)
+![image3](assets/quickstart_posteriors.png)
 
 ---
 
