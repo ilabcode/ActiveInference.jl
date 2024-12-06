@@ -78,8 +78,8 @@ makedocs(;
     ],
     doctest=true,
 )
-### NOTE Sam: change devbranch to master
+
 deploydocs(;
     repo="github.com/ilabcode/ActiveInference.jl",
-    devbranch="dev",
+    devbranch="master",
 )

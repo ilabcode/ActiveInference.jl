@@ -15,12 +15,9 @@ Left: A synthetic agent wants to reach the end of the maze environment while avo
 Right: The agent's noisy prior expectations about the state of the environment parameterized by Dirichlet distributions are updated dynamically as it moves through the maze.
 
 ## News
-#### Version 0.1.0 - October 2024
-- All parameters are now recoverable using ReverseDiff
-- Now fully compatible with ActionModels.jl v0.6.6
+#### Version 0.1.1 - December 2024
+- Initial release of the package documentation. 
 
-#### Coming Soon
-- **Documentation**: Full [documentation](https://samuelnehrer02.github.io/ActiveInference.jl/dev/) will be available within the next few weeks, including examples and tutorials.
 
 ## Installation
 Install ActiveInference.jl using the Julia package manager:
