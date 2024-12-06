@@ -147,9 +147,20 @@ results=fit_model(multi_subject_model, show_progress=false);#hide
 #     n_chains = 4, # Number of chains
 # )
 # ```
-# Turing allows us to run distributed `MCMCDistributed()` or threaded `MCMCThreads()` parallel sampling. The default is to run chains serially `MCMCSerial()`. For information on the available samplers see the [Turing documentation](https://turing.ml/dev/docs/using-turing/samplers/). 
+# '**Turing**' allows us to run distributed `MCMCDistributed()` or threaded `MCMCThreads()` parallel sampling. The default is to run chains serially `MCMCSerial()`. For information on the available samplers see the [Turing documentation](https://turing.ml/dev/docs/using-turing/samplers/). 
 # 
 # #### Results
 # 
-# The `fit_model` function is an object that contains the standard Turing chains which we can use to extract the summary statistics of the posterior distribution...
-results.chains
+# The output of the `fit_model` function is an object that contains the standard '**Turing**' chains which we can use to extract the summary statistics of the posterior distribution.
+#
+# Let's extract the chains from the results object:
+chains = results.chains
+#
+# Note that the parameter names in the chains are somewhat cryptic. We can use the `rename_chains` function to rename them to something more understandable:
+renamed_chains = rename_chains(chains, multi_subject_model)
+#
+# That looks better! We can now use the '**StatsPlots**' package to plot the chain traces and density plots of the posterior distributions for all subjects:
+#
+using StatsPlots # Load the StatsPlots package
+
+plot(renamed_chains)
