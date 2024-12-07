@@ -24,6 +24,7 @@ using ActiveInference
 
 In the next section we will go over the basic concepts of how to start using the package. We do this by providing instructions on how to create and design a generative model, that can be used for both simulation and parameter estimation.
 
+---
 
 *This page was generated using [Literate.jl](https://github.com/fredrikekre/Literate.jl).*
 
