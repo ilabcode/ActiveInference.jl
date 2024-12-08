@@ -160,8 +160,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 4.94 seconds
-Compute duration  = 4.94 seconds
+Wall duration     = 19.56 seconds
+Compute duration  = 19.56 seconds
 parameters        = parameters[1, 1], parameters[1, 2], parameters[1, 3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -169,17 +169,17 @@ Summary Statistics
         parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
             Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  parameters[1, 1]    1.0069    1.0555    0.0386   645.6724   503.0667    1.0014      130.5708
-  parameters[1, 2]    0.9659    0.9180    0.0344   579.7951   461.5439    1.0025      117.2488
-  parameters[1, 3]    0.9747    0.9424    0.0346   339.3010   214.1875    1.0018       68.6150
+  parameters[1, 1]    1.0256    0.9533    0.0334   604.0459   456.9243    0.9996       30.8801
+  parameters[1, 2]    0.9735    0.9665    0.0330   588.0456   500.3343    1.0008       30.0621
+  parameters[1, 3]    1.0613    1.0308    0.0422   452.5146   370.6840    1.0001       23.1335
 
 Quantiles
         parameters      2.5%     25.0%     50.0%     75.0%     97.5%
             Symbol   Float64   Float64   Float64   Float64   Float64
 
-  parameters[1, 1]    0.0312    0.2762    0.7024    1.3342    4.0748
-  parameters[1, 2]    0.0265    0.3047    0.7223    1.2691    3.5563
-  parameters[1, 3]    0.0167    0.2510    0.6941    1.4203    3.3940
+  parameters[1, 1]    0.0468    0.3173    0.7704    1.3994    3.5222
+  parameters[1, 2]    0.0272    0.2746    0.6785    1.3652    3.4548
+  parameters[1, 3]    0.0468    0.3363    0.7380    1.4649    3.5748
 
 ````
 
@@ -195,8 +195,8 @@ Chains MCMC chain (1000×15×1 Array{Float64, 3}):
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 4.94 seconds
-Compute duration  = 4.94 seconds
+Wall duration     = 19.56 seconds
+Compute duration  = 19.56 seconds
 parameters        = subjectID:1.alpha, subjectID:2.alpha, subjectID:3.alpha
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, hamiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, tree_depth, numerical_error, step_size, nom_step_size
 
@@ -204,17 +204,17 @@ Summary Statistics
          parameters      mean       std      mcse   ess_bulk   ess_tail      rhat   ess_per_sec
              Symbol   Float64   Float64   Float64    Float64    Float64   Float64       Float64
 
-  subjectID:1.alpha    1.0069    1.0555    0.0386   645.6724   503.0667    1.0014      130.5708
-  subjectID:2.alpha    0.9659    0.9180    0.0344   579.7951   461.5439    1.0025      117.2488
-  subjectID:3.alpha    0.9747    0.9424    0.0346   339.3010   214.1875    1.0018       68.6150
+  subjectID:1.alpha    1.0256    0.9533    0.0334   604.0459   456.9243    0.9996       30.8801
+  subjectID:2.alpha    0.9735    0.9665    0.0330   588.0456   500.3343    1.0008       30.0621
+  subjectID:3.alpha    1.0613    1.0308    0.0422   452.5146   370.6840    1.0001       23.1335
 
 Quantiles
          parameters      2.5%     25.0%     50.0%     75.0%     97.5%
              Symbol   Float64   Float64   Float64   Float64   Float64
 
-  subjectID:1.alpha    0.0312    0.2762    0.7024    1.3342    4.0748
-  subjectID:2.alpha    0.0265    0.3047    0.7223    1.2691    3.5563
-  subjectID:3.alpha    0.0167    0.2510    0.6941    1.4203    3.3940
+  subjectID:1.alpha    0.0468    0.3173    0.7704    1.3994    3.5222
+  subjectID:2.alpha    0.0272    0.2746    0.6785    1.3652    3.4548
+  subjectID:3.alpha    0.0468    0.3363    0.7380    1.4649    3.5748
 
 ````
 
